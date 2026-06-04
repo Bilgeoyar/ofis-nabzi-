@@ -6,7 +6,6 @@
 <title>Ofis Nabzı 💬</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     background: #f0f2f5;
@@ -16,173 +15,69 @@
     align-items: center;
     padding: 20px;
   }
-
   header {
-    width: 100%;
-    max-width: 600px;
-    background: #fff;
-    border-radius: 16px;
-    padding: 20px 24px;
-    margin-bottom: 16px;
+    width: 100%; max-width: 600px;
+    background: #fff; border-radius: 16px;
+    padding: 20px 24px; margin-bottom: 16px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    display: flex; align-items: center; justify-content: space-between;
   }
-
   header h1 { font-size: 1.2rem; font-weight: 700; color: #1a1a2e; }
   header p { font-size: 0.8rem; color: #888; margin-top: 2px; }
-
-  .kalan-badge {
-    background: #6c63ff;
-    color: white;
-    border-radius: 20px;
-    padding: 6px 14px;
-    font-size: 0.85rem;
-    font-weight: 600;
-  }
-
-  .kalan-badge.bitti { background: #ccc; }
-
+  .kalan-badge { display: none; }
   .yaz-kutusu {
-    width: 100%;
-    max-width: 600px;
-    background: #fff;
-    border-radius: 16px;
-    padding: 16px;
-    margin-bottom: 20px;
+    width: 100%; max-width: 600px;
+    background: #fff; border-radius: 16px;
+    padding: 16px; margin-bottom: 20px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   }
-
   .yaz-kutusu textarea {
-    width: 100%;
-    border: 2px solid #e8e8e8;
-    border-radius: 12px;
-    padding: 12px;
-    font-size: 0.95rem;
-    resize: none;
-    outline: none;
-    font-family: inherit;
-    transition: border-color 0.2s;
-    height: 80px;
+    width: 100%; border: 2px solid #e8e8e8;
+    border-radius: 12px; padding: 12px;
+    font-size: 0.95rem; resize: none; outline: none;
+    font-family: inherit; transition: border-color 0.2s; height: 80px;
   }
-
   .yaz-kutusu textarea:focus { border-color: #6c63ff; }
   .yaz-kutusu textarea:disabled { background: #f9f9f9; color: #aaa; }
-
   .yaz-kutusu button {
-    margin-top: 10px;
-    width: 100%;
-    background: #6c63ff;
-    color: white;
-    border: none;
-    border-radius: 12px;
-    padding: 12px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s;
+    margin-top: 10px; width: 100%;
+    background: #6c63ff; color: white;
+    border: none; border-radius: 12px;
+    padding: 12px; font-size: 0.95rem;
+    font-weight: 600; cursor: pointer; transition: background 0.2s;
   }
-
   .yaz-kutusu button:hover { background: #574fd6; }
   .yaz-kutusu button:disabled { background: #ccc; cursor: not-allowed; }
-
-  .bitti-mesaj {
-    text-align: center;
-    color: #aaa;
-    font-size: 0.85rem;
-    margin-top: 8px;
-  }
-
-  .mesajlar {
-    width: 100%;
-    max-width: 600px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
+  .bitti-mesaj { text-align: center; color: #aaa; font-size: 0.85rem; margin-top: 8px; }
+  .mesajlar { width: 100%; max-width: 600px; display: flex; flex-direction: column; gap: 12px; }
   .mesaj-kart {
-    background: #fff;
-    border-radius: 16px;
-    padding: 16px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    background: #fff; border-radius: 16px;
+    padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     animation: giris 0.3s ease;
   }
-
   @keyframes giris {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
   }
-
-  .mesaj-ust {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 12px;
-  }
-
-  .mesaj-metin {
-    font-size: 0.95rem;
-    color: #1a1a2e;
-    line-height: 1.5;
-    flex: 1;
-  }
-
-  .mesaj-zaman {
-    font-size: 0.75rem;
-    color: #bbb;
-    margin-left: 12px;
-    white-space: nowrap;
-  }
-
-  .emoji-butonlar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
+  .mesaj-ust { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+  .mesaj-metin { font-size: 0.95rem; color: #1a1a2e; line-height: 1.5; flex: 1; }
+  .mesaj-zaman { font-size: 0.75rem; color: #bbb; margin-left: 12px; white-space: nowrap; }
+  .emoji-butonlar { display: flex; flex-wrap: wrap; gap: 8px; }
   .emoji-btn {
-    background: #f5f5f5;
-    border: 2px solid transparent;
-    border-radius: 20px;
-    padding: 6px 12px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.15s;
-    display: flex;
-    align-items: center;
-    gap: 4px;
+    background: #f5f5f5; border: 2px solid transparent;
+    border-radius: 20px; padding: 6px 12px;
+    font-size: 1rem; cursor: pointer; transition: all 0.15s;
+    display: flex; align-items: center; gap: 4px;
   }
-
   .emoji-btn:hover { background: #ede9ff; border-color: #6c63ff; }
-
-  .emoji-btn.secildi {
-    background: #ede9ff;
-    border-color: #6c63ff;
-  }
-
-  .emoji-btn .sayi {
-    font-size: 0.78rem;
-    color: #666;
-    font-weight: 600;
-  }
-
-  .bos-mesaj {
-    text-align: center;
-    color: #bbb;
-    padding: 40px 0;
-    font-size: 0.95rem;
-  }
-
+  .emoji-btn.secildi { background: #ede9ff; border-color: #6c63ff; }
+  .emoji-btn .sayi { font-size: 0.78rem; color: #666; font-weight: 600; }
+  .bos-mesaj { text-align: center; color: #bbb; padding: 40px 0; font-size: 0.95rem; }
   .bos-mesaj span { font-size: 2rem; display: block; margin-bottom: 8px; }
-
   .kendi-mesaj .mesaj-metin::before {
-    content: "Sen • ";
-    color: #6c63ff;
-    font-size: 0.78rem;
-    font-weight: 600;
+    content: "Sen • "; color: #6c63ff; font-size: 0.78rem; font-weight: 600;
   }
+  #yukleniyor { text-align: center; color: #aaa; padding: 40px 0; }
 </style>
 </head>
 <body>
@@ -204,114 +99,54 @@
 </div>
 
 <div class="mesajlar" id="mesajlar">
-  <div class="bos-mesaj">
-    <span>💭</span>
-    Henüz mesaj yok. İlk sen yaz!
-  </div>
+  <div id="yukleniyor">⏳ Yükleniyor...</div>
 </div>
 
-<script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyD9Gww-7rTsXQYJ1szG-8cuccMesQ48ucI",
+    authDomain: "ofis-nabzi.firebaseapp.com",
+    projectId: "ofis-nabzi",
+    storageBucket: "ofis-nabzi.firebasestorage.app",
+    messagingSenderId: "5830878288",
+    appId: "1:5830878288:web:af5719c88c16a78b5b5d55",
+    measurementId: "G-93HBPJT3EV"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
   const EMOJILER = ["😂","👍","❤️","🔥","😮","😤","🙏","💯","😴","🤔"];
-  
-  // Basit ID üret (her oturum için)
-  const KULLANICI_ID = "k_" + Math.random().toString(36).substr(2, 9);
-  
-  let mesajlar = [];
-  let bugunKalan = 3;
-  let bugunTarih = bugunTarihi();
-  let tepkilerim = {}; // mesajId -> emoji
+  const KULLANICI_ID = (() => {
+    let id = localStorage.getItem("ofis_uid");
+    if (!id) { id = "k_" + Math.random().toString(36).substr(2, 9); localStorage.setItem("ofis_uid", id); }
+    return id;
+  })();
 
-  function bugunTarihi() {
-    return new Date().toDateString();
-  }
+  let bugunKalan = 999;
 
-  function yerelYukle() {
-    const kayit = localStorage.getItem("ofis_nabzi");
-    if (kayit) {
-      const veri = JSON.parse(kayit);
-      mesajlar = veri.mesajlar || [];
-      tepkilerim = veri.tepkilerim || {};
-      
-      // Gün değiştiyse hakkı sıfırla
-      if (veri.tarih === bugunTarihi()) {
-        bugunKalan = veri.bugunKalan ?? 3;
-      } else {
-        bugunKalan = 3;
-      }
-    }
-  }
+  let tepkilerim = JSON.parse(localStorage.getItem("ofis_tepki") || "{}");
+  let tumMesajlar = [];
 
-  function yerelKaydet() {
-    localStorage.setItem("ofis_nabzi", JSON.stringify({
-      mesajlar,
-      tepkilerim,
-      bugunKalan,
-      tarih: bugunTarihi()
-    }));
-  }
-
-  function mesajGonder() {
-    const input = document.getElementById("mesajInput");
-    const metin = input.value.trim();
-    
-    if (!metin || bugunKalan <= 0) return;
-
-    const yeniMesaj = {
-      id: "m_" + Date.now(),
-      metin,
-      zaman: simdi(),
-      sahip: KULLANICI_ID,
-      tepkiler: {}
-    };
-
-    EMOJILER.forEach(e => yeniMesaj.tepkiler[e] = 0);
-
-    mesajlar.unshift(yeniMesaj);
-    bugunKalan--;
-    input.value = "";
-
-    yerelKaydet();
-    render();
-  }
-
-  function tepkiVer(mesajId, emoji) {
-    const mesaj = mesajlar.find(m => m.id === mesajId);
-    if (!mesaj) return;
-
-    // Kendi mesajına tepki veremesin
-    if (mesaj.sahip === KULLANICI_ID) return;
-
-    const onceki = tepkilerim[mesajId];
-
-    // Aynı emojiye tekrar basarsa geri al
-    if (onceki === emoji) {
-      mesaj.tepkiler[emoji] = Math.max(0, (mesaj.tepkiler[emoji] || 0) - 1);
-      delete tepkilerim[mesajId];
-    } else {
-      // Önceki tepkiyi geri al
-      if (onceki) {
-        mesaj.tepkiler[onceki] = Math.max(0, (mesaj.tepkiler[onceki] || 0) - 1);
-      }
-      mesaj.tepkiler[emoji] = (mesaj.tepkiler[emoji] || 0) + 1;
-      tepkilerim[mesajId] = emoji;
-    }
-
-    yerelKaydet();
-    render();
-  }
+  function gunKaydet() {}
 
   function simdi() {
     const now = new Date();
     return now.getHours().toString().padStart(2,"0") + ":" + now.getMinutes().toString().padStart(2,"0");
   }
 
+  function escHtml(str) {
+    return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+
   function render() {
-    // Badge
     const badge = document.getElementById("kalanBadge");
     badge.textContent = bugunKalan + " hak";
     badge.className = "kalan-badge" + (bugunKalan === 0 ? " bitti" : "");
 
-    // Input alanı
     const input = document.getElementById("mesajInput");
     const btn = document.getElementById("gonderBtn");
     const bittiMesaj = document.getElementById("bittiMesaj");
@@ -326,25 +161,21 @@
       bittiMesaj.style.display = "none";
     }
 
-    // Mesajlar
     const konteyner = document.getElementById("mesajlar");
-
-    if (mesajlar.length === 0) {
+    if (tumMesajlar.length === 0) {
       konteyner.innerHTML = `<div class="bos-mesaj"><span>💭</span>Henüz mesaj yok. İlk sen yaz!</div>`;
       return;
     }
 
-    konteyner.innerHTML = mesajlar.map(mesaj => {
+    konteyner.innerHTML = tumMesajlar.map(mesaj => {
       const benimMi = mesaj.sahip === KULLANICI_ID;
       const seciliEmoji = tepkilerim[mesaj.id];
-
       const emojiBtnler = EMOJILER.map(e => {
-        const sayi = mesaj.tepkiler[e] || 0;
+        const sayi = (mesaj.tepkiler && mesaj.tepkiler[e]) || 0;
         const secildi = seciliEmoji === e ? "secildi" : "";
-        const disabled = benimMi ? "style='opacity:0.3;cursor:not-allowed'" : "";
-        return `<button class="emoji-btn ${secildi}" onclick="${benimMi ? '' : `tepkiVer('${mesaj.id}','${e}')`}" ${disabled}>
-          ${e} <span class="sayi">${sayi > 0 ? sayi : ""}</span>
-        </button>`;
+        const tiklama = benimMi ? "" : `onclick="tepkiVer('${mesaj.id}','${e}')"`;
+        const stil = benimMi ? "style='opacity:0.3;cursor:not-allowed'" : "";
+        return `<button class="emoji-btn ${secildi}" ${tiklama} ${stil}>${e} <span class="sayi">${sayi > 0 ? sayi : ""}</span></button>`;
       }).join("");
 
       return `
@@ -354,18 +185,57 @@
             <div class="mesaj-zaman">${mesaj.zaman}</div>
           </div>
           <div class="emoji-butonlar">${emojiBtnler}</div>
-        </div>
-      `;
+        </div>`;
     }).join("");
   }
 
-  function escHtml(str) {
-    return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-  }
+  window.mesajGonder = async () => {
+    const input = document.getElementById("mesajInput");
+    const metin = input.value.trim();
+    if (!metin || bugunKalan <= 0) return;
 
-  // Başlat
-  yerelYukle();
-  render();
+    const tepkilerBos = {};
+    EMOJILER.forEach(e => tepkilerBos[e] = 0);
+
+    await addDoc(collection(db, "mesajlar"), {
+      metin, zaman: simdi(),
+      sahip: KULLANICI_ID,
+      tepkiler: tepkilerBos,
+      olusturuldu: serverTimestamp()
+    });
+
+    bugunKalan--;
+    gunKaydet();
+    input.value = "";
+    render();
+  };
+
+  window.tepkiVer = async (mesajId, emoji) => {
+    const mesaj = tumMesajlar.find(m => m.id === mesajId);
+    if (!mesaj || mesaj.sahip === KULLANICI_ID) return;
+
+    const onceki = tepkilerim[mesajId];
+    const yeniTepkiler = { ...mesaj.tepkiler };
+
+    if (onceki === emoji) {
+      yeniTepkiler[emoji] = Math.max(0, (yeniTepkiler[emoji] || 0) - 1);
+      delete tepkilerim[mesajId];
+    } else {
+      if (onceki) yeniTepkiler[onceki] = Math.max(0, (yeniTepkiler[onceki] || 0) - 1);
+      yeniTepkiler[emoji] = (yeniTepkiler[emoji] || 0) + 1;
+      tepkilerim[mesajId] = emoji;
+    }
+
+    localStorage.setItem("ofis_tepki", JSON.stringify(tepkilerim));
+    await updateDoc(doc(db, "mesajlar", mesajId), { tepkiler: yeniTepkiler });
+  };
+
+  // Canlı dinle
+  const q = query(collection(db, "mesajlar"), orderBy("olusturuldu", "desc"));
+  onSnapshot(q, (snapshot) => {
+    tumMesajlar = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    render();
+  });
 </script>
 </body>
 </html>
