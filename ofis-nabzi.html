@@ -6,199 +6,125 @@
 <title>Ofis Nabzı 💬</title>
 <style>
 * { box-sizing:border-box; margin:0; padding:0; }
-body {
-  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-  background:#f0f2f5; min-height:100vh; padding:20px;
-}
-.sayfa {
-  display:flex; gap:16px; align-items:flex-start;
-  max-width:1240px; margin:0 auto;
-}
+body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:#f0f2f5; min-height:100vh; padding:20px; }
+.sayfa { display:flex; gap:16px; align-items:flex-start; max-width:1240px; margin:0 auto; }
 .sol-panel { width:260px; flex-shrink:0; position:sticky; top:20px; }
 .sag-panel { width:260px; flex-shrink:0; position:sticky; top:20px; }
 .orta { flex:1; min-width:0; }
-.kart {
-  background:#fff; border-radius:16px; padding:18px;
-  box-shadow:0 2px 8px rgba(0,0,0,0.07); margin-bottom:12px;
-}
-/* SOL PANEL */
-.saat-buyuk {
-  font-size:2.6rem; font-weight:900; color:#1a1a2e;
-  letter-spacing:-2px; line-height:1;
-}
+.kart { background:#fff; border-radius:16px; padding:18px; box-shadow:0 2px 8px rgba(0,0,0,0.07); margin-bottom:12px; }
+.saat-buyuk { font-size:2.6rem; font-weight:900; color:#1a1a2e; letter-spacing:-2px; line-height:1; }
 .tarih-yazi { font-size:0.84rem; color:#888; margin-top:6px; line-height:1.6; }
 .hava-bolum { margin-top:14px; padding-top:14px; border-top:1px solid #f0f0f0; }
-.hava-icon { font-size:2.4rem; line-height:1; }
-.hava-sicak { font-size:1.6rem; font-weight:800; color:#1a1a2e; margin-top:4px; }
-.hava-tanim { font-size:0.78rem; color:#888; margin-top:2px; }
+.hava-icon { font-size:2.4rem; } .hava-sicak { font-size:1.6rem; font-weight:800; color:#1a1a2e; margin-top:4px; } .hava-tanim { font-size:0.78rem; color:#888; margin-top:2px; }
 .foto-bolum { margin-top:14px; padding-top:14px; border-top:1px solid #f0f0f0; }
-.foto-wrapper {
-  position:relative; cursor:pointer;
-  border-radius:14px; overflow:hidden;
-}
+.foto-wrapper { position:relative; cursor:pointer; border-radius:14px; overflow:hidden; }
 .foto-wrapper:hover .foto-hint { opacity:1; }
-.sol-foto {
-  width:100%; height:320px; object-fit:cover; object-position:center;
-  border-radius:14px; display:block;
-  transition:opacity 0.35s ease, transform 0.2s ease;
-}
+.sol-foto { width:100%; height:320px; object-fit:cover; object-position:center; border-radius:14px; display:block; transition:opacity 0.35s ease, transform 0.2s ease; }
 .foto-wrapper:hover .sol-foto { transform:scale(1.02); }
-.foto-hint {
-  position:absolute; bottom:8px; right:8px;
-  background:rgba(0,0,0,0.5); color:#fff;
-  font-size:0.7rem; padding:3px 8px; border-radius:20px;
-  opacity:0; transition:opacity 0.2s;
-}
-/* HEADER */
-header {
-  background:#fff; border-radius:16px; padding:20px 24px; margin-bottom:16px;
-  box-shadow:0 2px 8px rgba(0,0,0,0.08);
-  display:flex; align-items:center; justify-content:space-between;
-}
-header h1 { font-size:1.2rem; font-weight:700; color:#1a1a2e; }
-header p { font-size:0.8rem; color:#888; margin-top:2px; }
-/* YAZ KUTUSU */
-.yaz-kutusu {
-  background:#fff; border-radius:16px; padding:16px; margin-bottom:16px;
-  box-shadow:0 2px 8px rgba(0,0,0,0.08);
-}
-.yaz-kutusu textarea {
-  width:100%; border:2px solid #e8e8e8; border-radius:12px; padding:12px;
-  font-size:0.95rem; resize:none; outline:none;
-  font-family:inherit; transition:border-color 0.2s; height:80px;
-}
-.yaz-kutusu textarea:focus { border-color:#6c63ff; }
-.yaz-kutusu button {
-  margin-top:10px; width:100%; background:#6c63ff; color:white;
-  border:none; border-radius:12px; padding:12px; font-size:0.95rem;
-  font-weight:600; cursor:pointer; transition:background 0.2s;
-}
-.yaz-kutusu button:hover { background:#574fd6; }
-/* MESAJLAR */
+.foto-hint { position:absolute; bottom:8px; right:8px; background:rgba(0,0,0,0.5); color:#fff; font-size:0.7rem; padding:3px 8px; border-radius:20px; opacity:0; transition:opacity 0.2s; }
+header { background:#fff; border-radius:16px; padding:20px 24px; margin-bottom:16px; box-shadow:0 2px 8px rgba(0,0,0,0.08); display:flex; align-items:center; justify-content:space-between; }
+header h1 { font-size:1.2rem; font-weight:700; color:#1a1a2e; } header p { font-size:0.8rem; color:#888; margin-top:2px; }
+.yaz-kutusu { background:#fff; border-radius:16px; padding:16px; margin-bottom:16px; box-shadow:0 2px 8px rgba(0,0,0,0.08); }
+.input-satir { display:flex; gap:6px; align-items:flex-end; }
+.input-satir textarea { flex:1; border:2px solid #e8e8e8; border-radius:12px; padding:12px; font-size:0.95rem; resize:none; outline:none; font-family:inherit; transition:border-color 0.2s; height:80px; }
+.input-satir textarea:focus { border-color:#6c63ff; }
+.emoji-picker-btn { background:#f5f5f5; border:2px solid #e8e8e8; border-radius:12px; padding:0 10px; height:80px; font-size:1.3rem; cursor:pointer; transition:all 0.15s; flex-shrink:0; }
+.emoji-picker-btn:hover { background:#ede9ff; border-color:#6c63ff; }
+.yaz-kutusu button.gonder-btn, .yanit-form button.gonder-btn { margin-top:8px; width:100%; background:#6c63ff; color:white; border:none; border-radius:12px; padding:12px; font-size:0.95rem; font-weight:600; cursor:pointer; transition:background 0.2s; }
+.yaz-kutusu button.gonder-btn:hover, .yanit-form button.gonder-btn:hover { background:#574fd6; }
+.emoji-popup { position:absolute; z-index:200; background:#fff; border-radius:14px; padding:10px; box-shadow:0 4px 20px rgba(0,0,0,0.15); display:flex; flex-wrap:wrap; gap:4px; width:220px; animation:popIn 0.15s ease; }
+@keyframes popIn { from{opacity:0;transform:scale(0.9)} to{opacity:1;transform:scale(1)} }
+.emoji-popup button { background:none; border:none; font-size:1.3rem; cursor:pointer; padding:4px; border-radius:6px; transition:background 0.1s; }
+.emoji-popup button:hover { background:#f0eeff; }
 .mesajlar { display:flex; flex-direction:column; gap:12px; }
-.mesaj-kart {
-  background:#fff; border-radius:16px; padding:16px;
-  box-shadow:0 2px 8px rgba(0,0,0,0.06); animation:giris 0.3s ease;
-}
-@keyframes giris {
-  from { opacity:0; transform:translateY(10px); }
-  to   { opacity:1; transform:translateY(0); }
-}
+.mesaj-kart { background:#fff; border-radius:16px; padding:16px; box-shadow:0 2px 8px rgba(0,0,0,0.06); animation:giris 0.3s ease; }
+@keyframes giris { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
 .mesaj-ust { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; }
 .mesaj-metin { font-size:0.95rem; color:#1a1a2e; line-height:1.5; flex:1; }
 .mesaj-zaman { font-size:0.75rem; color:#bbb; margin-left:12px; white-space:nowrap; }
 .emoji-butonlar { display:flex; flex-wrap:wrap; gap:8px; }
-.emoji-btn {
-  background:#f5f5f5; border:2px solid transparent; border-radius:20px;
-  padding:6px 12px; font-size:1rem; cursor:pointer; transition:all 0.15s;
-  display:flex; align-items:center; gap:4px;
-}
+.emoji-btn { background:#f5f5f5; border:2px solid transparent; border-radius:20px; padding:6px 12px; font-size:1rem; cursor:pointer; transition:all 0.15s; display:flex; align-items:center; gap:4px; }
 .emoji-btn:hover { background:#ede9ff; border-color:#6c63ff; }
 .emoji-btn.secildi { background:#ede9ff; border-color:#6c63ff; }
 .emoji-btn .sayi { font-size:0.78rem; color:#666; font-weight:600; }
 .bos-mesaj { text-align:center; color:#bbb; padding:40px 0; font-size:0.95rem; }
 .bos-mesaj span { font-size:2rem; display:block; margin-bottom:8px; }
-.kendi-mesaj .mesaj-metin::before {
-  content:"Sen • "; color:#6c63ff; font-size:0.78rem; font-weight:600;
-}
-/* YANITLAR */
-.mesaj-alt {
-  display:flex; align-items:center; justify-content:space-between;
-  margin-top:12px; padding-top:10px; border-top:1px solid #f0f0f0;
-}
-.yanit-ac-btn {
-  background:none; border:none; cursor:pointer; font-size:0.82rem; color:#999;
-  padding:4px 8px; border-radius:8px; transition:color 0.15s, background 0.15s;
-  display:flex; align-items:center; gap:4px;
-}
+.kendi-mesaj .mesaj-metin::before { content:"Sen • "; color:#6c63ff; font-size:0.78rem; font-weight:600; }
+.mesaj-alt { display:flex; align-items:center; justify-content:space-between; margin-top:12px; padding-top:10px; border-top:1px solid #f0f0f0; }
+.yanit-ac-btn { background:none; border:none; cursor:pointer; font-size:0.82rem; color:#999; padding:4px 8px; border-radius:8px; transition:color 0.15s,background 0.15s; display:flex; align-items:center; gap:4px; }
 .yanit-ac-btn:hover { color:#6c63ff; background:#f0eeff; }
 .yanit-sayisi { font-size:0.78rem; color:#bbb; }
-.yanitlar-bolum {
-  margin-top:10px; padding-left:16px;
-  border-left:2px solid #ede9ff;
-  display:flex; flex-direction:column; gap:8px;
-}
-.yanit-kart {
-  background:#fafafa; border-radius:10px; padding:10px 12px;
-  font-size:0.88rem; color:#333; line-height:1.45; animation:giris 0.2s ease;
-}
+.yanitlar-bolum { margin-top:10px; padding-left:16px; border-left:2px solid #ede9ff; display:flex; flex-direction:column; gap:10px; }
+.yanit-kart { background:#fafafa; border-radius:12px; padding:10px 12px; font-size:0.88rem; color:#333; line-height:1.45; animation:giris 0.2s ease; }
 .yanit-kart .yanit-ust { display:flex; justify-content:space-between; margin-bottom:4px; }
 .yanit-kart .yanit-kim { font-size:0.72rem; color:#6c63ff; font-weight:600; }
 .yanit-kart .yanit-zaman { font-size:0.72rem; color:#ccc; }
-.yanit-form { margin-top:10px; display:flex; gap:8px; align-items:flex-end; }
-.yanit-form textarea {
-  flex:1; border:2px solid #e8e8e8; border-radius:10px; padding:8px 10px;
-  font-size:0.88rem; resize:none; outline:none;
-  font-family:inherit; transition:border-color 0.2s; height:60px;
+.yanit-metin { margin-bottom:8px; }
+
+/* ALINTI BLOĞU — yanıta yanıt verildiğinde */
+.alinti {
+  background:#ede9ff; border-left:3px solid #6c63ff;
+  border-radius:0 8px 8px 0; padding:6px 10px;
+  margin-bottom:8px; font-size:0.78rem; color:#555; line-height:1.4;
 }
-.yanit-form textarea:focus { border-color:#6c63ff; }
-.yanit-form button {
-  background:#6c63ff; color:white; border:none; border-radius:10px;
-  padding:8px 14px; font-size:0.88rem; font-weight:600; cursor:pointer;
-  white-space:nowrap; height:60px; transition:background 0.2s;
+.alinti-kim { font-weight:700; color:#6c63ff; font-size:0.72rem; margin-bottom:2px; }
+.alinti-metin { color:#666; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
+
+.yanit-alt { display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-top:6px; }
+.yanit-emoji-btn { background:#f0f0f0; border:1.5px solid transparent; border-radius:16px; padding:3px 8px; font-size:0.82rem; cursor:pointer; transition:all 0.12s; display:flex; align-items:center; gap:3px; }
+.yanit-emoji-btn:hover { background:#ede9ff; border-color:#6c63ff; }
+.yanit-emoji-btn.secildi { background:#ede9ff; border-color:#6c63ff; }
+.yanit-emoji-btn .sayi { font-size:0.7rem; color:#666; font-weight:600; }
+.yanit-cevap-btn { background:none; border:none; cursor:pointer; font-size:0.75rem; color:#bbb; padding:3px 6px; border-radius:8px; transition:color 0.15s,background 0.15s; margin-left:auto; }
+.yanit-cevap-btn:hover { color:#6c63ff; background:#f0eeff; }
+
+/* YANIT FORMU */
+.yanit-form { margin-top:10px; position:relative; }
+.yanit-form .input-satir textarea { height:56px; font-size:0.88rem; }
+.yanit-form .emoji-picker-btn { height:56px; padding:0 8px; font-size:1.1rem; }
+.yanit-form .gonder-btn { margin-top:6px; padding:8px; font-size:0.88rem; border-radius:10px; }
+
+/* Yanıt formunun üstünde "X'e yanıt veriyorsun" etiketi */
+.yanit-hedef-etiket {
+  display:flex; align-items:center; justify-content:space-between;
+  background:#f5f3ff; border-radius:8px; padding:6px 10px; margin-bottom:6px;
+  font-size:0.78rem; color:#6c63ff;
 }
-.yanit-form button:hover { background:#574fd6; }
+.yanit-hedef-etiket span { font-weight:600; }
+.yanit-hedef-iptal { background:none; border:none; cursor:pointer; color:#aaa; font-size:0.9rem; padding:0 2px; }
+.yanit-hedef-iptal:hover { color:#e55; }
+
 /* SAĞ PANEL */
-.panel-baslik {
-  font-size:0.75rem; font-weight:700; color:#888;
-  text-transform:uppercase; letter-spacing:0.06em; margin-bottom:12px;
-}
+.panel-baslik { font-size:0.75rem; font-weight:700; color:#888; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:12px; }
 .puan-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:6px; }
-.puan-btn {
-  aspect-ratio:1; border:2px solid #e8e8e8; border-radius:10px;
-  background:#f9f9f9; font-size:0.9rem; font-weight:700; color:#666;
-  cursor:pointer; transition:all 0.15s;
-  display:flex; align-items:center; justify-content:center;
-}
+.puan-btn { aspect-ratio:1; border:2px solid #e8e8e8; border-radius:10px; background:#f9f9f9; font-size:0.9rem; font-weight:700; color:#666; cursor:pointer; transition:all 0.15s; display:flex; align-items:center; justify-content:center; }
 .puan-btn:hover { border-color:#6c63ff; background:#f0eeff; color:#6c63ff; }
 .puan-btn.secildi { border-color:#6c63ff; background:#6c63ff; color:#fff; }
-.puan-ort-bolum {
-  margin-top:16px; padding-top:14px;
-  border-top:1px solid #f0f0f0; text-align:center;
-}
+.puan-ort-bolum { margin-top:16px; padding-top:14px; border-top:1px solid #f0f0f0; text-align:center; }
 .puan-ort-sayi { font-size:3rem; font-weight:900; color:#6c63ff; line-height:1; }
 .puan-ort-alt { font-size:0.72rem; color:#aaa; margin-top:4px; }
-.puan-gun-yazi {
-  margin-top:10px; font-size:0.84rem; color:#555;
-  text-align:center; line-height:1.5; font-style:italic;
-}
+.puan-gun-yazi { margin-top:10px; font-size:0.84rem; color:#555; text-align:center; line-height:1.5; font-style:italic; }
 .puan-gun-yazi strong { color:#6c63ff; font-style:normal; font-size:1rem; }
 .sarki-bolum { margin-top:14px; padding-top:14px; border-top:1px solid #f0f0f0; }
 .sarki-etiket { font-size:0.72rem; color:#aaa; margin-bottom:6px; }
-.sarki-isim {
-  font-size:0.95rem; font-weight:700; color:#1a1a2e;
-  display:flex; align-items:center; gap:6px;
-}
+.sarki-isim { font-size:0.95rem; font-weight:700; color:#1a1a2e; display:flex; align-items:center; gap:6px; }
 .puan-uye-bolum { margin-top:14px; padding-top:14px; border-top:1px solid #f0f0f0; }
-.puan-uye-foto {
-  width:100%; height:300px; object-fit:cover; object-position:top;
-  border-radius:14px; display:block; transition:opacity 0.4s ease;
-}
+.puan-uye-foto { width:100%; height:300px; object-fit:cover; object-position:top; border-radius:14px; display:block; transition:opacity 0.4s ease; }
 .puan-uye-altyazi { margin-top:8px; display:flex; align-items:baseline; gap:6px; }
 .puan-uye-isim { font-size:0.9rem; font-weight:800; color:#1a1a2e; }
-.puan-uye-rol {
-  font-size:0.72rem; color:#fff; background:#6c63ff;
-  border-radius:20px; padding:2px 8px; font-weight:600;
-}
-@media (max-width:820px) {
-  .sayfa { flex-direction:column; }
-  .sol-panel, .sag-panel { width:100%; position:static; }
-}
+.puan-uye-rol { font-size:0.72rem; color:#fff; background:#6c63ff; border-radius:20px; padding:2px 8px; font-weight:600; }
+@media (max-width:820px) { .sayfa{flex-direction:column} .sol-panel,.sag-panel{width:100%;position:static} }
 </style>
 </head>
 <body>
 <div class="sayfa">
-
-  <!-- SOL PANEL -->
   <div class="sol-panel">
     <div class="kart">
       <div class="saat-buyuk" id="saat">--:--</div>
       <div class="tarih-yazi" id="tarih">--</div>
-      <div class="hava-bolum">
-        <div id="hava-icerik" style="font-size:0.82rem;color:#bbb">🌤️ Yükleniyor...</div>
-      </div>
+      <div class="hava-bolum"><div id="hava-icerik" style="font-size:0.82rem;color:#bbb">🌤️ Yükleniyor...</div></div>
       <div class="foto-bolum">
-        <div class="foto-wrapper" onclick="sonrakiFoto()" id="fotoWrapper">
+        <div class="foto-wrapper" onclick="sonrakiFoto()">
           <img id="solFoto" class="sol-foto" src="" alt="foto">
           <div class="foto-hint">tıkla →</div>
         </div>
@@ -206,24 +132,21 @@ header p { font-size:0.8rem; color:#888; margin-top:2px; }
     </div>
   </div>
 
-  <!-- ORTA -->
   <div class="orta">
-    <header>
-      <div>
-        <h1>💬 Ofis Nabzı</h1>
-        <p>Anonim • Sadece emoji tepki</p>
+    <header><div><h1>💬 Ofis Nabzı</h1><p>Anonim • Sadece emoji tepki</p></div></header>
+    <div class="yaz-kutusu" style="position:relative">
+      <div class="input-satir">
+        <textarea id="mesajInput" placeholder="Aklından ne geçiyor? Anonim olarak yaz..." maxlength="200"></textarea>
+        <button class="emoji-picker-btn" onclick="togglePicker('main-picker','mesajInput')" type="button">😊</button>
       </div>
-    </header>
-    <div class="yaz-kutusu">
-      <textarea id="mesajInput" placeholder="Aklından ne geçiyor? Anonim olarak yaz..." maxlength="200"></textarea>
-      <button onclick="mesajGonder()">Gönder →</button>
+      <div id="main-picker" style="display:none;position:absolute;bottom:60px;right:0"></div>
+      <button class="gonder-btn" onclick="mesajGonder()">Gönder →</button>
     </div>
     <div class="mesajlar" id="mesajlar">
       <div style="text-align:center;color:#aaa;padding:40px 0">⏳ Yükleniyor...</div>
     </div>
   </div>
 
-  <!-- SAĞ PANEL -->
   <div class="sag-panel">
     <div class="kart">
       <div class="panel-baslik">Günün Puanı</div>
@@ -240,7 +163,6 @@ header p { font-size:0.8rem; color:#888; margin-top:2px; }
       <div class="puan-uye-bolum" id="puanUyeBolum" style="display:none"></div>
     </div>
   </div>
-
 </div>
 
 <script>
@@ -252,153 +174,64 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import {
-    getFirestore, collection, addDoc, onSnapshot, doc,
-    updateDoc, setDoc, getDoc, query, orderBy, serverTimestamp
-  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, setDoc, getDoc, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey:"AIzaSyD9Gww-7rTsXQYJ1szG-8cuccMesQ48ucI",
-    authDomain:"ofis-nabzi.firebaseapp.com",
-    projectId:"ofis-nabzi",
-    storageBucket:"ofis-nabzi.firebasestorage.app",
-    messagingSenderId:"5830878288",
-    appId:"1:5830878288:web:af5719c88c16a78b5b5d55"
-  };
-  const app = initializeApp(firebaseConfig);
-  const db  = getFirestore(app);
+  const firebaseConfig = { apiKey:"AIzaSyD9Gww-7rTsXQYJ1szG-8cuccMesQ48ucI", authDomain:"ofis-nabzi.firebaseapp.com", projectId:"ofis-nabzi", storageBucket:"ofis-nabzi.firebasestorage.app", messagingSenderId:"5830878288", appId:"1:5830878288:web:af5719c88c16a78b5b5d55" };
+  const app=initializeApp(firebaseConfig), db=getFirestore(app);
 
-  const EMOJILER = ["😂","👍","❤️","🔥","😮","😤","🙏","💯","😴","🤔"];
-  const KULLANICI_ID = (() => {
-    let id = localStorage.getItem("ofis_uid");
-    if (!id) { id = "k_" + Math.random().toString(36).substr(2,9); localStorage.setItem("ofis_uid",id); }
-    return id;
-  })();
+  const EMOJILER=["😂","👍","❤️","🔥","😮","😤","🙏","💯","😴","🤔"];
+  const YANIT_EMOJILER=["😂","👍","❤️","🔥","😮"];
+  const PICKER_EMOJILER=["😂","😍","🥰","😊","😎","🤩","😅","😭","😤","😮","🤔","😴","🙏","💯","🔥","❤️","👍","👎","✨","🎉","💪","🫶","🤣","😏","😬","🥲","🫠","😇","🤯","💀"];
 
-  let tepkilerim = JSON.parse(localStorage.getItem("ofis_tepki")||"{}");
+  const KULLANICI_ID=(()=>{let id=localStorage.getItem("ofis_uid");if(!id){id="k_"+Math.random().toString(36).substr(2,9);localStorage.setItem("ofis_uid",id);}return id;})();
+  let tepkilerim=JSON.parse(localStorage.getItem("ofis_tepki")||"{}");
+  let yTepkilerim=JSON.parse(localStorage.getItem("ofis_ytepki")||"{}");
   let tumMesajlar=[], tumYanitlar={}, acikYanitFormlar=new Set();
+  // mesajId -> { hedefYanitId, hedefMetin, hedefKim }
+  let yanitFormHedef={};
 
-  // ---- SAAT & TARİH ----
   const TR_G=["Pazar","Pazartesi","Salı","Çarşamba","Perşembe","Cuma","Cumartesi"];
   const TR_A=["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
-  function saatiGuncelle() {
-    const n=new Date();
-    document.getElementById("saat").textContent=n.getHours().toString().padStart(2,"0")+":"+n.getMinutes().toString().padStart(2,"0");
-    document.getElementById("tarih").innerHTML=`${TR_G[n.getDay()]}<br>${n.getDate()} ${TR_A[n.getMonth()]} ${n.getFullYear()}`;
-  }
-  saatiGuncelle(); setInterval(saatiGuncelle,1000);
+  function saatiGuncelle(){const n=new Date();document.getElementById("saat").textContent=n.getHours().toString().padStart(2,"0")+":"+n.getMinutes().toString().padStart(2,"0");document.getElementById("tarih").innerHTML=`${TR_G[n.getDay()]}<br>${n.getDate()} ${TR_A[n.getMonth()]} ${n.getFullYear()}`;}
+  saatiGuncelle();setInterval(saatiGuncelle,1000);
 
-  // ---- SOL PANEL FOTOĞRAFlar (tıklayınca değişir) ----
-  let solFotoIndex = 0;
-  function solFotoGoster(idx) {
-    const img = document.getElementById("solFoto");
-    img.style.opacity = "0";
-    setTimeout(() => {
-      img.src = SOL_IMGS[idx];
-      img.style.opacity = "1";
-    }, 200);
-  }
-  window.sonrakiFoto = () => {
-    solFotoIndex = (solFotoIndex + 1) % SOL_IMGS.length;
-    solFotoGoster(solFotoIndex);
-  };
+  let solFotoIndex=0;
+  function solFotoGoster(idx){const img=document.getElementById("solFoto");img.style.opacity="0";setTimeout(()=>{img.src=SOL_IMGS[idx];img.style.opacity="1";},200);}
+  window.sonrakiFoto=()=>{solFotoIndex=(solFotoIndex+1)%SOL_IMGS.length;solFotoGoster(solFotoIndex);};
   solFotoGoster(0);
 
-  // ---- HAVA DURUMU ----
-  const WMO={
-    0:"☀️ Açık",1:"🌤️ Az bulutlu",2:"⛅ Parçalı",3:"☁️ Bulutlu",
-    45:"🌫️ Sisli",48:"🌫️ Sisli",51:"🌦️ Çiseleme",53:"🌦️ Çiseleme",55:"🌧️ Çiseleme",
-    61:"🌧️ Hafif yağmur",63:"🌧️ Yağmur",65:"🌧️ Şiddetli yağmur",
-    71:"🌨️ Hafif kar",73:"🌨️ Kar",75:"❄️ Yoğun kar",
-    80:"🌦️ Sağanak",81:"🌧️ Sağanak",82:"⛈️ Şiddetli sağanak",
-    95:"⛈️ Fırtına",96:"⛈️ Dolulu fırtına",99:"⛈️ Dolulu fırtına"
-  };
-  async function havaDurumuGetir() {
-    try {
-      const r=await fetch("https://api.open-meteo.com/v1/forecast?latitude=39.9334&longitude=32.8597&current=temperature_2m,weathercode");
-      const d=await r.json();
-      const sic=Math.round(d.current.temperature_2m);
-      const wmo=WMO[d.current.weathercode]||"🌡️ Bilinmiyor";
-      const [ikon,...kel]=wmo.split(" ");
-      document.getElementById("hava-icerik").innerHTML=`
-        <div class="hava-icon">${ikon}</div>
-        <div class="hava-sicak">${sic}°C</div>
-        <div class="hava-tanim">Ankara • ${kel.join(" ")}</div>`;
-    } catch(e) { document.getElementById("hava-icerik").textContent="Hava bilgisi alınamadı"; }
-  }
+  const WMO={0:"☀️ Açık",1:"🌤️ Az bulutlu",2:"⛅ Parçalı",3:"☁️ Bulutlu",45:"🌫️ Sisli",48:"🌫️ Sisli",51:"🌦️ Çiseleme",53:"🌦️ Çiseleme",55:"🌧️ Çiseleme",61:"🌧️ Hafif yağmur",63:"🌧️ Yağmur",65:"🌧️ Şiddetli yağmur",71:"🌨️ Hafif kar",73:"🌨️ Kar",75:"❄️ Yoğun kar",80:"🌦️ Sağanak",81:"🌧️ Sağanak",82:"⛈️ Şiddetli sağanak",95:"⛈️ Fırtına",96:"⛈️ Dolulu",99:"⛈️ Dolulu"};
+  async function havaDurumuGetir(){try{const r=await fetch("https://api.open-meteo.com/v1/forecast?latitude=39.9334&longitude=32.8597&current=temperature_2m,weathercode");const d=await r.json();const sic=Math.round(d.current.temperature_2m);const [ikon,...kel]=(WMO[d.current.weathercode]||"🌡️ Bilinmiyor").split(" ");document.getElementById("hava-icerik").innerHTML=`<div class="hava-icon">${ikon}</div><div class="hava-sicak">${sic}°C</div><div class="hava-tanim">Ankara • ${kel.join(" ")}</div>`;}catch(e){document.getElementById("hava-icerik").textContent="Hava bilgisi alınamadı";}}
   havaDurumuGetir();
 
-  // ---- SAĞ PANEL: puana göre manifest kızı ----
-  function sagUyeGoster(ort) {
-    const el=document.getElementById("puanUyeBolum");
-    if (ort===null) { el.style.display="none"; return; }
-    const idx=Math.min(4,Math.floor((ort-0.01)/2));
-    const uye=UYELER[idx];
-    el.style.display="block";
-    el.innerHTML=`
-      <img src="${UYELAR_IMG[uye.key]}" class="puan-uye-foto" alt="${uye.isim}">
-      <div class="puan-uye-altyazi">
-        <span class="puan-uye-isim">${uye.isim}</span>
-        <span class="puan-uye-rol">${uye.rol}</span>
-      </div>`;
-  }
+  let acikPicker=null;
+  window.togglePicker=(pickerId,inputId)=>{
+    if(acikPicker&&acikPicker!==pickerId){const old=document.getElementById(acikPicker);if(old)old.style.display="none";}
+    const el=document.getElementById(pickerId);if(!el)return;
+    if(el.style.display!=="none"){el.style.display="none";acikPicker=null;return;}
+    el.innerHTML=`<div class="emoji-popup">${PICKER_EMOJILER.map(e=>`<button type="button" onclick="insertEmoji('${inputId}','${e}')">${e}</button>`).join("")}</div>`;
+    el.style.display="block";acikPicker=pickerId;
+  };
+  window.insertEmoji=(inputId,emoji)=>{
+    const ta=document.getElementById(inputId);if(!ta)return;
+    const s=ta.selectionStart,e=ta.selectionEnd;
+    ta.value=ta.value.slice(0,s)+emoji+ta.value.slice(e);
+    ta.selectionStart=ta.selectionEnd=s+emoji.length;ta.focus();
+    if(acikPicker){const el=document.getElementById(acikPicker);if(el)el.style.display="none";acikPicker=null;}
+  };
+  document.addEventListener("click",e=>{if(acikPicker&&!e.target.closest(".emoji-picker-btn")&&!e.target.closest(".emoji-popup")){const el=document.getElementById(acikPicker);if(el)el.style.display="none";acikPicker=null;}});
 
-  // ---- GÜNÜN PUANI ----
-  function bugunId() {
-    const n=new Date();
-    return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,"0")}-${String(n.getDate()).padStart(2,"0")}`;
-  }
+  function sagUyeGoster(ort){const el=document.getElementById("puanUyeBolum");if(ort===null){el.style.display="none";return;}const idx=Math.min(4,Math.floor((ort-0.01)/2));const uye=UYELER[idx];el.style.display="block";el.innerHTML=`<img src="${UYELAR_IMG[uye.key]}" class="puan-uye-foto" alt="${uye.isim}"><div class="puan-uye-altyazi"><span class="puan-uye-isim">${uye.isim}</span><span class="puan-uye-rol">${uye.rol}</span></div>`;}
+
+  function bugunId(){const n=new Date();return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,"0")}-${String(n.getDate()).padStart(2,"0")}`;}
   let benimPuanim=null;
   const puanDocRef=doc(db,"gunluk_puan",bugunId());
-
-  function puanGridRender(benim) {
-    document.getElementById("puanGrid").innerHTML=Array.from({length:10},(_,i)=>{
-      const p=i+1,s=benim===p?"secildi":"";
-      return `<button class="puan-btn ${s}" onclick="puanVer(${p})">${p}</button>`;
-    }).join("");
-  }
+  function puanGridRender(benim){document.getElementById("puanGrid").innerHTML=Array.from({length:10},(_,i)=>{const p=i+1,s=benim===p?"secildi":"";return `<button class="puan-btn ${s}" onclick="puanVer(${p})">${p}</button>`;}).join("");}
   puanGridRender(null);
+  function puanOrtRender(oylar){const degerler=Object.values(oylar||{});const sayi=degerler.length;const ort=sayi>0?degerler.reduce((a,b)=>a+b,0)/sayi:null;document.getElementById("puanOrt").textContent=ort!==null?ort.toFixed(1):"--";document.getElementById("puanKisi").textContent=sayi>0?`${sayi} kişi oy verdi`:"henüz oy yok";const yaziEl=document.getElementById("puanYazi"),sarkiEl=document.getElementById("sarkiBolum");if(ort!==null){yaziEl.style.display="block";yaziEl.innerHTML=`Bugün <strong>${ort.toFixed(1)}</strong>'lik bir gün`;const [sarki,emoji]=SARKILER[Math.min(9,Math.max(0,Math.round(ort)-1))];sarkiEl.style.display="block";document.getElementById("sarkiIsim").innerHTML=`<span>${emoji}</span>${sarki}`;}else{yaziEl.style.display="none";sarkiEl.style.display="none";}sagUyeGoster(ort);}
+  window.puanVer=async puan=>{benimPuanim=benimPuanim===puan?null:puan;puanGridRender(benimPuanim);const snap=await getDoc(puanDocRef);const oylar=snap.exists()?(snap.data().oylar||{}):{};if(benimPuanim===null)delete oylar[KULLANICI_ID];else oylar[KULLANICI_ID]=benimPuanim;await setDoc(puanDocRef,{oylar});};
+  onSnapshot(puanDocRef,snap=>{const oylar=snap.exists()?(snap.data().oylar||{}):{};benimPuanim=oylar[KULLANICI_ID]??null;puanGridRender(benimPuanim);puanOrtRender(oylar);});
 
-  function puanOrtRender(oylar) {
-    const degerler=Object.values(oylar||{});
-    const sayi=degerler.length;
-    const ort=sayi>0?degerler.reduce((a,b)=>a+b,0)/sayi:null;
-    document.getElementById("puanOrt").textContent=ort!==null?ort.toFixed(1):"--";
-    document.getElementById("puanKisi").textContent=sayi>0?`${sayi} kişi oy verdi`:"henüz oy yok";
-    const yaziEl=document.getElementById("puanYazi");
-    const sarkiEl=document.getElementById("sarkiBolum");
-    if (ort!==null) {
-      yaziEl.style.display="block";
-      yaziEl.innerHTML=`Bugün <strong>${ort.toFixed(1)}</strong>'lik bir gün`;
-      const idx=Math.min(9,Math.max(0,Math.round(ort)-1));
-      const [sarki,emoji]=SARKILER[idx];
-      sarkiEl.style.display="block";
-      document.getElementById("sarkiIsim").innerHTML=`<span>${emoji}</span>${sarki}`;
-    } else {
-      yaziEl.style.display="none";
-      sarkiEl.style.display="none";
-    }
-    sagUyeGoster(ort);
-  }
-
-  window.puanVer=async puan=>{
-    benimPuanim=benimPuanim===puan?null:puan;
-    puanGridRender(benimPuanim);
-    const snap=await getDoc(puanDocRef);
-    const oylar=snap.exists()?(snap.data().oylar||{}):{};
-    if(benimPuanim===null) delete oylar[KULLANICI_ID];
-    else oylar[KULLANICI_ID]=benimPuanim;
-    await setDoc(puanDocRef,{oylar});
-  };
-
-  onSnapshot(puanDocRef,snap=>{
-    const oylar=snap.exists()?(snap.data().oylar||{}):{};
-    benimPuanim=oylar[KULLANICI_ID]??null;
-    puanGridRender(benimPuanim);
-    puanOrtRender(oylar);
-  });
-
-  // ---- MESAJLAR ----
   function simdi(){const n=new Date();return n.getHours().toString().padStart(2,"0")+":"+n.getMinutes().toString().padStart(2,"0");}
   function escHtml(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 
@@ -414,13 +247,59 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
         const st=benim?"style='opacity:0.3;cursor:not-allowed'":"";
         return `<button class="emoji-btn ${c}" ${t} ${st}>${e} <span class="sayi">${s>0?s:""}</span></button>`;
       }).join("");
+
       const yanitlar=tumYanitlar[mesaj.id]||[];
       const fa=acikYanitFormlar.has(mesaj.id);
+      const hedef=yanitFormHedef[mesaj.id]||null;
+      const pickerId=`picker-m-${mesaj.id}`;
+      const inputId=`yanit-input-${mesaj.id}`;
+
       const yH=yanitlar.map(y=>{
         const by=y.sahip===KULLANICI_ID;
-        return `<div class="yanit-kart"><div class="yanit-ust"><span class="yanit-kim">${by?"Sen":"Anonim"}</span><span class="yanit-zaman">${y.zaman}</span></div>${escHtml(y.metin)}</div>`;
+        const yTepkiler=y.tepkiler||{};
+        const ySecili=yTepkilerim[y.id];
+        const yEmojiBtnler=YANIT_EMOJILER.map(e=>{
+          const cnt=yTepkiler[e]||0,c=ySecili===e?"secildi":"";
+          const t=by?"":`onclick="yanitTepkiVer('${y.id}','${e}','${mesaj.id}')"`;
+          const st=by?"style='opacity:0.3;cursor:not-allowed'":"";
+          return `<button class="yanit-emoji-btn ${c}" ${t} ${st}>${e}<span class="sayi">${cnt>0?" "+cnt:""}</span></button>`;
+        }).join("");
+
+        // Alıntı bloğu: bu yanıt başka bir yanıta cevapsa göster
+        const alinti = y.hedefYanitId ? `
+          <div class="alinti">
+            <div class="alinti-kim">${y.hedefKim||"Anonim"} yazdı</div>
+            <div class="alinti-metin">${escHtml((y.hedefMetin||"").slice(0,80))}${(y.hedefMetin||"").length>80?"…":""}</div>
+          </div>` : "";
+
+        return `<div class="yanit-kart">
+          <div class="yanit-ust"><span class="yanit-kim">${by?"Sen":"Anonim"}</span><span class="yanit-zaman">${y.zaman}</span></div>
+          ${alinti}
+          <div class="yanit-metin">${escHtml(y.metin)}</div>
+          <div class="yanit-alt">
+            ${yEmojiBtnler}
+            <button class="yanit-cevap-btn" onclick="yanıtaYanıtVer('${mesaj.id}','${y.id}','${escHtml(y.metin).replace(/'/g,"\\'")}','${by?"Sen":"Anonim"}')">↩ yanıtla</button>
+          </div>
+        </div>`;
       }).join("");
-      const yF=fa?`<div class="yanit-form"><textarea id="yanit-input-${mesaj.id}" placeholder="Yanıtını yaz..." maxlength="200"></textarea><button onclick="yanitGonder('${mesaj.id}')">Gönder</button></div>`:"";
+
+      // Yanıt formunda hedef etiketi
+      const hedefEtiketi = hedef ? `
+        <div class="yanit-hedef-etiket">
+          <span>↩ ${hedef.kim}'e yanıt veriyorsun</span>
+          <button class="yanit-hedef-iptal" onclick="hedefiTemizle('${mesaj.id}')" type="button">✕</button>
+        </div>` : "";
+
+      const yF=fa?`<div class="yanit-form" style="position:relative">
+        ${hedefEtiketi}
+        <div class="input-satir">
+          <textarea id="${inputId}" placeholder="Yanıtını yaz..." maxlength="200"></textarea>
+          <button class="emoji-picker-btn" onclick="togglePicker('${pickerId}','${inputId}')" type="button">😊</button>
+        </div>
+        <div id="${pickerId}" style="display:none;position:absolute;bottom:70px;right:0"></div>
+        <button class="gonder-btn" onclick="yanitGonder('${mesaj.id}')">Gönder</button>
+      </div>`:"";
+
       return `<div class="mesaj-kart ${benim?'kendi-mesaj':''}">
         <div class="mesaj-ust"><div class="mesaj-metin">${escHtml(mesaj.metin)}</div><div class="mesaj-zaman">${mesaj.zaman}</div></div>
         <div class="emoji-butonlar">${emojiBtnler}</div>
@@ -434,32 +313,70 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
     }).join("");
   }
 
+  // Ana mesaja yanıt
   window.yanıtFormToggle=id=>{
-    acikYanitFormlar.has(id)?acikYanitFormlar.delete(id):acikYanitFormlar.add(id);
+    if(acikYanitFormlar.has(id)){acikYanitFormlar.delete(id);delete yanitFormHedef[id];}
+    else{acikYanitFormlar.add(id);}
     render();
     if(acikYanitFormlar.has(id)) setTimeout(()=>document.getElementById(`yanit-input-${id}`)?.focus(),50);
   };
+
+  // Bir yanıta yanıt ver — formu aç ve hedefi kaydet
+  window.yanıtaYanıtVer=(mesajId,yanitId,yanitMetin,yanitKim)=>{
+    acikYanitFormlar.add(mesajId);
+    yanitFormHedef[mesajId]={id:yanitId,metin:yanitMetin,kim:yanitKim};
+    render();
+    setTimeout(()=>document.getElementById(`yanit-input-${mesajId}`)?.focus(),50);
+  };
+
+  window.hedefiTemizle=mesajId=>{
+    delete yanitFormHedef[mesajId];
+    render();
+    setTimeout(()=>document.getElementById(`yanit-input-${mesajId}`)?.focus(),50);
+  };
+
   window.yanitGonder=async mesajId=>{
     const inp=document.getElementById(`yanit-input-${mesajId}`);
     if(!inp) return;
     const m=inp.value.trim(); if(!m) return;
-    await addDoc(collection(db,"yanitlar"),{mesajId,metin:m,zaman:simdi(),sahip:KULLANICI_ID,olusturuldu:serverTimestamp()});
-    acikYanitFormlar.delete(mesajId); render();
+    const tepkilerBos={};YANIT_EMOJILER.forEach(e=>tepkilerBos[e]=0);
+    const hedef=yanitFormHedef[mesajId]||null;
+    await addDoc(collection(db,"yanitlar"),{
+      mesajId, metin:m, zaman:simdi(), sahip:KULLANICI_ID,
+      tepkiler:tepkilerBos,
+      hedefYanitId: hedef?hedef.id:null,
+      hedefMetin:   hedef?hedef.metin:null,
+      hedefKim:     hedef?hedef.kim:null,
+      olusturuldu:serverTimestamp()
+    });
+    acikYanitFormlar.delete(mesajId);
+    delete yanitFormHedef[mesajId];
+    render();
   };
+
   window.mesajGonder=async()=>{
-    const inp=document.getElementById("mesajInput"),m=inp.value.trim(); if(!m) return;
+    const inp=document.getElementById("mesajInput"),m=inp.value.trim();if(!m)return;
     const t={};EMOJILER.forEach(e=>t[e]=0);
     await addDoc(collection(db,"mesajlar"),{metin:m,zaman:simdi(),sahip:KULLANICI_ID,tepkiler:t,olusturuldu:serverTimestamp()});
     inp.value="";
   };
+
   window.tepkiVer=async(mesajId,emoji)=>{
-    const mesaj=tumMesajlar.find(m=>m.id===mesajId);
-    if(!mesaj||mesaj.sahip===KULLANICI_ID) return;
+    const mesaj=tumMesajlar.find(m=>m.id===mesajId);if(!mesaj||mesaj.sahip===KULLANICI_ID)return;
     const onc=tepkilerim[mesajId],yT={...mesaj.tepkiler};
     if(onc===emoji){yT[emoji]=Math.max(0,(yT[emoji]||0)-1);delete tepkilerim[mesajId];}
     else{if(onc)yT[onc]=Math.max(0,(yT[onc]||0)-1);yT[emoji]=(yT[emoji]||0)+1;tepkilerim[mesajId]=emoji;}
     localStorage.setItem("ofis_tepki",JSON.stringify(tepkilerim));
     await updateDoc(doc(db,"mesajlar",mesajId),{tepkiler:yT});
+  };
+
+  window.yanitTepkiVer=async(yanitId,emoji,mesajId)=>{
+    const y=(tumYanitlar[mesajId]||[]).find(y=>y.id===yanitId);if(!y||y.sahip===KULLANICI_ID)return;
+    const onc=yTepkilerim[yanitId],yT={...y.tepkiler};
+    if(onc===emoji){yT[emoji]=Math.max(0,(yT[emoji]||0)-1);delete yTepkilerim[yanitId];}
+    else{if(onc)yT[onc]=Math.max(0,(yT[onc]||0)-1);yT[emoji]=(yT[emoji]||0)+1;yTepkilerim[yanitId]=emoji;}
+    localStorage.setItem("ofis_ytepki",JSON.stringify(yTepkilerim));
+    await updateDoc(doc(db,"yanitlar",yanitId),{tepkiler:yT});
   };
 
   const q=query(collection(db,"mesajlar"),orderBy("olusturuldu","desc"));
