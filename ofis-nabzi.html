@@ -78,6 +78,69 @@
     content: "Sen • "; color: #6c63ff; font-size: 0.78rem; font-weight: 600;
   }
   #yukleniyor { text-align: center; color: #aaa; padding: 40px 0; }
+
+  /* --- YANITLAR --- */
+  .mesaj-alt {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 12px; padding-top: 10px;
+    border-top: 1px solid #f0f0f0;
+  }
+  .yanit-ac-btn {
+    background: none; border: none; cursor: pointer;
+    font-size: 0.82rem; color: #999;
+    padding: 4px 8px; border-radius: 8px;
+    transition: color 0.15s, background 0.15s;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .yanit-ac-btn:hover { color: #6c63ff; background: #f0eeff; }
+  .yanit-sayisi {
+    font-size: 0.78rem; color: #bbb;
+  }
+  .yanitlar-bolum {
+    margin-top: 10px;
+    padding-left: 16px;
+    border-left: 2px solid #ede9ff;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .yanit-kart {
+    background: #fafafa; border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 0.88rem;
+    color: #333;
+    line-height: 1.45;
+    animation: giris 0.2s ease;
+  }
+  .yanit-kart .yanit-ust {
+    display: flex; justify-content: space-between;
+    margin-bottom: 4px;
+  }
+  .yanit-kart .yanit-kim {
+    font-size: 0.72rem; color: #6c63ff; font-weight: 600;
+  }
+  .yanit-kart .yanit-zaman {
+    font-size: 0.72rem; color: #ccc;
+  }
+  .yanit-form {
+    margin-top: 10px;
+    display: flex; gap: 8px; align-items: flex-end;
+  }
+  .yanit-form textarea {
+    flex: 1; border: 2px solid #e8e8e8;
+    border-radius: 10px; padding: 8px 10px;
+    font-size: 0.88rem; resize: none; outline: none;
+    font-family: inherit; transition: border-color 0.2s;
+    height: 60px;
+  }
+  .yanit-form textarea:focus { border-color: #6c63ff; }
+  .yanit-form button {
+    background: #6c63ff; color: white;
+    border: none; border-radius: 10px;
+    padding: 8px 14px; font-size: 0.88rem;
+    font-weight: 600; cursor: pointer;
+    white-space: nowrap; height: 60px;
+    transition: background 0.2s;
+  }
+  .yanit-form button:hover { background: #574fd6; }
 </style>
 </head>
 <body>
@@ -85,7 +148,7 @@
 <header>
   <div>
     <h1>💬 Ofis Nabzı</h1>
-    <p>Anonim • Günde 3 mesaj • Sadece emoji tepki</p>
+    <p>Anonim • Sadece emoji tepki</p>
   </div>
   <div class="kalan-badge" id="kalanBadge">3 hak</div>
 </header>
@@ -127,11 +190,10 @@
   })();
 
   let bugunKalan = 999;
-
   let tepkilerim = JSON.parse(localStorage.getItem("ofis_tepki") || "{}");
   let tumMesajlar = [];
-
-  function gunKaydet() {}
+  let tumYanitlar = {}; // mesajId -> yanıt listesi
+  let acikYanitFormlar = new Set(); // hangi mesajların yanıt formu açık
 
   function simdi() {
     const now = new Date();
@@ -143,24 +205,6 @@
   }
 
   function render() {
-    const badge = document.getElementById("kalanBadge");
-    badge.textContent = bugunKalan + " hak";
-    badge.className = "kalan-badge" + (bugunKalan === 0 ? " bitti" : "");
-
-    const input = document.getElementById("mesajInput");
-    const btn = document.getElementById("gonderBtn");
-    const bittiMesaj = document.getElementById("bittiMesaj");
-
-    if (bugunKalan <= 0) {
-      input.disabled = true;
-      btn.style.display = "none";
-      bittiMesaj.style.display = "block";
-    } else {
-      input.disabled = false;
-      btn.style.display = "block";
-      bittiMesaj.style.display = "none";
-    }
-
     const konteyner = document.getElementById("mesajlar");
     if (tumMesajlar.length === 0) {
       konteyner.innerHTML = `<div class="bos-mesaj"><span>💭</span>Henüz mesaj yok. İlk sen yaz!</div>`;
@@ -178,6 +222,29 @@
         return `<button class="emoji-btn ${secildi}" ${tiklama} ${stil}>${e} <span class="sayi">${sayi > 0 ? sayi : ""}</span></button>`;
       }).join("");
 
+      // Yanıtlar
+      const yanitlar = tumYanitlar[mesaj.id] || [];
+      const yanitSayisi = yanitlar.length;
+      const formAcik = acikYanitFormlar.has(mesaj.id);
+
+      const yanitlarHtml = yanitlar.map(y => {
+        const benimYanitim = y.sahip === KULLANICI_ID;
+        return `
+          <div class="yanit-kart">
+            <div class="yanit-ust">
+              <span class="yanit-kim">${benimYanitim ? "Sen" : "Anonim"}</span>
+              <span class="yanit-zaman">${y.zaman}</span>
+            </div>
+            ${escHtml(y.metin)}
+          </div>`;
+      }).join("");
+
+      const yanitFormHtml = formAcik ? `
+        <div class="yanit-form">
+          <textarea id="yanit-input-${mesaj.id}" placeholder="Yanıtını yaz..." maxlength="200"></textarea>
+          <button onclick="yanitGonder('${mesaj.id}')">Gönder</button>
+        </div>` : "";
+
       return `
         <div class="mesaj-kart ${benimMi ? 'kendi-mesaj' : ''}">
           <div class="mesaj-ust">
@@ -185,9 +252,51 @@
             <div class="mesaj-zaman">${mesaj.zaman}</div>
           </div>
           <div class="emoji-butonlar">${emojiBtnler}</div>
+          <div class="mesaj-alt">
+            <button class="yanit-ac-btn" onclick="yanıtFormToggle('${mesaj.id}')">
+              💬 ${formAcik ? "İptal" : "Yanıtla"}
+            </button>
+            ${yanitSayisi > 0 ? `<span class="yanit-sayisi">${yanitSayisi} yanıt</span>` : ""}
+          </div>
+          ${yanitlar.length > 0 ? `<div class="yanitlar-bolum">${yanitlarHtml}</div>` : ""}
+          ${yanitFormHtml}
         </div>`;
     }).join("");
   }
+
+  window.yanıtFormToggle = (mesajId) => {
+    if (acikYanitFormlar.has(mesajId)) {
+      acikYanitFormlar.delete(mesajId);
+    } else {
+      acikYanitFormlar.add(mesajId);
+    }
+    render();
+    // Textarea'ya odaklan
+    if (acikYanitFormlar.has(mesajId)) {
+      setTimeout(() => {
+        const el = document.getElementById(`yanit-input-${mesajId}`);
+        if (el) el.focus();
+      }, 50);
+    }
+  };
+
+  window.yanitGonder = async (mesajId) => {
+    const input = document.getElementById(`yanit-input-${mesajId}`);
+    if (!input) return;
+    const metin = input.value.trim();
+    if (!metin) return;
+
+    await addDoc(collection(db, "yanitlar"), {
+      mesajId,
+      metin,
+      zaman: simdi(),
+      sahip: KULLANICI_ID,
+      olusturuldu: serverTimestamp()
+    });
+
+    acikYanitFormlar.delete(mesajId);
+    render();
+  };
 
   window.mesajGonder = async () => {
     const input = document.getElementById("mesajInput");
@@ -205,7 +314,6 @@
     });
 
     bugunKalan--;
-    gunKaydet();
     input.value = "";
     render();
   };
@@ -230,10 +338,22 @@
     await updateDoc(doc(db, "mesajlar", mesajId), { tepkiler: yeniTepkiler });
   };
 
-  // Canlı dinle
+  // Mesajları canlı dinle
   const q = query(collection(db, "mesajlar"), orderBy("olusturuldu", "desc"));
   onSnapshot(q, (snapshot) => {
     tumMesajlar = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    render();
+  });
+
+  // Yanıtları canlı dinle (tek listener, tüm yanıtlar)
+  const qY = query(collection(db, "yanitlar"), orderBy("olusturuldu", "asc"));
+  onSnapshot(qY, (snapshot) => {
+    tumYanitlar = {};
+    snapshot.docs.forEach(d => {
+      const y = { id: d.id, ...d.data() };
+      if (!tumYanitlar[y.mesajId]) tumYanitlar[y.mesajId] = [];
+      tumYanitlar[y.mesajId].push(y);
+    });
     render();
   });
 </script>
