@@ -10,13 +10,36 @@
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     background: #f0f2f5;
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     padding: 20px;
   }
+
+  /* ---- LAYOUT ---- */
+  .sayfa {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    max-width: 1020px;
+    margin: 0 auto;
+  }
+  .sol-panel, .sag-panel {
+    width: 190px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 20px;
+  }
+  .orta { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0; }
+
+  /* ---- KART GENEL ---- */
+  .kart {
+    background: #fff;
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  }
+  .kart + .kart { margin-top: 12px; }
+
+  /* ---- HEADER ---- */
   header {
-    width: 100%; max-width: 600px;
     background: #fff; border-radius: 16px;
     padding: 20px 24px; margin-bottom: 16px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
@@ -24,11 +47,57 @@
   }
   header h1 { font-size: 1.2rem; font-weight: 700; color: #1a1a2e; }
   header p { font-size: 0.8rem; color: #888; margin-top: 2px; }
-  .kalan-badge { display: none; }
+
+  /* ---- SOL PANEL ---- */
+  .saat-buyuk {
+    font-size: 2rem; font-weight: 700; color: #1a1a2e;
+    letter-spacing: -1px; line-height: 1;
+  }
+  .tarih-yazi {
+    font-size: 0.78rem; color: #888; margin-top: 6px; line-height: 1.5;
+  }
+  .hava-bolum { margin-top: 14px; padding-top: 14px; border-top: 1px solid #f0f0f0; }
+  .hava-icon { font-size: 2.2rem; line-height: 1; }
+  .hava-sicak { font-size: 1.4rem; font-weight: 700; color: #1a1a2e; margin-top: 4px; }
+  .hava-tanim { font-size: 0.78rem; color: #888; margin-top: 2px; }
+  .hava-loading { font-size: 0.78rem; color: #bbb; }
+
+  /* ---- SAĞ PANEL ---- */
+  .panel-baslik {
+    font-size: 0.78rem; font-weight: 700; color: #888;
+    text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px;
+  }
+  .puan-grid {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;
+  }
+  .puan-btn {
+    aspect-ratio: 1; border: 2px solid #e8e8e8;
+    border-radius: 10px; background: #f9f9f9;
+    font-size: 0.85rem; font-weight: 600; color: #666;
+    cursor: pointer; transition: all 0.15s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .puan-btn:hover { border-color: #6c63ff; background: #f0eeff; color: #6c63ff; }
+  .puan-btn.secildi { border-color: #6c63ff; background: #6c63ff; color: #fff; }
+  .puan-ort-bolum {
+    margin-top: 16px; padding-top: 14px;
+    border-top: 1px solid #f0f0f0; text-align: center;
+  }
+  .puan-ort-sayi {
+    font-size: 2.4rem; font-weight: 800; color: #6c63ff; line-height: 1;
+  }
+  .puan-ort-alt { font-size: 0.72rem; color: #aaa; margin-top: 4px; }
+  .puan-gun-yazi {
+    margin-top: 12px; font-size: 0.8rem; color: #555;
+    text-align: center; line-height: 1.4;
+    font-style: italic;
+  }
+  .puan-gun-yazi strong { color: #6c63ff; font-style: normal; }
+
+  /* ---- MESAJ ALANI ---- */
   .yaz-kutusu {
-    width: 100%; max-width: 600px;
     background: #fff; border-radius: 16px;
-    padding: 16px; margin-bottom: 20px;
+    padding: 16px; margin-bottom: 16px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   }
   .yaz-kutusu textarea {
@@ -38,7 +107,6 @@
     font-family: inherit; transition: border-color 0.2s; height: 80px;
   }
   .yaz-kutusu textarea:focus { border-color: #6c63ff; }
-  .yaz-kutusu textarea:disabled { background: #f9f9f9; color: #aaa; }
   .yaz-kutusu button {
     margin-top: 10px; width: 100%;
     background: #6c63ff; color: white;
@@ -47,9 +115,7 @@
     font-weight: 600; cursor: pointer; transition: background 0.2s;
   }
   .yaz-kutusu button:hover { background: #574fd6; }
-  .yaz-kutusu button:disabled { background: #ccc; cursor: not-allowed; }
-  .bitti-mesaj { text-align: center; color: #aaa; font-size: 0.85rem; margin-top: 8px; }
-  .mesajlar { width: 100%; max-width: 600px; display: flex; flex-direction: column; gap: 12px; }
+  .mesajlar { display: flex; flex-direction: column; gap: 12px; }
   .mesaj-kart {
     background: #fff; border-radius: 16px;
     padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
@@ -79,7 +145,7 @@
   }
   #yukleniyor { text-align: center; color: #aaa; padding: 40px 0; }
 
-  /* --- YANITLAR --- */
+  /* Yanıt sistemi */
   .mesaj-alt {
     display: flex; align-items: center; justify-content: space-between;
     margin-top: 12px; padding-top: 10px;
@@ -93,43 +159,26 @@
     display: flex; align-items: center; gap: 4px;
   }
   .yanit-ac-btn:hover { color: #6c63ff; background: #f0eeff; }
-  .yanit-sayisi {
-    font-size: 0.78rem; color: #bbb;
-  }
+  .yanit-sayisi { font-size: 0.78rem; color: #bbb; }
   .yanitlar-bolum {
-    margin-top: 10px;
-    padding-left: 16px;
+    margin-top: 10px; padding-left: 16px;
     border-left: 2px solid #ede9ff;
     display: flex; flex-direction: column; gap: 8px;
   }
   .yanit-kart {
     background: #fafafa; border-radius: 10px;
-    padding: 10px 12px;
-    font-size: 0.88rem;
-    color: #333;
-    line-height: 1.45;
-    animation: giris 0.2s ease;
+    padding: 10px 12px; font-size: 0.88rem; color: #333;
+    line-height: 1.45; animation: giris 0.2s ease;
   }
-  .yanit-kart .yanit-ust {
-    display: flex; justify-content: space-between;
-    margin-bottom: 4px;
-  }
-  .yanit-kart .yanit-kim {
-    font-size: 0.72rem; color: #6c63ff; font-weight: 600;
-  }
-  .yanit-kart .yanit-zaman {
-    font-size: 0.72rem; color: #ccc;
-  }
-  .yanit-form {
-    margin-top: 10px;
-    display: flex; gap: 8px; align-items: flex-end;
-  }
+  .yanit-kart .yanit-ust { display: flex; justify-content: space-between; margin-bottom: 4px; }
+  .yanit-kart .yanit-kim { font-size: 0.72rem; color: #6c63ff; font-weight: 600; }
+  .yanit-kart .yanit-zaman { font-size: 0.72rem; color: #ccc; }
+  .yanit-form { margin-top: 10px; display: flex; gap: 8px; align-items: flex-end; }
   .yanit-form textarea {
     flex: 1; border: 2px solid #e8e8e8;
     border-radius: 10px; padding: 8px 10px;
     font-size: 0.88rem; resize: none; outline: none;
-    font-family: inherit; transition: border-color 0.2s;
-    height: 60px;
+    font-family: inherit; transition: border-color 0.2s; height: 60px;
   }
   .yanit-form textarea:focus { border-color: #6c63ff; }
   .yanit-form button {
@@ -141,33 +190,70 @@
     transition: background 0.2s;
   }
   .yanit-form button:hover { background: #574fd6; }
+
+  /* ---- MOBİL ---- */
+  @media (max-width: 760px) {
+    .sayfa { flex-direction: column; }
+    .sol-panel, .sag-panel { width: 100%; position: static; }
+    .puan-grid { grid-template-columns: repeat(5, 1fr); }
+  }
 </style>
 </head>
 <body>
 
-<header>
-  <div>
-    <h1>💬 Ofis Nabzı</h1>
-    <p>Anonim • Sadece emoji tepki</p>
-  </div>
-  <div class="kalan-badge" id="kalanBadge">3 hak</div>
-</header>
+<div class="sayfa">
 
-<div class="yaz-kutusu">
-  <textarea id="mesajInput" placeholder="Aklından ne geçiyor? Anonim olarak yaz..." maxlength="200"></textarea>
-  <button id="gonderBtn" onclick="mesajGonder()">Gönder →</button>
-  <div class="bitti-mesaj" id="bittiMesaj" style="display:none">
-    Bugünlük hakkın bitti! Yarın tekrar yazabilirsin 🌙
+  <!-- SOL PANEL -->
+  <div class="sol-panel">
+    <div class="kart">
+      <div class="saat-buyuk" id="saat">--:--</div>
+      <div class="tarih-yazi" id="tarih">--</div>
+      <div class="hava-bolum">
+        <div id="hava-icerik" class="hava-loading">🌤️ Yükleniyor...</div>
+      </div>
+    </div>
   </div>
-</div>
 
-<div class="mesajlar" id="mesajlar">
-  <div id="yukleniyor">⏳ Yükleniyor...</div>
+  <!-- ORTA -->
+  <div class="orta">
+    <header>
+      <div>
+        <h1>💬 Ofis Nabzı</h1>
+        <p>Anonim • Sadece emoji tepki</p>
+      </div>
+    </header>
+
+    <div class="yaz-kutusu">
+      <textarea id="mesajInput" placeholder="Aklından ne geçiyor? Anonim olarak yaz..." maxlength="200"></textarea>
+      <button onclick="mesajGonder()">Gönder →</button>
+    </div>
+
+    <div class="mesajlar" id="mesajlar">
+      <div id="yukleniyor">⏳ Yükleniyor...</div>
+    </div>
+  </div>
+
+  <!-- SAĞ PANEL -->
+  <div class="sag-panel">
+    <div class="kart">
+      <div class="panel-baslik">Günün Puanı</div>
+      <div class="puan-grid" id="puanGrid"></div>
+      <div class="puan-ort-bolum">
+        <div class="puan-ort-sayi" id="puanOrt">--</div>
+        <div class="puan-ort-alt" id="puanKisi">oy yok</div>
+      </div>
+      <div class="puan-gun-yazi" id="puanYazi" style="display:none"></div>
+    </div>
+  </div>
+
 </div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import {
+    getFirestore, collection, addDoc, onSnapshot, doc,
+    updateDoc, setDoc, getDoc, query, orderBy, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyD9Gww-7rTsXQYJ1szG-8cuccMesQ48ucI",
@@ -175,8 +261,7 @@
     projectId: "ofis-nabzi",
     storageBucket: "ofis-nabzi.firebasestorage.app",
     messagingSenderId: "5830878288",
-    appId: "1:5830878288:web:af5719c88c16a78b5b5d55",
-    measurementId: "G-93HBPJT3EV"
+    appId: "1:5830878288:web:af5719c88c16a78b5b5d55"
   };
 
   const app = initializeApp(firebaseConfig);
@@ -189,17 +274,120 @@
     return id;
   })();
 
-  let bugunKalan = 999;
   let tepkilerim = JSON.parse(localStorage.getItem("ofis_tepki") || "{}");
   let tumMesajlar = [];
-  let tumYanitlar = {}; // mesajId -> yanıt listesi
-  let acikYanitFormlar = new Set(); // hangi mesajların yanıt formu açık
+  let tumYanitlar = {};
+  let acikYanitFormlar = new Set();
 
+  // ---- SAAT & TARİH ----
+  const TR_GUNLER = ["Pazar","Pazartesi","Salı","Çarşamba","Perşembe","Cuma","Cumartesi"];
+  const TR_AYLAR = ["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
+
+  function saatiGuncelle() {
+    const now = new Date();
+    document.getElementById("saat").textContent =
+      now.getHours().toString().padStart(2,"0") + ":" + now.getMinutes().toString().padStart(2,"0");
+    document.getElementById("tarih").innerHTML =
+      `${TR_GUNLER[now.getDay()]}<br>${now.getDate()} ${TR_AYLAR[now.getMonth()]} ${now.getFullYear()}`;
+  }
+  saatiGuncelle();
+  setInterval(saatiGuncelle, 1000);
+
+  // ---- HAVA DURUMU (Open-Meteo, Ankara) ----
+  const WMO = {
+    0:"☀️ Açık",1:"🌤️ Az bulutlu",2:"⛅ Parçalı bulutlu",3:"☁️ Bulutlu",
+    45:"🌫️ Sisli",48:"🌫️ Sisli",51:"🌦️ Çiseleme",53:"🌦️ Çiseleme",55:"🌧️ Çiseleme",
+    61:"🌧️ Hafif yağmur",63:"🌧️ Yağmur",65:"🌧️ Şiddetli yağmur",
+    71:"🌨️ Hafif kar",73:"🌨️ Kar",75:"❄️ Yoğun kar",
+    80:"🌦️ Sağanak",81:"🌧️ Sağanak",82:"⛈️ Şiddetli sağanak",
+    95:"⛈️ Gök gürültülü",96:"⛈️ Dolu",99:"⛈️ Dolu"
+  };
+  async function havaDurumuGetir() {
+    try {
+      const r = await fetch("https://api.open-meteo.com/v1/forecast?latitude=39.9334&longitude=32.8597&current=temperature_2m,weathercode");
+      const d = await r.json();
+      const sicak = Math.round(d.current.temperature_2m);
+      const kod = d.current.weathercode;
+      const [ikon, tanim] = (WMO[kod] || "🌡️ Bilinmiyor").split(" ").reduce((a,w,i) => i===0 ? [w,""] : [a[0], a[1]+" "+w], ["",""]);
+      document.getElementById("hava-icerik").innerHTML =
+        `<div class="hava-icon">${ikon}</div>
+         <div class="hava-sicak">${sicak}°C</div>
+         <div class="hava-tanim">Ankara •${tanim}</div>`;
+    } catch(e) {
+      document.getElementById("hava-icerik").textContent = "Hava bilgisi alınamadı";
+    }
+  }
+  havaDurumuGetir();
+
+  // ---- GÜNÜN PUANI ----
+  function bugunId() {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}`;
+  }
+
+  let benimPuanim = null;
+  const puanDocRef = doc(db, "gunluk_puan", bugunId());
+
+  // Puan butonlarını oluştur
+  function puanGridRender(benim) {
+    const grid = document.getElementById("puanGrid");
+    grid.innerHTML = Array.from({length:10}, (_,i) => {
+      const p = i+1;
+      const secildi = benim === p ? "secildi" : "";
+      return `<button class="puan-btn ${secildi}" onclick="puanVer(${p})">${p}</button>`;
+    }).join("");
+  }
+  puanGridRender(null);
+
+  // Puan ortalamasını güncelle
+  function puanOrtRender(oylar) {
+    const degerler = Object.values(oylar || {});
+    const sayi = degerler.length;
+    const ort = sayi > 0 ? (degerler.reduce((a,b)=>a+b,0)/sayi) : null;
+
+    document.getElementById("puanOrt").textContent = ort !== null ? ort.toFixed(1) : "--";
+    document.getElementById("puanKisi").textContent = sayi > 0 ? `${sayi} kişi oy verdi` : "henüz oy yok";
+
+    const yaziEl = document.getElementById("puanYazi");
+    if (ort !== null) {
+      yaziEl.style.display = "block";
+      yaziEl.innerHTML = `Bugün <strong>${ort.toFixed(1)}</strong>'lik bir gün`;
+    } else {
+      yaziEl.style.display = "none";
+    }
+  }
+
+  window.puanVer = async (puan) => {
+    const onceki = benimPuanim;
+    benimPuanim = (onceki === puan) ? null : puan; // aynı puana tıklarsa geri al
+    puanGridRender(benimPuanim);
+
+    const snap = await getDoc(puanDocRef);
+    let oylar = snap.exists() ? (snap.data().oylar || {}) : {};
+
+    if (benimPuanim === null) {
+      delete oylar[KULLANICI_ID];
+    } else {
+      oylar[KULLANICI_ID] = benimPuanim;
+    }
+
+    await setDoc(puanDocRef, { oylar });
+  };
+
+  // Canlı puan dinle
+  onSnapshot(puanDocRef, (snap) => {
+    const oylar = snap.exists() ? (snap.data().oylar || {}) : {};
+    const benimKayitli = oylar[KULLANICI_ID] ?? null;
+    benimPuanim = benimKayitli;
+    puanGridRender(benimPuanim);
+    puanOrtRender(oylar);
+  });
+
+  // ---- MESAJLAR ----
   function simdi() {
     const now = new Date();
     return now.getHours().toString().padStart(2,"0") + ":" + now.getMinutes().toString().padStart(2,"0");
   }
-
   function escHtml(str) {
     return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
   }
@@ -210,7 +398,6 @@
       konteyner.innerHTML = `<div class="bos-mesaj"><span>💭</span>Henüz mesaj yok. İlk sen yaz!</div>`;
       return;
     }
-
     konteyner.innerHTML = tumMesajlar.map(mesaj => {
       const benimMi = mesaj.sahip === KULLANICI_ID;
       const seciliEmoji = tepkilerim[mesaj.id];
@@ -222,21 +409,18 @@
         return `<button class="emoji-btn ${secildi}" ${tiklama} ${stil}>${e} <span class="sayi">${sayi > 0 ? sayi : ""}</span></button>`;
       }).join("");
 
-      // Yanıtlar
       const yanitlar = tumYanitlar[mesaj.id] || [];
-      const yanitSayisi = yanitlar.length;
       const formAcik = acikYanitFormlar.has(mesaj.id);
 
       const yanitlarHtml = yanitlar.map(y => {
         const benimYanitim = y.sahip === KULLANICI_ID;
-        return `
-          <div class="yanit-kart">
-            <div class="yanit-ust">
-              <span class="yanit-kim">${benimYanitim ? "Sen" : "Anonim"}</span>
-              <span class="yanit-zaman">${y.zaman}</span>
-            </div>
-            ${escHtml(y.metin)}
-          </div>`;
+        return `<div class="yanit-kart">
+          <div class="yanit-ust">
+            <span class="yanit-kim">${benimYanitim ? "Sen" : "Anonim"}</span>
+            <span class="yanit-zaman">${y.zaman}</span>
+          </div>
+          ${escHtml(y.metin)}
+        </div>`;
       }).join("");
 
       const yanitFormHtml = formAcik ? `
@@ -245,39 +429,28 @@
           <button onclick="yanitGonder('${mesaj.id}')">Gönder</button>
         </div>` : "";
 
-      return `
-        <div class="mesaj-kart ${benimMi ? 'kendi-mesaj' : ''}">
-          <div class="mesaj-ust">
-            <div class="mesaj-metin">${escHtml(mesaj.metin)}</div>
-            <div class="mesaj-zaman">${mesaj.zaman}</div>
-          </div>
-          <div class="emoji-butonlar">${emojiBtnler}</div>
-          <div class="mesaj-alt">
-            <button class="yanit-ac-btn" onclick="yanıtFormToggle('${mesaj.id}')">
-              💬 ${formAcik ? "İptal" : "Yanıtla"}
-            </button>
-            ${yanitSayisi > 0 ? `<span class="yanit-sayisi">${yanitSayisi} yanıt</span>` : ""}
-          </div>
-          ${yanitlar.length > 0 ? `<div class="yanitlar-bolum">${yanitlarHtml}</div>` : ""}
-          ${yanitFormHtml}
-        </div>`;
+      return `<div class="mesaj-kart ${benimMi ? 'kendi-mesaj' : ''}">
+        <div class="mesaj-ust">
+          <div class="mesaj-metin">${escHtml(mesaj.metin)}</div>
+          <div class="mesaj-zaman">${mesaj.zaman}</div>
+        </div>
+        <div class="emoji-butonlar">${emojiBtnler}</div>
+        <div class="mesaj-alt">
+          <button class="yanit-ac-btn" onclick="yanıtFormToggle('${mesaj.id}')">
+            💬 ${formAcik ? "İptal" : "Yanıtla"}
+          </button>
+          ${yanitlar.length > 0 ? `<span class="yanit-sayisi">${yanitlar.length} yanıt</span>` : ""}
+        </div>
+        ${yanitlar.length > 0 ? `<div class="yanitlar-bolum">${yanitlarHtml}</div>` : ""}
+        ${yanitFormHtml}
+      </div>`;
     }).join("");
   }
 
-  window.yanıtFormToggle = (mesajId) => {
-    if (acikYanitFormlar.has(mesajId)) {
-      acikYanitFormlar.delete(mesajId);
-    } else {
-      acikYanitFormlar.add(mesajId);
-    }
+  window.yanıtFormToggle = (id) => {
+    acikYanitFormlar.has(id) ? acikYanitFormlar.delete(id) : acikYanitFormlar.add(id);
     render();
-    // Textarea'ya odaklan
-    if (acikYanitFormlar.has(mesajId)) {
-      setTimeout(() => {
-        const el = document.getElementById(`yanit-input-${mesajId}`);
-        if (el) el.focus();
-      }, 50);
-    }
+    if (acikYanitFormlar.has(id)) setTimeout(() => document.getElementById(`yanit-input-${id}`)?.focus(), 50);
   };
 
   window.yanitGonder = async (mesajId) => {
@@ -285,15 +458,9 @@
     if (!input) return;
     const metin = input.value.trim();
     if (!metin) return;
-
     await addDoc(collection(db, "yanitlar"), {
-      mesajId,
-      metin,
-      zaman: simdi(),
-      sahip: KULLANICI_ID,
-      olusturuldu: serverTimestamp()
+      mesajId, metin, zaman: simdi(), sahip: KULLANICI_ID, olusturuldu: serverTimestamp()
     });
-
     acikYanitFormlar.delete(mesajId);
     render();
   };
@@ -301,30 +468,21 @@
   window.mesajGonder = async () => {
     const input = document.getElementById("mesajInput");
     const metin = input.value.trim();
-    if (!metin || bugunKalan <= 0) return;
-
+    if (!metin) return;
     const tepkilerBos = {};
     EMOJILER.forEach(e => tepkilerBos[e] = 0);
-
     await addDoc(collection(db, "mesajlar"), {
-      metin, zaman: simdi(),
-      sahip: KULLANICI_ID,
-      tepkiler: tepkilerBos,
-      olusturuldu: serverTimestamp()
+      metin, zaman: simdi(), sahip: KULLANICI_ID,
+      tepkiler: tepkilerBos, olusturuldu: serverTimestamp()
     });
-
-    bugunKalan--;
     input.value = "";
-    render();
   };
 
   window.tepkiVer = async (mesajId, emoji) => {
     const mesaj = tumMesajlar.find(m => m.id === mesajId);
     if (!mesaj || mesaj.sahip === KULLANICI_ID) return;
-
     const onceki = tepkilerim[mesajId];
     const yeniTepkiler = { ...mesaj.tepkiler };
-
     if (onceki === emoji) {
       yeniTepkiler[emoji] = Math.max(0, (yeniTepkiler[emoji] || 0) - 1);
       delete tepkilerim[mesajId];
@@ -333,19 +491,16 @@
       yeniTepkiler[emoji] = (yeniTepkiler[emoji] || 0) + 1;
       tepkilerim[mesajId] = emoji;
     }
-
     localStorage.setItem("ofis_tepki", JSON.stringify(tepkilerim));
     await updateDoc(doc(db, "mesajlar", mesajId), { tepkiler: yeniTepkiler });
   };
 
-  // Mesajları canlı dinle
   const q = query(collection(db, "mesajlar"), orderBy("olusturuldu", "desc"));
   onSnapshot(q, (snapshot) => {
     tumMesajlar = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
     render();
   });
 
-  // Yanıtları canlı dinle (tek listener, tüm yanıtlar)
   const qY = query(collection(db, "yanitlar"), orderBy("olusturuldu", "asc"));
   onSnapshot(qY, (snapshot) => {
     tumYanitlar = {};
