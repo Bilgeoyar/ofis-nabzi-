@@ -19,9 +19,9 @@ body.dark {
 body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:var(--bg); min-height:100vh; padding:20px; transition:background 0.3s; }
 
 /* ---- LAYOUT ---- */
-.sayfa { display:flex; gap:16px; align-items:flex-start; max-width:1900px; margin:0 auto; }
-.sol-panel { width:500px; flex-shrink:0; position:sticky; top:20px; }
-.sag-panel { width:500px; flex-shrink:0; position:sticky; top:20px; }
+.sayfa { display:flex; gap:16px; align-items:flex-start; max-width:1240px; margin:0 auto; }
+.sol-panel { width:300px; flex-shrink:0; position:sticky; top:20px; }
+.sag-panel { width:240px; flex-shrink:0; position:sticky; top:20px; }
 .orta { flex:1; min-width:0; }
 .kart { background:var(--kart); border-radius:16px; padding:18px; box-shadow:0 2px 8px var(--shadow); margin-bottom:12px; transition:background 0.3s; }
 
@@ -103,6 +103,15 @@ header p { font-size:0.76rem; color:var(--yazi2); margin-top:2px; }
 .yanit-hedef-etiket span { font-weight:600; }
 .yanit-hedef-iptal { background:none; border:none; cursor:pointer; color:var(--yazi3); font-size:0.9rem; padding:0 2px; }
 .yanit-hedef-iptal:hover { color:#e55; }
+
+.sil-btn {
+  background:none; border:none; cursor:pointer; color:var(--yazi3);
+  font-size:0.8rem; padding:3px 6px; border-radius:6px;
+  transition:color 0.15s, background 0.15s; line-height:1;
+  margin-left:6px;
+}
+.sil-btn:hover { color:#e55; background:#fff0f0; }
+
 
 /* ---- SAĞ PANEL ---- */
 .panel-baslik { font-size:0.73rem; font-weight:700; color:var(--yazi2); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:12px; }
@@ -343,11 +352,11 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
           return `<button class="yanit-emoji-btn ${c}" ${t} ${st}>${e}<span class="sayi">${cnt>0?" "+cnt:""}</span></button>`;
         }).join("");
         const alinti=y.hedefYanitId?`<div class="alinti"><div class="alinti-kim">${y.hedefKim||"Anonim"} yazdı</div><div class="alinti-metin">${escHtml((y.hedefMetin||"").slice(0,80))}${(y.hedefMetin||"").length>80?"…":""}</div></div>`:"";
-        return `<div class="yanit-kart"><div class="yanit-ust"><span class="yanit-kim">${by?"Sen":"Anonim"}</span><span class="yanit-zaman">${y.zaman}</span></div>${alinti}<div class="yanit-metin">${escHtml(y.metin)}</div><div class="yanit-alt">${yEmojiBtnler}<button class="yanit-cevap-btn" onclick="yanıtaYanıtVer('${mesaj.id}','${y.id}','${escHtml(y.metin).replace(/'/g,"\\'")}','${by?"Sen":"Anonim"}')">↩ yanıtla</button></div></div>`;
+        return `<div class="yanit-kart"><div class="yanit-ust"><span class="yanit-kim">${by?"Sen":"Anonim"}</span><span style="display:flex;align-items:center;gap:2px">${y.zaman}${by?`<button class=\"sil-btn\" onclick=\"yanıtıSil('${y.id}')\" title=\"Sil\">🗑️</button>`:""}</span></div>${alinti}<div class="yanit-metin">${escHtml(y.metin)}</div><div class="yanit-alt">${yEmojiBtnler}<button class="yanit-cevap-btn" onclick="yanıtaYanıtVer('${mesaj.id}','${y.id}','${escHtml(y.metin).replace(/'/g,"\\'")}','${by?"Sen":"Anonim"}')">↩ yanıtla</button></div></div>`;
       }).join("");
       const hedefEtiketi=hedef?`<div class="yanit-hedef-etiket"><span>↩ ${hedef.kim}'e yanıt veriyorsun</span><button class="yanit-hedef-iptal" onclick="hedefiTemizle('${mesaj.id}')" type="button">✕</button></div>`:"";
       const yF=fa?`<div class="yanit-form" style="position:relative">${hedefEtiketi}<div class="input-satir"><textarea id="${inputId}" placeholder="Yanıtını yaz..." maxlength="200"></textarea><button class="emoji-picker-btn" onclick="togglePicker('${pickerId}','${inputId}')" type="button">😊</button></div><div id="${pickerId}" style="display:none;position:absolute;bottom:66px;right:0"></div><button class="gonder-btn" onclick="yanitGonder('${mesaj.id}')">Gönder</button></div>`:"";
-      return `<div class="mesaj-kart ${benim?'kendi-mesaj':''}"><div class="mesaj-ust"><div class="mesaj-metin">${escHtml(mesaj.metin)}</div><div class="mesaj-zaman">${mesaj.zaman}</div></div><div class="emoji-butonlar">${emojiBtnler}</div><div class="mesaj-alt"><button class="yanit-ac-btn" onclick="yanıtFormToggle('${mesaj.id}')">💬 ${fa?"İptal":"Yanıtla"}</button>${yanitlar.length>0?`<span class="yanit-sayisi">${yanitlar.length} yanıt</span>`:""}</div>${yanitlar.length>0?`<div class="yanitlar-bolum">${yH}</div>`:""}${yF}</div>`;
+      return `<div class="mesaj-kart ${benim?'kendi-mesaj':''}"><div class="mesaj-ust"><div class="mesaj-metin">${escHtml(mesaj.metin)}</div><div style="display:flex;align-items:center">${mesaj.zaman}${benim?`<button class="sil-btn" onclick="mesajiSil('${mesaj.id}')" title="Sil">🗑️</button>`:""}</div></div><div class="emoji-butonlar">${emojiBtnler}</div><div class="mesaj-alt"><button class="yanit-ac-btn" onclick="yanıtFormToggle('${mesaj.id}')">💬 ${fa?"İptal":"Yanıtla"}</button>${yanitlar.length>0?`<span class="yanit-sayisi">${yanitlar.length} yanıt</span>`:""}</div>${yanitlar.length>0?`<div class="yanitlar-bolum">${yH}</div>`:""}${yF}</div>`;
     }).join("");
   }
 
@@ -363,6 +372,20 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
     await addDoc(collection(db,"yanitlar"),{mesajId,metin:m,zaman:simdi(),sahip:KULLANICI_ID,tepkiler:tepkilerBos,hedefYanitId:hedef?hedef.id:null,hedefMetin:hedef?hedef.metin:null,hedefKim:hedef?hedef.kim:null,olusturuldu:serverTimestamp()});
     acikYanitFormlar.delete(mesajId);delete yanitFormHedef[mesajId];render();
   };
+
+  window.mesajiSil = async (mesajId) => {
+    if (!confirm("Bu mesajı silmek istediğine emin misin?")) return;
+    // Önce yanıtları sil
+    const ySnap = await getDocs(query(collection(db,"yanitlar"), where("mesajId","==",mesajId)));
+    for (const y of ySnap.docs) await deleteDoc(y.ref);
+    await deleteDoc(doc(db,"mesajlar",mesajId));
+  };
+
+  window.yanıtıSil = async (yanitId) => {
+    if (!confirm("Bu yanıtı silmek istediğine emin misin?")) return;
+    await deleteDoc(doc(db,"yanitlar",yanitId));
+  };
+
   window.mesajGonder=async()=>{
     const inp=document.getElementById("mesajInput"),m=inp.value.trim();if(!m)return;
     const t={};EMOJILER.forEach(e=>t[e]=0);
