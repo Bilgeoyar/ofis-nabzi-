@@ -162,9 +162,77 @@ header p { font-size:0.76rem; color:var(--yazi2); margin-top:2px; }
   .puan-grid { gap:4px; }
   .puan-btn { font-size:0.82rem; }
 }
+
+/* ---- BURÇ BÖLÜMÜ ---- */
+.burc-bolum {
+  max-width:1400px; margin:0 auto 20px auto;
+  background:var(--kart); border-radius:20px;
+  padding:24px; box-shadow:0 2px 12px var(--shadow);
+  transition:background 0.3s;
+}
+.burc-baslik {
+  font-size:1rem; font-weight:700; color:var(--yazi);
+  margin-bottom:16px; display:flex; align-items:center; gap:8px;
+}
+.burc-grid {
+  display:grid; grid-template-columns:repeat(6,1fr); gap:8px;
+  margin-bottom:0;
+}
+.burc-kart {
+  display:flex; flex-direction:column; align-items:center;
+  gap:4px; padding:10px 6px; border-radius:12px;
+  border:2px solid var(--border); background:var(--btn-bg);
+  cursor:pointer; transition:all 0.18s; user-select:none;
+}
+.burc-kart:hover { border-color:#6c63ff; background:var(--alinti-bg); transform:translateY(-2px); }
+.burc-kart.aktif { border-color:#6c63ff; background:linear-gradient(135deg,#6c63ff22,#a78bfa22); box-shadow:0 0 0 3px #6c63ff33; }
+.burc-emoji { font-size:1.6rem; line-height:1; }
+.burc-ad { font-size:0.7rem; font-weight:600; color:var(--yazi2); }
+.burc-kart.aktif .burc-ad { color:#6c63ff; }
+
+.burc-yorum-alan {
+  margin-top:16px; padding-top:16px;
+  border-top:1px solid var(--border2);
+  display:none;
+}
+.burc-yorum-ust {
+  display:flex; align-items:center; gap:10px; margin-bottom:12px;
+}
+.burc-yorum-icon { font-size:2rem; }
+.burc-yorum-isim { font-size:1.1rem; font-weight:800; color:var(--yazi); }
+.burc-yorum-tarih { font-size:0.75rem; color:var(--yazi3); margin-top:2px; }
+.burc-yorum-metin {
+  font-size:0.93rem; color:var(--yazi2); line-height:1.75;
+  background:var(--yanit-bg); border-radius:12px;
+  padding:16px; border-left:4px solid #6c63ff;
+}
+.burc-loading { color:var(--yazi3); font-size:0.88rem; padding:12px 0; }
+
+@media (max-width:600px) {
+  .burc-grid { grid-template-columns:repeat(4,1fr); gap:6px; }
+  .burc-emoji { font-size:1.3rem; }
+}
+@media (max-width:400px) {
+  .burc-grid { grid-template-columns:repeat(3,1fr); }
+}
 </style>
 </head>
 <body>
+
+<div class="burc-bolum">
+  <div class="burc-baslik">🔮 Günlük Burç Yorumu</div>
+  <div class="burc-grid" id="burcGrid"></div>
+  <div class="burc-yorum-alan" id="burcYorumAlan">
+    <div class="burc-yorum-ust">
+      <div class="burc-yorum-icon" id="burcYorumIcon"></div>
+      <div>
+        <div class="burc-yorum-isim" id="burcYorumIsim"></div>
+        <div class="burc-yorum-tarih" id="burcYorumTarih"></div>
+      </div>
+    </div>
+    <div class="burc-yorum-metin" id="burcYorumMetin"></div>
+  </div>
+</div>
 <div class="sayfa">
 
   <!-- SOL PANEL -->
@@ -408,6 +476,62 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
     localStorage.setItem("ofis_ytepki",JSON.stringify(yTepkilerim));
     await updateDoc(doc(db,"yanitlar",yanitId),{tepkiler:yT});
   };
+
+
+  // ---- BURÇ ----
+  const BURCLAR = [
+    {en:"aries",     tr:"Koç",       emoji:"♈"},
+    {en:"taurus",    tr:"Boğa",      emoji:"♉"},
+    {en:"gemini",    tr:"İkizler",   emoji:"♊"},
+    {en:"cancer",    tr:"Yengeç",    emoji:"♋"},
+    {en:"leo",       tr:"Aslan",     emoji:"♌"},
+    {en:"virgo",     tr:"Başak",     emoji:"♍"},
+    {en:"libra",     tr:"Terazi",    emoji:"♎"},
+    {en:"scorpio",   tr:"Akrep",     emoji:"♏"},
+    {en:"sagittarius",tr:"Yay",      emoji:"♐"},
+    {en:"capricorn", tr:"Oğlak",     emoji:"♑"},
+    {en:"aquarius",  tr:"Kova",      emoji:"♒"},
+    {en:"pisces",    tr:"Balık",     emoji:"♓"},
+  ];
+
+  let aktifBurc = localStorage.getItem("ofis_burc") || null;
+
+  function burcGridRender() {
+    document.getElementById("burcGrid").innerHTML = BURCLAR.map(b => `
+      <div class="burc-kart ${aktifBurc===b.en?'aktif':''}" onclick="burcSec('${b.en}')">
+        <div class="burc-emoji">${b.emoji}</div>
+        <div class="burc-ad">${b.tr}</div>
+      </div>`).join("");
+  }
+
+  async function burcSec(en) {
+    aktifBurc = en;
+    localStorage.setItem("ofis_burc", en);
+    burcGridRender();
+
+    const alan = document.getElementById("burcYorumAlan");
+    alan.style.display = "block";
+    const burc = BURCLAR.find(b=>b.en===en);
+    document.getElementById("burcYorumIcon").textContent = burc.emoji;
+    document.getElementById("burcYorumIsim").textContent = burc.tr;
+    document.getElementById("burcYorumTarih").textContent = "";
+    document.getElementById("burcYorumMetin").innerHTML = `<span class="burc-loading">⏳ Yorum yükleniyor...</span>`;
+
+    try {
+      const r = await fetch(`https://freehoroscopeapi.com/api/v1/get-horoscope/daily?sign=${en}`);
+      const d = await r.json();
+      const text = d?.data?.horoscope || "Yorum alınamadı.";
+      const date = d?.data?.date || "";
+      document.getElementById("burcYorumTarih").textContent = date;
+      document.getElementById("burcYorumMetin").textContent = text;
+    } catch(e) {
+      document.getElementById("burcYorumMetin").textContent = "Yorum şu an alınamadı, lütfen tekrar dene.";
+    }
+  }
+  window.burcSec = burcSec;
+
+  burcGridRender();
+  if (aktifBurc) burcSec(aktifBurc);
 
   const q=query(collection(db,"mesajlar"),orderBy("olusturuldu","desc"));
   onSnapshot(q,snap=>{tumMesajlar=snap.docs.map(d=>({id:d.id,...d.data()}));render();});
