@@ -480,19 +480,176 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
 
   // ---- BURÇ ----
   const BURCLAR = [
-    {en:"aries",     tr:"Koç",       emoji:"♈"},
-    {en:"taurus",    tr:"Boğa",      emoji:"♉"},
-    {en:"gemini",    tr:"İkizler",   emoji:"♊"},
-    {en:"cancer",    tr:"Yengeç",    emoji:"♋"},
-    {en:"leo",       tr:"Aslan",     emoji:"♌"},
-    {en:"virgo",     tr:"Başak",     emoji:"♍"},
-    {en:"libra",     tr:"Terazi",    emoji:"♎"},
-    {en:"scorpio",   tr:"Akrep",     emoji:"♏"},
-    {en:"sagittarius",tr:"Yay",      emoji:"♐"},
-    {en:"capricorn", tr:"Oğlak",     emoji:"♑"},
-    {en:"aquarius",  tr:"Kova",      emoji:"♒"},
-    {en:"pisces",    tr:"Balık",     emoji:"♓"},
+    {en:"aries",      tr:"Koç",        emoji:"♈"},
+    {en:"taurus",     tr:"Boğa",       emoji:"♉"},
+    {en:"gemini",     tr:"İkizler",    emoji:"♊"},
+    {en:"cancer",     tr:"Yengeç",     emoji:"♋"},
+    {en:"leo",        tr:"Aslan",      emoji:"♌"},
+    {en:"virgo",      tr:"Başak",      emoji:"♍"},
+    {en:"libra",      tr:"Terazi",     emoji:"♎"},
+    {en:"scorpio",    tr:"Akrep",      emoji:"♏"},
+    {en:"sagittarius",tr:"Yay",        emoji:"♐"},
+    {en:"capricorn",  tr:"Oğlak",      emoji:"♑"},
+    {en:"aquarius",   tr:"Kova",       emoji:"♒"},
+    {en:"pisces",     tr:"Balık",      emoji:"♓"},
   ];
+
+  // Her burç için 10 farklı günlük yorum — gün + burç indexine göre seçilir, her gün değişir
+  const YORUMLAR = {
+    aries: [
+      "Bugün enerjin tavan yapıyor! Uzun süredir ertelediğin o işe girişmek için mükemmel bir gün. Çevrendekiler senin kararlılığından ilham alacak, inisiyatif almaktan çekinme.",
+      "Öfkeni yönetmekte bugün biraz zorlanabilirsin; küçük bir nefes molası büyük farklar yaratır. Öğleden sonra işler yoluna girecek ve bir sürpriz haber seni güldürebilir.",
+      "Liderlik içgüdülerin bugün ön plana çıkıyor. Bir ekip projesinde söz alma vakti gelmiş olabilir. Aceleci davranmak yerine önce dinle, sonra konuş.",
+      "Maddi konularda dürtüsel kararlar vermekten kaçın. Bütçeni gözden geçirmek için harika bir gün; küçük bir tasarruf büyük bir kazanca dönüşebilir.",
+      "Romantik enerji yoğun! Duygularını doğrudan ifade etmekten çekinme; karşındaki tam olarak bunu bekliyor olabilir.",
+      "Fiziksel aktiviteye ihtiyaç duyuyorsun, bedenini harekete geçir. Kısa bir yürüyüş bile zihnini netleştirir ve o sıkışmış fikri çözebilir.",
+      "Sabır gösterdiğinde işlerin ne kadar hızlı ilerlediğini göreceksin bugün. Dışarıdan gelecek bir tavsiyeyi geri çevirmeden önce bir kez daha düşün.",
+      "Yaratıcı düşünce bugün en büyük silahın. Alışılmışın dışında bir çözüm önerirsen çevrendeki herkes şaşırabilir; çekinme.",
+      "Eski bir arkadaşla yeniden bağlantı kurma ihtimalin yüksek. Bu kişi sana beklenmedik bir kapı aralayabilir.",
+      "Bugün kazanmak için değil, öğrenmek için oyna. Küçük bir yenilgi seni güçlendiren bir ders olabilir.",
+    ],
+    taurus: [
+      "Konfor alanından çıkmak bugün zor gelebilir ama küçük bir adım bile seni ileriye taşır. Güvendiğin biri sana beklenmedik bir teklif sunabilir.",
+      "Maddi konular olumlu bir seyir izliyor. Uzun süredir beklediğin bir ödeme ya da fırsat bugün kapına gelebilir.",
+      "Güzellik ve estetik duygun bugün çok güçlü; yaratıcı bir uğraş seni rahatlatır ve kendini ifade etmeni kolaylaştırır.",
+      "İlişkilerinde güven ön planda. Bir yakınınla dürüst bir konuşma yapmak için doğru an gelmiş olabilir; sözlerini dikkatle seç.",
+      "Rutinin dışına çıkmak seni bugün besleyecek. Küçük bir değişiklik, mesela yeni bir kafe ya da farklı bir yol, zihnine taze bir soluk getirir.",
+      "Bedenine iyi bak bugün; beslenme ve dinlenme konusunda biraz özenli olmak harika sonuçlar verir.",
+      "Birinin duygusal desteğine ihtiyaç duyduğunu fark edebilirsin. Orada olmak, söyleyeceğin en güzel şey olacak.",
+      "Sabırlı tavrın bugün meyve verecek. Aceleci davrananlar tökezlerken sen hedefine sağlam adımlarla yaklaşıyorsun.",
+      "Ev ve aile meseleleri gündemde. Küçük bir yenileme ya da düzenleme fikri seni heyecanlandırabilir.",
+      "Doğayla vakit geçirmek bugün seni şarj eder. Kısa bir park yürüyüşü bile zihnini sıfırlamana yardımcı olur.",
+    ],
+    gemini: [
+      "Merakın bugün seni ilginç yerlere taşıyor. Yeni bir şey öğrenmek için harika bir gün; o podcast'i ya da makaleyi açmaktan çekinme.",
+      "İletişim konusunda bugün son derece başarılısın. Uzun süredir söylemekte zorlandığın bir şeyi dile getirmek için doğru an.",
+      "Çift taraflı düşüncen bugün bir çatışmayı çözmene yardımcı olabilir. Her iki tarafı da anlayan tek kişi sensin.",
+      "Dikkatini dağıtan çok şey var; bugün tek bir konuya odaklanmayı dene, sonuçlar seni şaşırtacak.",
+      "Sosyal çevren bugün hareketli. Bir toplantı ya da anlık bir sohbet, sana çok değerli bir bağlantı kazandırabilir.",
+      "Yaratıcı projeler için bugün harika bir enerji var. Aklındaki fikri not almaya başla, ileride işe yarayacak.",
+      "Kararları ertelemek yerine bugün küçük ama net adımlar at. Mükemmel plan beklemek seni geride bırakıyor.",
+      "Bir yakının seni yanlış anlamış olabilir; küçük bir açıklama büyük bir yükü kaldırabilir.",
+      "Finans konusunda ikinci düşünce iyidir; impulsif bir alışveriş yapmadan önce bir gece bekle.",
+      "Enerjin tükenmeye başlarsa suçluluk duyma; bugün biraz içe çekilmek de tamam.",
+    ],
+    cancer: [
+      "Sezgilerine güven bugün, içgüdülerin seni doğruya yönlendiriyor. Bir durumu herkesten önce fark edebilirsin.",
+      "Sevdiklerinden gelen küçük bir jestle kalbin ısınabilir. Bugün duygusal bağlar ön planda.",
+      "Ev ortamına zaman ayırmak sana iyi gelecek. Küçük bir düzenleme ya da yemek pişirmek bile içini huzurla doldurabilir.",
+      "Geçmişten bir anı ya da kişi aklına gelebilir bugün; bu bir tesadüf değil, bir mesaj gibi.",
+      "Başkalarının ihtiyaçlarına o kadar odaklandın ki kendi ihtiyaçlarını gözden kaçırıyorsun. Bugün biraz kendin için var ol.",
+      "Maddi güvence ihtiyacın artmış olabilir; küçük bir bütçe planı yapmak rahatlamanı sağlar.",
+      "Yaratıcı ifade bugün çok güçlü; yazı yazmak, çizmek ya da müzik dinlemek seni içsel bir yolculuğa çıkarabilir.",
+      "Bir çatışmada taraf tutmak yerine arabulucu olmayı dene; doğal empatine bunu yapabilecek güç var.",
+      "Yeni bir arkadaşlık ya da iş bağlantısı bugün anlık bir konuşmadan doğabilir.",
+      "Geceleri biraz fazla düşünüyorsun; aklındaki endişeyi bir kağıda dök, sabah daha küçük görünecek.",
+    ],
+    leo: [
+      "Bugün sahnedeki yerini al; parlamanın tam zamanı. Başkalarının dikkatini çekecek bir sunum ya da konuşma yapabilirsin.",
+      "Cömertliğin bugün sana çok şey kazandırır. Birinin ihtiyacını fark edip uzanmak, seni daha güçlü kılar.",
+      "Bir eleştiriyi kişisel algılamadan önce bir nefes al; karşındaki kişi gerçekten yardımcı olmaya çalışıyor olabilir.",
+      "Romantik hayatında heyecan verici bir gelişme kapıda. Duygularını açıkça ifade etmek sana büyük avantaj sağlar.",
+      "Liderlik etme isteğin yüksek; ancak bugün takım oyuncusu olmak daha büyük başarılar getirir.",
+      "Yaratıcı enerjin zirveye çıkmış durumda. Bir sanat projesi ya da yaratıcı çalışma başlatmak için ideal gün.",
+      "Kendinle barışık olduğunda dünya da seninle barışık oluyor; bugün öz güvenin tavan yapıyor.",
+      "Mali konularda biraz gösterişli kararlar almak isteyebilirsin; pratik düşünce her zaman kazanır.",
+      "Eski bir anlaşmazlığı geride bırakmanın vakti geldi. Affetmek seni küçük yapmaz, tersine özgürleştirir.",
+      "Bugün aldığın risk küçük bir kazanım sağlayabilir; fazla hesaplamadan içgüdülerine güven.",
+    ],
+    virgo: [
+      "Detaylara verdiğin önem bugün büyük fark yaratıyor. Başkalarının gözden kaçırdığı bir hatayı sen fark ediyorsun.",
+      "Sağlık ve rutin konularında küçük bir iyileştirme bugün başlayabilir. Büyük adımlara gerek yok, tek bir alışkanlık yeter.",
+      "Mükemmeliyetçiliğin seni bloke ediyor olabilir; 'yeterince iyi' aslında bugün 'mükemmel'den daha değerli.",
+      "Birinin yardımına koşmak istiyorsun; ama önce kendi enerjini kontrol et, boş bir bardaktan su dökülmez.",
+      "Analitik düşüncen bugün bir sorunu çözüyor; çevrendekiler senden fikir isteyebilir.",
+      "Finansal planlama için harika bir gün. Küçük bir hesap-kitap çalışması seni rahatlatan sonuçlar verebilir.",
+      "İletişimde bugün çok dikkatlisin; söylediklerin ve söylemediklerin ikisi de önem taşıyor.",
+      "Bir ilişkide beklentilerini netleştirme vakti gelmiş olabilir; saygılı bir dürüstlük sizi güçlendirir.",
+      "Doğayla ya da sessizlikle geçirilecek zaman bugün seni yeniliyor. Zihinsel bir detoks tam ihtiyacın.",
+      "Uzun süredir çözmeye çalıştığın bir problem bugün aniden netleşebilir; o 'aha!' anına hazır ol.",
+    ],
+    libra: [
+      "Denge arayışın bugün hem ilişkilerinde hem kararlarında kendini gösteriyor. Doğru seçimi yapma gücün var.",
+      "Bir anlaşmazlıkta arabulucu olmak seni öne çıkarıyor; adalet duygun herkese ilham veriyor.",
+      "Bugün estetik açıdan kendine zaman ayır; güzel bir ortam ya da kıyafet enerjini yükseltir.",
+      "Bir karar vermeyi erteliyorsun; bugün artık harekete geçme vakti. Mükemmel an beklersen sonsuza kadar beklersin.",
+      "Romantik ilişkinde güzel bir konuşma ya da jest günü özel kılabilir. Küçük sürprizler büyük iz bırakır.",
+      "Sosyal çevrenden enerji alıyorsun bugün; bir arkadaşla geçirilen vakit zihnini tazeleyebilir.",
+      "Mali konularda adil bir değerlendirme yapman gerekebilir; hak ettiğin değeri talep etmekten çekinme.",
+      "Kendi fikirlerine sahip çıkma zamanı geldi; başkasını memnun etmek için kendinizden ödün vermene gerek yok.",
+      "Yaratıcı bir proje ya da sanatsal bir uğraş bugün seni derinden tatmin edecek.",
+      "Uzun süredir görmediğin biriyle yeniden bağlantı kurmak için güzel bir gün; ilk adımı sen at.",
+    ],
+    scorpio: [
+      "Sezgin bugün çok güçlü; bir durumun yüzeyinin altındaki gerçeği görüyorsun. Bu bilgiyi dikkatli kullan.",
+      "Dönüşüm enerjisi yüksek; bırakmakta zorlandığın bir şeyi bugün geride bırakmak için güç bulabilirsin.",
+      "Tutkun seni ileriye taşıyor ama yoğunluğunu biraz kısarsan insanlar sana daha kolay yaklaşır.",
+      "Gizli kalan bir bilgi ya da durum bugün gün yüzüne çıkabilir; şaşırmak yerine hazırlıklı ol.",
+      "Finansal konularda derin bir analiz yapma zamanı. Gizlide kalan bir maliyet ya da fırsatı fark edebilirsin.",
+      "Duygusal sınırlarını korumak bugün özellikle önemli; herkese her şeyi anlatmak zorunda değilsin.",
+      "Güvendiğin biriyle derinlemesine bir konuşma bugün hem seni hem de karşındakini iyileştirebilir.",
+      "Uzun süredir planladığın bir hamleyi bugün başlatabilirsin; zamanlama mükemmel.",
+      "Kendine karşı da o derin empatiyi göster; içindeki eleştirmen biraz sussun bugün.",
+      "Bir yarışma ya da müzakerede üstünlüğü ele alıyorsun; stratejik düşüncen bugün parlıyor.",
+    ],
+    sagittarius: [
+      "Macera ruhun bugün kanat çırpıyor; yeni bir şey denemek ya da farklı bir yere gitmek enerjini patlatır.",
+      "Felsefi sorular bugün aklını meşgul ediyor; bir kitap, bir podcast ya da derin bir sohbet tam ihtiyacın.",
+      "Özgürlük ihtiyacın artmış olabilir; sınırlayıcı hissettiren bir durumdan sağlıklı bir uzaklık iyi gelir.",
+      "Doğrudan konuşma tarzın bugün hem kapı açar hem de kapı kapayabilir; ton ayarını kontrol et.",
+      "Yabancı kültürler, seyahat ya da yeni öğrenme alanları bugün seni heyecanlandırıyor.",
+      "Şansın biraz yüksek; küçük bir risk almanın tam zamanı, ama sınırlarını bil.",
+      "Mizah anlayışın bugün ortamı canlandırıyor; insanlar senin etrafında daha rahat hissediyor.",
+      "Bir arkadaşın ya da iş arkadaşın senden değerli bir şey öğreniyor; bunu fark et ve gurur duy.",
+      "Maddi konularda biraz büyük düşünüyorsun; pratiğe inmek kayıpları önler.",
+      "Uzun vadeli hedeflerine bugün yeniden bakma zamanı; hangi adımlar seni gerçekten oraya taşıyor?",
+    ],
+    capricorn: [
+      "Disiplinin ve kararlılığın bugün seni başkalarından bir adım öne taşıyor. Emek asla boşa gitmiyor.",
+      "Kariyer konularında önemli bir gelişme kapıda olabilir; hazır ve uyanık ol.",
+      "Duygusal ihtiyaçlarına da zaman ayır bugün; iş dışında da bir hayat var.",
+      "Uzun vadeli bir plan için küçük ama somut bir adım bugün atılabilir; başlamak, bitirmenin yarısıdır.",
+      "Birinin güvenini kazanmak için fırsatın var; güvenilir olduğunu göstermen yeterli.",
+      "Maddi konularda temkinli yaklaşımın seni korur; hızlı kazanç vaat eden şeylere şüpheyle bak.",
+      "Aile ya da ev meselelerine zaman ayırmak bugün seni şarj eder; temellerine dön.",
+      "Mükemmeliyetçiliğin seni yavaşlatabilir; 'yeterince iyi' tamamlanmış işi seçmek her zaman daha iyidir.",
+      "Yardım istemek güçsüzlük değil, zeka; bugün destek almaktan çekinme.",
+      "Uzun süredir taşıdığın sorumluluklardan birini devretme zamanı gelmiş olabilir; kontrol bırakmak özgürleştirir.",
+    ],
+    aquarius: [
+      "Orijinal fikirlerin bugün ilgi çekiyor; farklı düşünmek seni öne çıkaran şey, bunu sahiplen.",
+      "İnsanlığa, topluluğa ya da büyük bir davaya katkı sağlamak için güzel bir gün.",
+      "Arkadaşlık ilişkilerinde yeni bir boyut açılıyor; beklenmedik bir sohbet seni etkileyebilir.",
+      "Teknoloji ya da inovasyon alanında sezgin çok keskin; o fikri not al.",
+      "Bağımsızlık ihtiyacın bugün yüksek; biraz yalnız kalıp düşünmek seni netleştirir.",
+      "Alışılmadık bir yaklaşımla bir sorunu çözebilirsin; standart çözümler işe yaramıyorsa yaratıcı ol.",
+      "Duygularını ifade etmekte zorlanıyorsan bugün yazarak dene; kelimeler daha kolay akacak.",
+      "Bir grup projesinde köprü kurucu rolüne giriyorsun; uyumu sağlamak senin için doğal.",
+      "Finansal konularda pratik bir karar gerekiyor; hayalci tarafını bir kenara bırak.",
+      "Eski bir alışkanlığı bugün kırmak istiyorsun; değişim için gereken güç içinde hazır.",
+    ],
+    pisces: [
+      "Sezgin ve hayal gücün bugün tavan yapıyor; yaratıcı bir proje ya da sanatsal bir uğraş tam zamanı.",
+      "Empatin bugün güçlü; başkalarının duygularını hissediyorsun ama kendi sınırlarını korumayı unutma.",
+      "Maneviyat ve içsel huzur için harika bir gün; meditasyon, müzik ya da sessizlik seni derinleştiriyor.",
+      "Uzun süredir süren bir belirsizlik bugün biraz daha netleşiyor; sabırlı olmaya devam et.",
+      "Romantizmde güzel bir an kapıda; hassasiyetin bugün seni çok çekici kılıyor.",
+      "Gerçeklik ile hayaller arasındaki çizgiyi bugün dikkatli çiz; duygusal kararlardan önce biraz bekle.",
+      "Maddi konularda belirsizlikten kaçınmak için somut adımlar at; sezgiye bırakmak bu konuda riskli.",
+      "Bir arkadaşın bugün sana gerçekten ihtiyaç duyuyor; orada olman çok şey ifade edecek.",
+      "Uyku ve dinlenme bugün özellikle önemli; bedenini ve zihnini yenile.",
+      "Geçmişten gelen bir durum ya da kişi bugün aklına geliyorsa, bu sana bir şey söyliyor; dinle.",
+    ],
+  };
+
+  function burcYorumGetir(en) {
+    const n = new Date();
+    const yilinGunu = Math.floor((n - new Date(n.getFullYear(), 0, 0)) / 86400000);
+    const burcIdx = BURCLAR.findIndex(b => b.en === en);
+    const yorumlar = YORUMLAR[en] || [];
+    const idx = (yilinGunu * 3 + burcIdx * 7) % yorumlar.length;
+    return yorumlar[idx] || "Bugün yıldızlar seninle konuşuyor; içindeki sesi dinle.";
+  }
 
   let aktifBurc = localStorage.getItem("ofis_burc") || null;
 
@@ -504,61 +661,21 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
       </div>`).join("");
   }
 
-  async function burcSec(en) {
+  function burcSec(en) {
     aktifBurc = en;
     localStorage.setItem("ofis_burc", en);
     burcGridRender();
 
     const alan = document.getElementById("burcYorumAlan");
     alan.style.display = "block";
-    const burc = BURCLAR.find(b=>b.en===en);
+    const burc = BURCLAR.find(b => b.en === en);
+    const n = new Date();
+    const tarihStr = `${n.getDate()} ${["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"][n.getMonth()]} ${n.getFullYear()}`;
+
     document.getElementById("burcYorumIcon").textContent = burc.emoji;
     document.getElementById("burcYorumIsim").textContent = burc.tr;
-    document.getElementById("burcYorumTarih").textContent = "";
-    document.getElementById("burcYorumMetin").innerHTML = `<span class="burc-loading">⏳ Yorum yükleniyor...</span>`;
-
-    try {
-      // Önce direkt dene, olmadı proxy üzerinden
-      let text = "", date = "";
-      const apis = [
-        async () => {
-          const r = await fetch(`https://horoscope-app-api.vercel.app/api/v1/get-horoscope/daily?sign=${en}&day=today`);
-          const d = await r.json();
-          return { text: d?.data?.horoscope_data, date: d?.data?.date };
-        },
-        async () => {
-          const target = encodeURIComponent(`https://horoscope-app-api.vercel.app/api/v1/get-horoscope/daily?sign=${en}&day=today`);
-          const r = await fetch(`https://api.allorigins.win/get?url=${target}`);
-          const wrapper = await r.json();
-          const d = JSON.parse(wrapper.contents);
-          return { text: d?.data?.horoscope_data, date: d?.data?.date };
-        },
-        async () => {
-          const target = encodeURIComponent(`https://freehoroscopeapi.com/api/v1/get-horoscope/daily?sign=${en}`);
-          const r = await fetch(`https://api.allorigins.win/get?url=${target}`);
-          const wrapper = await r.json();
-          const d = JSON.parse(wrapper.contents);
-          return { text: d?.data?.horoscope, date: d?.data?.date };
-        }
-      ];
-
-      let success = false;
-      for (const apiFn of apis) {
-        try {
-          const result = await apiFn();
-          if (result?.text) { text = result.text; date = result.date || ""; success = true; break; }
-        } catch(_) {}
-      }
-
-      if (success) {
-        document.getElementById("burcYorumTarih").textContent = date;
-        document.getElementById("burcYorumMetin").textContent = text;
-      } else {
-        document.getElementById("burcYorumMetin").textContent = "Yorum şu an alınamadı, lütfen tekrar dene.";
-      }
-    } catch(e) {
-      document.getElementById("burcYorumMetin").textContent = "Yorum şu an alınamadı, lütfen tekrar dene.";
-    }
+    document.getElementById("burcYorumTarih").textContent = tarihStr;
+    document.getElementById("burcYorumMetin").textContent = burcYorumGetir(en);
   }
   window.burcSec = burcSec;
 
