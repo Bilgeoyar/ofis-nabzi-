@@ -518,12 +518,44 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
     document.getElementById("burcYorumMetin").innerHTML = `<span class="burc-loading">⏳ Yorum yükleniyor...</span>`;
 
     try {
-      const r = await fetch(`https://freehoroscopeapi.com/api/v1/get-horoscope/daily?sign=${en}`);
-      const d = await r.json();
-      const text = d?.data?.horoscope || "Yorum alınamadı.";
-      const date = d?.data?.date || "";
-      document.getElementById("burcYorumTarih").textContent = date;
-      document.getElementById("burcYorumMetin").textContent = text;
+      // Önce direkt dene, olmadı proxy üzerinden
+      let text = "", date = "";
+      const apis = [
+        async () => {
+          const r = await fetch(`https://horoscope-app-api.vercel.app/api/v1/get-horoscope/daily?sign=${en}&day=today`);
+          const d = await r.json();
+          return { text: d?.data?.horoscope_data, date: d?.data?.date };
+        },
+        async () => {
+          const target = encodeURIComponent(`https://horoscope-app-api.vercel.app/api/v1/get-horoscope/daily?sign=${en}&day=today`);
+          const r = await fetch(`https://api.allorigins.win/get?url=${target}`);
+          const wrapper = await r.json();
+          const d = JSON.parse(wrapper.contents);
+          return { text: d?.data?.horoscope_data, date: d?.data?.date };
+        },
+        async () => {
+          const target = encodeURIComponent(`https://freehoroscopeapi.com/api/v1/get-horoscope/daily?sign=${en}`);
+          const r = await fetch(`https://api.allorigins.win/get?url=${target}`);
+          const wrapper = await r.json();
+          const d = JSON.parse(wrapper.contents);
+          return { text: d?.data?.horoscope, date: d?.data?.date };
+        }
+      ];
+
+      let success = false;
+      for (const apiFn of apis) {
+        try {
+          const result = await apiFn();
+          if (result?.text) { text = result.text; date = result.date || ""; success = true; break; }
+        } catch(_) {}
+      }
+
+      if (success) {
+        document.getElementById("burcYorumTarih").textContent = date;
+        document.getElementById("burcYorumMetin").textContent = text;
+      } else {
+        document.getElementById("burcYorumMetin").textContent = "Yorum şu an alınamadı, lütfen tekrar dene.";
+      }
     } catch(e) {
       document.getElementById("burcYorumMetin").textContent = "Yorum şu an alınamadı, lütfen tekrar dene.";
     }
