@@ -453,10 +453,28 @@ header p { font-size:0.76rem; color:var(--yazi2); margin-top:2px; }
 </div>
 
 <!-- OFİS MOBİLYALARI -->
-<div class="k-furniture" id="kDesk"    style="left:3%;bottom:12%">🖥️</div>
-<div class="k-furniture" id="kKahve"   style="right:3%;bottom:18%">☕</div>
-<div class="k-furniture" id="kSandalye"style="left:8%;bottom:9%">🪑</div>
-<div class="k-lunch-table" id="kLunchTable" style="left:50%;bottom:20%;transform:translateX(-50%)">🍽️</div>
+<style>
+.k-obj{position:fixed;z-index:60;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;transition:transform 0.15s;user-select:none;}
+.k-obj:hover{transform:scale(1.2);}
+.k-obj .ico{font-size:2rem;filter:drop-shadow(1px 2px 4px rgba(0,0,0,0.3));}
+.k-obj .lbl{font-size:0.55rem;color:#fff;background:rgba(0,0,0,0.5);border-radius:8px;padding:1px 5px;white-space:nowrap;}
+.k-obj.aktif .ico{animation:bounce 0.4s ease infinite;}
+.k-lunch-table{position:fixed;z-index:60;font-size:2.5rem;display:none;animation:popIn 0.4s ease;pointer-events:none;}
+</style>
+<!-- Sol: Çalışma köşesi -->
+<div class="k-obj" onclick="objTikla('bilgisayar',this)" style="left:3%;bottom:24%"><div class="ico">🖥️</div><div class="lbl">Bilgisayar</div></div>
+<div class="k-obj" onclick="objTikla('yazici',this)"    style="left:3%;bottom:12%"><div class="ico">🖨️</div><div class="lbl">Yazıcı</div></div>
+<div class="k-obj" onclick="objTikla('kitaplik',this)"  style="left:14%;bottom:14%"><div class="ico">📚</div><div class="lbl">Kitaplık</div></div>
+<!-- Orta -->
+<div class="k-obj" onclick="objTikla('toplanti',this)"  style="left:42%;bottom:8%"><div class="ico">🪑</div><div class="lbl">Toplantı</div></div>
+<div class="k-obj" onclick="objTikla('tahta',this)"     style="left:50%;bottom:22%"><div class="ico">📋</div><div class="lbl">Tahta</div></div>
+<div class="k-obj" onclick="objTikla('dart',this)"      style="left:58%;bottom:12%"><div class="ico">🎯</div><div class="lbl">Dart</div></div>
+<!-- Sağ: Mutfak köşesi -->
+<div class="k-obj" onclick="objTikla('kahve',this)"     style="right:12%;bottom:22%"><div class="ico">☕</div><div class="lbl">Kahve</div></div>
+<div class="k-obj" onclick="objTikla('buzdolabi',this)" style="right:3%;bottom:22%"><div class="ico">🧊</div><div class="lbl">Buzdolabı</div></div>
+<div class="k-obj" onclick="objTikla('bitki',this)"     style="right:3%;bottom:10%"><div class="ico">🌱</div><div class="lbl">Bitki</div></div>
+<!-- Öğle -->
+<div class="k-lunch-table" id="kLunchTable" style="left:42%;bottom:8%">🍽️</div>
 
 <!-- KARAKTER EDİTÖR MODAL -->
 <div class="k-overlay" id="kModal" style="display:none" onclick="if(event.target===this)karakterEditorKapat()">
@@ -492,19 +510,31 @@ header p { font-size:0.76rem; color:var(--yazi2); margin-top:2px; }
 </div>
 
 <!-- TAŞ KAĞIT MAKAS MODAL -->
-<div class="k-overlay" id="rpsModal" style="display:none" onclick="if(event.target===this)rpsKapat()">
-  <div class="k-modal" style="max-width:340px">
+<div class="k-overlay" id="rpsModal" style="display:none">
+  <div class="k-modal" style="max-width:360px">
     <h2>✂️ Taş Kağıt Makas</h2>
-    <div id="rpsHedefIsim" style="text-align:center;color:var(--yazi2);font-size:0.9rem;margin-bottom:8px"></div>
-    <div class="rps-secimler">
-      <button class="rps-btn" onclick="rpsSec('tas')">🪨<br><span style="font-size:0.7rem">Taş</span></button>
-      <button class="rps-btn" onclick="rpsSec('kagit')">📄<br><span style="font-size:0.7rem">Kağıt</span></button>
-      <button class="rps-btn" onclick="rpsSec('makas')">✂️<br><span style="font-size:0.7rem">Makas</span></button>
+    <div id="rpsHedefIsim" style="text-align:center;color:var(--yazi2);font-size:0.88rem;margin-bottom:12px;padding:8px;background:var(--yanit-bg);border-radius:10px"></div>
+    <div id="rpsBekle" style="display:none;text-align:center;color:var(--yazi3);padding:16px;">⏳ Rakip bekleniyor...</div>
+    <div id="rpsSecimAlan">
+      <p style="text-align:center;font-size:0.82rem;color:var(--yazi2);margin-bottom:10px">Seçimini yap:</p>
+      <div class="rps-secimler">
+        <button class="rps-btn" onclick="rpsSec('tas')">🪨<br><span style="font-size:0.7rem;color:var(--yazi2)">Taş</span></button>
+        <button class="rps-btn" onclick="rpsSec('kagit')">📄<br><span style="font-size:0.7rem;color:var(--yazi2)">Kağıt</span></button>
+        <button class="rps-btn" onclick="rpsSec('makas')">✂️<br><span style="font-size:0.7rem;color:var(--yazi2)">Makas</span></button>
+      </div>
     </div>
-    <div id="rpsSonucAlan" style="display:none">
-      <div class="rps-sonuc" id="rpsSonuc"></div>
-    </div>
-    <button class="k-kaydet" style="margin-top:12px" onclick="rpsKapat()">Kapat</button>
+    <div id="rpsSonucAlan" style="display:none"><div class="rps-sonuc" id="rpsSonuc"></div></div>
+    <button style="margin-top:12px;width:100%;background:var(--btn-bg);color:var(--yazi);border:2px solid var(--border);border-radius:12px;padding:11px;font-size:0.9rem;font-weight:600;cursor:pointer;" onclick="rpsKapat()">Kapat</button>
+  </div>
+</div>
+
+<!-- CHALLENGE BİLDİRİMİ -->
+<div id="rpsChallenge" style="display:none;position:fixed;bottom:20px;right:20px;z-index:5000;background:#6c63ff;color:#fff;border-radius:16px;padding:14px 18px;box-shadow:0 4px 20px rgba(108,99,255,0.5);max-width:260px;animation:popIn 0.3s ease">
+  <div style="font-weight:700;margin-bottom:6px">✂️ Meydan Okuma!</div>
+  <div style="font-size:0.82rem;margin-bottom:10px" id="rcText" data-isim=""></div>
+  <div style="display:flex;gap:8px">
+    <button onclick="rpsKabul()" style="flex:1;background:#fff;color:#6c63ff;border:none;border-radius:10px;padding:8px;font-weight:700;cursor:pointer">Kabul Et ✊</button>
+    <button onclick="rpsReddet()" style="flex:1;background:rgba(255,255,255,0.2);color:#fff;border:none;border-radius:10px;padding:8px;cursor:pointer">Reddet</button>
   </div>
 </div>
 
@@ -1037,17 +1067,16 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
   window.objTikla=function(objId, el){
     const cfg=OBJ_CONFIG[objId]; if(!cfg) return;
     const K=tumK[KULLANICI_ID]; if(!K) return;
-    // Objenin pozisyonunu al
     const rect=el.getBoundingClientRect();
-    const tx=rect.left+rect.width/2-32, ty=rect.top-100;
+    const tx=rect.left+rect.width/2-32;
+    const ty=Math.max(60, rect.top - 90);
     K.state='gidiyor'; K.hedefX=tx; K.hedefY=ty;
     K.varinca=()=>{
-      K.state=cfg.state; K.stateTimer=cfg.dur/16;
+      K.state=cfg.state; K.stateTimer=Math.floor(cfg.dur/16);
       charBubble(K.el, cfg.emoji);
-      // Objeyi aktif yap
-      document.querySelectorAll('.k-obj').forEach(o=>o.classList.remove('active'));
-      el.classList.add('active');
-      setTimeout(()=>{K.state='normal';el.classList.remove('active');},cfg.dur);
+      document.querySelectorAll('.k-obj').forEach(o=>o.classList.remove('aktif'));
+      el.classList.add('aktif');
+      setTimeout(()=>{ K.state='normal'; el.classList.remove('aktif'); }, cfg.dur);
     };
   };
 
