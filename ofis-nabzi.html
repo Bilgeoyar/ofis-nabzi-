@@ -742,7 +742,8 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
   moodBarRender();
 
   // ---- FLOAT SYSTEM ----
-  let tumK={}; // uid -> {cfg,el,canvas,x,y,vx,vy,state,stateTimer,flip,danceAngle,phaseX,phaseY}
+  let tumK={};
+  let myExpr='normal'; // global, kBarRender'da kullanılır
   let floatT=0, floatRaf=null;
 
   function charElOlustur(uid, cfg){
@@ -775,7 +776,7 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
 
   function charBubble(el, txt){
     const b=document.createElement('div');
-    b.style.cssText='position:absolute;top:-34px;left:50%;transform:translateX(-50%);font-size:1.5rem;pointer-events:none;animation:bubbleUp 2s ease forwards;z-index:10;white-space:nowrap';
+    b.style.cssText='position:absolute;top:-38px;left:50%;transform:translateX(-50%);font-size:1.2rem;pointer-events:none;animation:bubbleUp 2s ease forwards;z-index:10;white-space:nowrap;background:rgba(255,255,255,0.92);border-radius:20px;padding:3px 8px;color:#333;box-shadow:0 2px 6px rgba(0,0,0,0.2)';
     b.textContent=txt; el.appendChild(b); setTimeout(()=>b.remove(),2000);
   }
 
@@ -820,7 +821,7 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
     // Score expression
     const ort=parseFloat(document.getElementById('puanOrt')?.textContent)||5;
     const scoreExpr=ort>=7?'mutlu':ort<=3?'uzgun':'normal';
-    const myExpr=benimMood==='uykulu'?'uykulu':benimMood==='sinirli'?'sinirli':benimMood==='energik'?'energik':scoreExpr;
+    myExpr=benimMood==='uykulu'?'uykulu':benimMood==='sinirli'?'sinirli':benimMood==='energik'?'energik':scoreExpr;
 
     Object.entries(tumK).forEach(([uid,K])=>{
       if(!K.el) return;
@@ -830,13 +831,21 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
       // State timer
       if(K.stateTimer>0){ K.stateTimer--; if(K.stateTimer===0) K.state='normal'; }
       // Movement
-      if(K.state==='lunch'){
+      if(K.state==='gidiyor'){
+        const dx=K.hedefX-K.x, dy=K.hedefY-K.y;
+        const dist=Math.sqrt(dx*dx+dy*dy);
+        if(dist<8){ K.x=K.hedefX; K.y=K.hedefY; if(K.varinca){K.varinca();K.varinca=null;} }
+        else { K.x+=dx*0.06; K.y+=dy*0.06; K.flip=dx<0; }
+      } else if(K.state==='lunch'){
         const tx=YEMEK_X(), ty=YEMEK_Y();
         K.x+=(tx-K.x)*0.025; K.y+=(ty-K.y)*0.025;
       } else if(K.state==='dance'){
         K.danceAngle+=0.12; K.x+=Math.sin(K.danceAngle)*2.5*spd; K.y+=Math.cos(K.danceAngle*0.7)*1.2;
       } else if(K.state==='wave'){
         K.x+=Math.sin(floatT*0.18)*2; K.y+=K.vy*0.3;
+      } else if(['calisiyor','okuyor','toplanti','tahtada','kahve','yiyor','bitki','dart','yazici'].includes(K.state)){
+        // Obje animasyonu — hafif sallanma
+        K.x+=Math.sin(floatT*0.08)*0.5;
       } else {
         K.x+=K.vx*spd; K.y+=K.vy*spd;
       }
@@ -859,6 +868,7 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
       }
     });
     if(floatT%60===0) carpismKontrol();
+    if(floatT%90===0){ const li=Object.values(tumK).map(k=>k.cfg).filter(Boolean).map(c=>({...c,uid:c.uid||KULLANICI_ID})); if(li.length) kBarRender(li.map(c=>({...c}))); }
     if(floatT%600===0) zamanKontrol();
     floatRaf=requestAnimationFrame(floatLoop);
   }
@@ -873,7 +883,12 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
       const div=document.createElement('div');
       div.className='k-item'+(k.uid===KULLANICI_ID?' benim':'');
       const c=document.createElement('canvas');
-      drawKarakter(c,{...k,level:lvl},54,70);
+      // Expression based on uid mood from Firebase + score
+      const ort2=parseFloat(document.getElementById('puanOrt')?.textContent)||5;
+      const scoreExpr2=ort2>=7?'mutlu':ort2<=3?'uzgun':'normal';
+      const kMood=k.mood||'normal';
+      const kExpr=kMood==='uykulu'?'uykulu':kMood==='sinirli'?'sinirli':kMood==='energik'?'energik':(k.uid===KULLANICI_ID?myExpr:scoreExpr2);
+      drawKarakter(c,{...k,level:lvl,expr:kExpr},54,70);
       const ad=document.createElement('div'); ad.className='k-isim';
       ad.textContent=(k.isim||'???')+' Lv'+lvl;
       const xpBar=document.createElement('div'); xpBar.className='k-xp-bar';
@@ -894,30 +909,147 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
     if(!floatRaf) floatLoop();
   });
 
-  // ---- RPS ----
-  let rpsHedef=null;
-  window.rpsBaslat=uid=>{
-    rpsHedef=uid;
-    const k=tumK[uid];
-    document.getElementById('rpsHedefIsim').textContent=(k?.cfg?.isim||'???')+" ile oynuyorsun";
+  // ---- RPS MULTIPLAYER ----
+  let rpsGameId=null, rpsRole=null, rpsHedefUid=null;
+  const RPS_BEATS={tas:'makas',kagit:'tas',makas:'kagit'};
+  const RPS_EMOJI={tas:'🪨',kagit:'📄',makas:'✂️'};
+
+  window.rpsBaslat=async uid=>{
+    rpsHedefUid=uid;
+    const k=tumK[uid]; const isim=k?.cfg?.isim||'???';
+    // Create challenge in Firebase
+    rpsGameId=KULLANICI_ID+'_'+uid+'_'+Date.now();
+    rpsRole='challenger';
+    await setDoc(doc(db,'rps_games',rpsGameId),{
+      challenger:KULLANICI_ID, challengerIsim:JSON.parse(localStorage.getItem('ofis_karakter')||'{}').isim||'???',
+      opponent:uid, opponentIsim:isim,
+      challengerChoice:null, opponentChoice:null,
+      status:'waiting', ts:serverTimestamp()
+    });
+    // Show modal for challenger
+    document.getElementById('rpsHedefIsim').textContent=isim+' ile oynuyorsun';
+    document.getElementById('rpsBekle').style.display='none';
+    document.getElementById('rpsSecimAlan').style.display='block';
+    document.getElementById('rpsSonucAlan').style.display='none';
+    document.getElementById('rpsModal').style.display='flex';
+    // Listen for result
+    rpsGameListen(rpsGameId);
+  };
+
+  let rpsUnsub=null;
+  function rpsGameListen(gameId){
+    if(rpsUnsub) rpsUnsub();
+    rpsUnsub=onSnapshot(doc(db,'rps_games',gameId), snap=>{
+      if(!snap.exists()) return;
+      const d=snap.data();
+      if(d.status==='result') rpsGosterSonuc(d);
+    });
+  }
+
+  window.rpsSec=async v=>{
+    if(!rpsGameId) return;
+    document.getElementById('rpsSecimAlan').style.display='none';
+    document.getElementById('rpsBekle').style.display='block';
+    document.getElementById('rpsBekle').textContent='⏳ Rakibin seçimi bekleniyor...';
+    const field=rpsRole==='challenger'?'challengerChoice':'opponentChoice';
+    const snap=await getDoc(doc(db,'rps_games',rpsGameId));
+    if(!snap.exists()) return;
+    const d=snap.data();
+    const update={[field]:v};
+    // Check if other already chose
+    const otherField=rpsRole==='challenger'?'opponentChoice':'challengerChoice';
+    if(d[otherField]){
+      update.status='result';
+      const cc=rpsRole==='challenger'?v:d[otherField];
+      const oc=rpsRole==='challenger'?d[otherField]:v;
+      update.challengerChoice=cc; update.opponentChoice=oc;
+      update.winner=cc===oc?'draw':RPS_BEATS[cc]===oc?'challenger':'opponent';
+    }
+    await updateDoc(doc(db,'rps_games',rpsGameId),update);
+  };
+
+  async function rpsGosterSonuc(d){
+    const isCh=rpsRole==='challenger';
+    const benimSecim=isCh?d.challengerChoice:d.opponentChoice;
+    const onunSecim=isCh?d.opponentChoice:d.challengerChoice;
+    const kazandim=(d.winner==='challenger'&&isCh)||(d.winner==='opponent'&&!isCh);
+    const berabere=d.winner==='draw';
+    let html=`<div style="font-size:1.5rem;text-align:center;margin-bottom:8px">${RPS_EMOJI[benimSecim]} vs ${RPS_EMOJI[onunSecim]}</div>`;
+    if(berabere) html+='<div style="color:#888;font-size:1.05rem;text-align:center">Berabere! 🤝</div>';
+    else if(kazandim){ html+='<div style="color:#4CAF50;font-size:1.1rem;font-weight:700;text-align:center">Kazandın! 🎉 +15 XP</div>'; await xpKazan(15); }
+    else{ html+='<div style="color:#E05252;font-size:1.05rem;text-align:center">Kaybettin! 😢 +3 XP</div>'; await xpKazan(3); }
+    document.getElementById('rpsBekle').style.display='none';
+    document.getElementById('rpsSonuc').innerHTML=html;
+    document.getElementById('rpsSonucAlan').style.display='block';
+    // Cleanup game after 10s
+    setTimeout(()=>deleteDoc(doc(db,'rps_games',rpsGameId)).catch(()=>{}),10000);
+  }
+
+  window.rpsKapat=()=>{
+    document.getElementById('rpsModal').style.display='none';
+    if(rpsUnsub){rpsUnsub();rpsUnsub=null;}
+    rpsGameId=null; rpsRole=null; rpsHedefUid=null;
+  };
+  window.rpsKabul=async()=>{
+    document.getElementById('rpsChallenge').style.display='none';
+    document.getElementById('rpsHedefIsim').textContent=document.getElementById('rcText').dataset.isim+' ile oynuyorsun';
+    document.getElementById('rpsBekle').style.display='none';
+    document.getElementById('rpsSecimAlan').style.display='block';
     document.getElementById('rpsSonucAlan').style.display='none';
     document.getElementById('rpsModal').style.display='flex';
   };
-  window.rpsSec=async v=>{
-    const items=['tas','kagit','makas'];
-    const rakip=items[Math.floor(Math.random()*3)];
-    const kazandim=(v==='tas'&&rakip==='makas')||(v==='kagit'&&rakip==='tas')||(v==='makas'&&rakip==='kagit');
-    const berabere=v===rakip;
-    const emojis={tas:'🪨',kagit:'📄',makas:'✂️'};
-    let sonucHTML=`<b>${emojis[v]} ${v}</b>  vs  <b>${emojis[rakip]} ${rakip}</b><br>`;
-    if(berabere) sonucHTML+='<span style="color:#888;font-size:1.05rem">Berabere! 🤝</span>';
-    else if(kazandim){ sonucHTML+='<span style="color:#4CAF50;font-size:1.1rem;font-weight:700">Kazandın! 🎉 +15 XP</span>'; await xpKazan(15); }
-    else sonucHTML+='<span style="color:#E05252;font-size:1.05rem">Kaybettin! 😢 +3 XP</span>';
-    if(!kazandim&&!berabere) await xpKazan(3);
-    document.getElementById('rpsSonuc').innerHTML=sonucHTML;
-    document.getElementById('rpsSonucAlan').style.display='block';
+  window.rpsReddet=async()=>{
+    document.getElementById('rpsChallenge').style.display='none';
+    if(rpsGameId) await deleteDoc(doc(db,'rps_games',rpsGameId)).catch(()=>{});
+    rpsGameId=null;
   };
-  window.rpsKapat=()=>document.getElementById('rpsModal').style.display='none';
+
+  // Listen for incoming challenges
+  onSnapshot(query(collection(db,'rps_games'),where('opponent','==',KULLANICI_ID),where('status','==','waiting')), snap=>{
+    snap.docChanges().forEach(ch=>{
+      if(ch.type==='added'){
+        const d=ch.doc.data();
+        rpsGameId=ch.doc.id; rpsRole='opponent';
+        document.getElementById('rcTitle').textContent='✂️ Meydan Okuma!';
+        const rcText=document.getElementById('rcText');
+        rcText.textContent=(d.challengerIsim||'Biri')+' sana taş kağıt makas oynamak istiyor!';
+        rcText.dataset.isim=d.challengerIsim||'???';
+        document.getElementById('rpsChallenge').style.display='block';
+        rpsGameListen(rpsGameId);
+        setTimeout(()=>document.getElementById('rpsChallenge').style.display='none',20000);
+      }
+    });
+  });
+
+  // ---- OBJELEr ----
+  const OBJ_CONFIG={
+    bilgisayar:{emoji:'⌨️💻',mesaj:'Çalışıyorum...',dur:8000,state:'calisiyor'},
+    yazici:    {emoji:'📄🖨️',mesaj:'Yazdırıyorum!',dur:4000,state:'yazici'},
+    kitaplik:  {emoji:'📖✨',mesaj:'Okuyorum...',dur:6000,state:'okuyor'},
+    toplanti:  {emoji:'💬🗣️',mesaj:'Toplantıdayım',dur:7000,state:'toplanti'},
+    tahta:     {emoji:'✏️💡',mesaj:'Fikir üretiyorum!',dur:5000,state:'tahtada'},
+    dart:      {emoji:'🎯😎',mesaj:'HEDEF!',dur:3000,state:'dart'},
+    kahve:     {emoji:'☕😌',mesaj:'Kahve molaaa!',dur:4000,state:'kahve'},
+    buzdolabi: {emoji:'🥪😋',mesaj:'Atıştırıyorum~',dur:3500,state:'yiyor'},
+    bitki:     {emoji:'🌱💚',mesaj:'Bitkimi suladım!',dur:2500,state:'bitki'},
+  };
+
+  window.objTikla=function(objId, el){
+    const cfg=OBJ_CONFIG[objId]; if(!cfg) return;
+    const K=tumK[KULLANICI_ID]; if(!K) return;
+    // Objenin pozisyonunu al
+    const rect=el.getBoundingClientRect();
+    const tx=rect.left+rect.width/2-32, ty=rect.top-100;
+    K.state='gidiyor'; K.hedefX=tx; K.hedefY=ty;
+    K.varinca=()=>{
+      K.state=cfg.state; K.stateTimer=cfg.dur/16;
+      charBubble(K.el, cfg.emoji);
+      // Objeyi aktif yap
+      document.querySelectorAll('.k-obj').forEach(o=>o.classList.remove('active'));
+      el.classList.add('active');
+      setTimeout(()=>{K.state='normal';el.classList.remove('active');},cfg.dur);
+    };
+  };
 
   // ---- EDITOR ----
   let kCfg={isim:'',cinsiyet:'kadin',ten:TEN[0],sac:SAC[0],sacStil:0,goz:GOZ[1],kiy:KIY[0],aksesuar:'yok'};
