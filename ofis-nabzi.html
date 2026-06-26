@@ -467,9 +467,8 @@ header p { font-size:0.76rem; color:var(--yazi2); margin-top:2px; }
 <div class="k-obj" onclick="objTikla('bilgisayar',this)" style="left:3%;bottom:24%"><div class="ico">🖥️</div><div class="lbl">Bilgisayar</div></div>
 <div class="k-obj" onclick="objTikla('yazici',this)"    style="left:3%;bottom:12%"><div class="ico">🖨️</div><div class="lbl">Yazıcı</div></div>
 <div class="k-obj" onclick="objTikla('kitaplik',this)"  style="left:14%;bottom:14%"><div class="ico">📚</div><div class="lbl">Kitaplık</div></div>
-  <div class="k-obj" onclick="objTikla('tahta',this)"     style="left:50%;bottom:22%"><div class="ico">📋</div><div class="lbl">Tahta</div></div>
-
 <!-- Orta -->
+<div class="k-obj" onclick="objTikla('tahta',this)"     style="left:22%;bottom:22%"><div class="ico">📋</div><div class="lbl">Tahta</div></div>
 <!-- Sağ: Mutfak köşesi -->
 <div class="k-obj" onclick="objTikla('kahve',this)"     style="right:12%;bottom:22%"><div class="ico">☕</div><div class="lbl">Kahve</div></div>
 <div class="k-obj" onclick="objTikla('buzdolabi',this)" style="right:3%;bottom:22%"><div class="ico">🧊</div><div class="lbl">Buzdolabı</div></div>
@@ -874,7 +873,7 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
         K.danceAngle+=0.12; K.x+=Math.sin(K.danceAngle)*2.5*spd; K.y+=Math.cos(K.danceAngle*0.7)*1.2;
       } else if(K.state==='wave'){
         K.x+=Math.sin(floatT*0.18)*2; K.y+=K.vy*0.3;
-      } else if(['calisiyor','okuyor','toplanti','tahtada','kahve','yiyor','bitki','dart','yazici'].includes(K.state)){
+      } else if(['calisiyor','okuyor','toplanti','tahtada','kahve','yiyor','bitki','dart','yazici','atObj'].includes(K.state)){
         // Obje animasyonu — hafif sallanma
         K.x+=Math.sin(floatT*0.08)*0.5;
       } else {
@@ -932,15 +931,30 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
     });
   }
 
-  // Aktivite badge güncelle
+  // Aktivite badge güncelle + karakteri o pozisyona götür
   function aktiviteBadgeGuncelle(uid, aktiflik){
     const K=tumK[uid]; if(!K) return;
     let b=K.el.querySelector('.k-aktivite-badge');
     if(!aktiflik||!aktiflik.bitis||aktiflik.bitis<Date.now()){
-      if(b) b.remove(); return;
+      if(b) b.remove();
+      return;
     }
+    // Badge göster
     if(!b){ b=document.createElement('div'); b.className='k-aktivite-badge'; K.el.style.position='fixed'; K.el.appendChild(b); }
     b.textContent=aktiflik.emoji||'✨';
+    // Karakteri aktivite konumuna götür (eğer konum var ve uzaktaysa)
+    if(typeof aktiflik.x==='number' && typeof aktiflik.y==='number'){
+      const dx=aktiflik.x-K.x, dy=aktiflik.y-K.y;
+      const dist=Math.sqrt(dx*dx+dy*dy);
+      if(dist>120){
+        // Anlık ışınla (uzaktaysa)
+        K.x=aktiflik.x; K.y=aktiflik.y;
+      } else if(dist>5){
+        // Smooth git
+        K.x+=dx*0.08; K.y+=dy*0.08;
+      }
+      K.state='atObj'; // Hareketi durdur
+    }
   }
 
   // Firebase listener
@@ -1079,7 +1093,7 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
     bilgisayar:{emoji:'⌨️💻',mesaj:'Çalışıyorum...',dur:8000,state:'calisiyor'},
     yazici:    {emoji:'📄🖨️',mesaj:'Yazdırıyorum!',dur:4000,state:'yazici'},
     kitaplik:  {emoji:'📖✨',mesaj:'Okuyorum...',dur:6000,state:'okuyor'},
-    tahta:     {emoji:'✏️💡',mesaj:'Fikir üretiyorum!',dur:6000,state:'tahtada'},
+    tahta:     {emoji:'✏️💡',mesaj:'Fikir üretiyorum!',dur:5000,state:'tahtada'},
     kahve:     {emoji:'☕😌',mesaj:'Kahve molaaa!',dur:4000,state:'kahve'},
     buzdolabi: {emoji:'🥪😋',mesaj:'Atıştırıyorum~',dur:3500,state:'yiyor'},
     bitki:     {emoji:'🌱💚',mesaj:'Bitkimi suladım!',dur:2500,state:'bitki'},
@@ -1097,9 +1111,11 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
       charBubble(K.el, cfg.emoji);
       document.querySelectorAll('.k-obj').forEach(o=>o.classList.remove('aktif'));
       el.classList.add('aktif');
-      // Firebase'e aktiviteyi kaydet (diğerleri görsün)
+      // Firebase'e aktiviteyi + pozisyonu kaydet (diğerleri görsün)
       const bitis=Date.now()+cfg.dur;
-      await setDoc(doc(db,'karakterler',KULLANICI_ID),{aktiflik:{obj:objId,emoji:cfg.emoji,bitis}},{merge:true});
+      await setDoc(doc(db,'karakterler',KULLANICI_ID),{
+        aktiflik:{obj:objId, emoji:cfg.emoji, bitis, x:Math.round(K.x), y:Math.round(K.y)}
+      },{merge:true});
       setTimeout(async()=>{
         K.state='normal'; el.classList.remove('aktif');
         await setDoc(doc(db,'karakterler',KULLANICI_ID),{aktiflik:null},{merge:true});
