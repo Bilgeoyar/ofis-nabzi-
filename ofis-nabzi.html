@@ -432,6 +432,28 @@ header p { font-size:0.76rem; color:var(--yazi2); margin-top:2px; }
 .lvl-popup { position:fixed;top:50%;left:50%;z-index:9999;background:linear-gradient(135deg,#6c63ff,#a78bfa);color:#fff;border-radius:20px;padding:20px 30px;font-size:1.2rem;font-weight:900;text-align:center;box-shadow:0 8px 30px rgba(108,99,255,0.5);animation:levelUp 0.4s ease,popIn 0.3s ease; }
 
 @media(max-width:520px){ .k-editor{flex-direction:column;align-items:center} }
+
+/* === EĞLENCELI KARAKTERİZASYON === */
+#kTrailCanvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:997;}
+.k-pet{position:fixed;z-index:999;pointer-events:none;font-size:1.4rem;transition:none;filter:drop-shadow(0 2px 3px rgba(0,0,0,0.2));}
+.k-emote{position:absolute;pointer-events:none;animation:emoteFloat 1.2s ease forwards;z-index:9999;font-size:1.4rem;}
+@keyframes emoteFloat{0%{opacity:1;transform:translateX(-50%) scale(0.5)}30%{transform:translateX(-50%) scale(1.2)}100%{opacity:0;transform:translateX(-50%) translateY(-60px) scale(0.8)}}
+.k-float canvas{transition:width 0.3s,height 0.3s;}
+.k-float.has-aura canvas{border-radius:50%;padding:2px;}
+/* Editor ek seçenekler */
+.k-size-row{display:flex;gap:6px;}
+.k-size-btn{flex:1;padding:6px 4px;border:2px solid var(--border);border-radius:10px;background:var(--btn-bg);color:var(--yazi2);font-size:0.78rem;font-weight:600;cursor:pointer;transition:all 0.15s;text-align:center;}
+.k-size-btn:hover,.k-size-btn.aktif{border-color:#6c63ff;background:#6c63ff;color:#fff;}
+.k-hayvan-row{display:flex;gap:6px;flex-wrap:wrap;}
+.k-hayvan-btn{padding:6px 8px;border:2px solid var(--border);border-radius:10px;background:var(--btn-bg);font-size:1.2rem;cursor:pointer;transition:all 0.15s;}
+.k-hayvan-btn:hover,.k-hayvan-btn.aktif{border-color:#6c63ff;background:var(--alinti-bg);transform:scale(1.15);}
+.k-aura-row{display:flex;gap:5px;flex-wrap:wrap;}
+.k-aura-swatch{width:26px;height:26px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all 0.12s;position:relative;}
+.k-aura-swatch:hover{transform:scale(1.2);}
+.k-aura-swatch.aktif{border-color:#fff;box-shadow:0 0 0 2px #6c63ff,0 0 8px currentColor;}
+.k-emote-bar{display:flex;gap:6px;flex-wrap:wrap;}
+.k-emote-btn{padding:6px 10px;border:2px solid var(--border);border-radius:10px;background:var(--btn-bg);font-size:1rem;cursor:pointer;transition:all 0.15s;}
+.k-emote-btn:hover{border-color:#6c63ff;transform:scale(1.1);}
 </style>
 </head>
 <body>
@@ -468,7 +490,7 @@ header p { font-size:0.76rem; color:var(--yazi2); margin-top:2px; }
 <div class="k-obj" onclick="objTikla('yazici',this)"    style="left:3%;bottom:12%"><div class="ico">🖨️</div><div class="lbl">Yazıcı</div></div>
 <div class="k-obj" onclick="objTikla('kitaplik',this)"  style="left:14%;bottom:14%"><div class="ico">📚</div><div class="lbl">Kitaplık</div></div>
 <!-- Orta -->
-<div class="k-obj" onclick="objTikla('tahta',this)"     style="left:22%;bottom:5%"><div class="ico">📋</div><div class="lbl">Tahta</div></div>
+<div class="k-obj" onclick="objTikla('tahta',this)"     style="left:22%;bottom:22%"><div class="ico">📋</div><div class="lbl">Tahta</div></div>
 <!-- Sağ: Mutfak köşesi -->
 <div class="k-obj" onclick="objTikla('kahve',this)"     style="right:12%;bottom:22%"><div class="ico">☕</div><div class="lbl">Kahve</div></div>
 <div class="k-obj" onclick="objTikla('buzdolabi',this)" style="right:3%;bottom:22%"><div class="ico">🧊</div><div class="lbl">Buzdolabı</div></div>
@@ -503,6 +525,11 @@ header p { font-size:0.76rem; color:var(--yazi2); margin-top:2px; }
         <div class="k-opt-group"><label>Göz Rengi</label><div class="k-color-row" id="kGozRow"></div></div>
         <div class="k-opt-group"><label>Kıyafet Rengi</label><div class="k-color-row" id="kKiyRow"></div></div>
         <div class="k-opt-group"><label>Aksesuar <span style="font-size:0.65rem;color:#6c63ff" id="kLvlHint"></span></label><div class="k-ak-row" id="kAkRow"></div></div>
+        <div class="k-opt-group"><label>📏 Boyut</label><div class="k-size-row" id="kBoyutRow"></div></div>
+        <div class="k-opt-group"><label>✨ Aura</label><div class="k-aura-row" id="kAuraRow"></div></div>
+        <div class="k-opt-group"><label>🐾 Evcil Hayvan</label><div class="k-hayvan-row" id="kHayvanRow"></div></div>
+        <div class="k-opt-group"><label>💫 Hareket İzi</label><div class="k-btn-row" id="kIzRow"></div></div>
+        <div class="k-opt-group"><label>🎉 Emote Seç</label><div class="k-emote-bar" id="kEmoteBar"></div></div>
       </div>
     </div>
     <button class="k-kaydet" onclick="karakterKaydet()">✨ Kaydet & Sahneye Çık</button>
@@ -554,6 +581,7 @@ header p { font-size:0.76rem; color:var(--yazi2); margin-top:2px; }
     <div class="burc-yorum-metin" id="burcYorumMetin"></div>
   </div>
 </div>
+<canvas id="kTrailCanvas"></canvas>
 <div class="sayfa">
 
   <!-- SOL PANEL -->
@@ -665,12 +693,16 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
 
     // Hair
     const hairStyles=[
-      ()=>{p(4,0,12,1,sac);p(3,1,14,2,sac);p(2,2,3,5,sac);p(15,2,3,5,sac);},
-      ()=>{p(4,0,12,1,sac);p(3,1,14,2,sac);p(2,2,3,6,sac);p(15,2,3,6,sac);},
-      ()=>{p(4,1,12,2,sac);p(2,2,3,4,sac);p(15,2,3,4,sac);p(0,0,5,5,sac);p(15,0,5,5,sac);},
-      ()=>{p(5,0,2,2,sac);p(9,0,2,3,sac);p(13,0,2,2,sac);p(4,1,12,2,sac);p(2,2,3,5,sac);p(15,2,3,5,sac);}
+      ()=>{p(4,0,12,1,sac);p(3,1,14,2,sac);p(2,2,3,5,sac);p(15,2,3,5,sac);}, // 0 kısa
+      ()=>{p(4,0,12,1,sac);p(3,1,14,2,sac);p(2,2,3,7,sac);p(15,2,3,7,sac);}, // 1 uzun
+      ()=>{p(4,1,12,2,sac);p(2,2,3,4,sac);p(15,2,3,4,sac);p(0,0,5,5,sac);p(15,0,5,5,sac);}, // 2 topuz
+      ()=>{p(5,0,2,2,sac);p(9,0,2,3,sac);p(13,0,2,2,sac);p(4,1,12,2,sac);p(2,2,3,5,sac);p(15,2,3,5,sac);}, // 3 dalgalı
+      ()=>{p(3,0,14,3,sac);p(2,2,3,4,sac);p(15,0,2,8,sac);}, // 4 yan taraf
+      ()=>{p(3,0,14,4,sac);p(2,0,4,7,sac);p(14,0,4,7,sac);p(6,0,8,2,sac);}, // 5 kabarık afro
+      ()=>{p(4,0,12,2,sac);p(3,2,3,4,sac);p(15,2,3,4,sac);p(8,0,4,14,sac);}, // 6 at kuyruğu
+      ()=>{p(8,0,4,8,sac);p(7,2,2,3,sac);p(11,2,2,3,sac);}, // 7 mohawk
     ];
-    (hairStyles[st]||hairStyles[0])();
+    (hairStyles[Math.min(st,7)]||hairStyles[0])();
 
     // Head over hair
     p(5,2,10,1,ten);p(4,3,12,1,ten);p(3,4,14,10,ten);p(4,14,12,1,ten);p(5,15,10,1,ten);
@@ -784,6 +816,10 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
     if(uid!==KULLANICI_ID){
       el.title=(cfg.isim||'???')+' — Taş Kağıt Makas oyna!';
       el.onclick=()=>rpsBaslat(uid);
+    } else {
+      el.style.cursor='pointer';
+      el.title='Tıkla - emote yap!';
+      el.onclick=()=>emoteYap(Math.floor(Math.random()*EMOTELER.length));
     }
     const c=document.createElement('canvas');
     drawKarakter(c,cfg,64,82);
@@ -796,12 +832,17 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
       vy:(uid===KULLANICI_ID?0.8:(0.4+((h>>4)%8)*0.1))*((h>>8)%2?1:-1),
       state:'normal', stateTimer:0, flip:false, danceAngle:0,
       phaseX:(h%628)/100, phaseY:((h>>4)%628)/100};
+    charBoyutuAyarla(uid, cfg.boyut);
+    charAuraSec(uid, cfg.aura);
+    if(uid===KULLANICI_ID){ const s=JSON.parse(localStorage.getItem('ofis_karakter')||'{}'); petOlustur(s.hayvan); }
   }
   function charElGuncelle(uid, cfg){
     if(!tumK[uid]) return;
     tumK[uid].cfg={...tumK[uid].cfg,...cfg};
     drawKarakter(tumK[uid].canvas, tumK[uid].cfg, 64, 82);
     if(uid!==KULLANICI_ID) tumK[uid].el.title=(cfg.isim||'???')+' — Taş Kağıt Makas oyna!';
+    charBoyutuAyarla(uid, cfg.boyut);
+    charAuraSec(uid, cfg.aura);
   }
 
   function charBubble(el, txt){
@@ -965,6 +1006,7 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
       if(!tumK[k.uid]) charElOlustur(k.uid,k); else charElGuncelle(k.uid,k);
       // Kendi aktivitemizi gösterme (zaten charBubble var)
       if(k.uid!==KULLANICI_ID) aktiviteBadgeGuncelle(k.uid, k.aktiflik);
+      if(k.uid!==KULLANICI_ID && k.emote) emoteGoster(k.uid, k.emote);
       // Gelen challenge kontrolü
       if(k.uid===KULLANICI_ID && k.pendingChallenge && k.pendingChallenge.ts){
         const pc=k.pendingChallenge;
@@ -1088,6 +1130,119 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
 
   // Challenge listener - karakterler snapshot üzerinden çalışıyor
 
+  // ===== BOYUT =====
+  function charBoyutuAyarla(uid, boyut){
+    const K=tumK[uid]; if(!K) return;
+    const scale=boyut||1;
+    const w=Math.round(64*scale), h=Math.round(82*scale);
+    K.canvas.style.width=w+'px'; K.canvas.style.height=h+'px';
+  }
+
+  // ===== AURA =====
+  function charAuraSec(uid, aura){
+    const K=tumK[uid]; if(!K) return;
+    if(!aura||aura==='yok'){ K.el.style.filter='drop-shadow(1px 3px 5px rgba(0,0,0,0.2))'; K.el.classList.remove('has-aura'); return; }
+    if(aura==='gokkusagi'){
+      K.el.style.filter='drop-shadow(0 0 8px red) drop-shadow(0 0 12px blue) drop-shadow(0 0 6px yellow)';
+    } else {
+      K.el.style.filter=`drop-shadow(0 0 8px ${aura}) drop-shadow(0 0 4px ${aura})`;
+    }
+    K.el.classList.add('has-aura');
+  }
+
+  // ===== PET HAYVAN =====
+  let petEl=null, petX=100, petY=200;
+  function petOlustur(emoji){
+    if(petEl) petEl.remove();
+    if(!emoji||emoji==='yok') return;
+    petEl=document.createElement('div');
+    petEl.className='k-pet'; petEl.textContent=emoji;
+    document.body.appendChild(petEl);
+  }
+  function petGuncelle(myK){
+    if(!petEl||!myK) return;
+    petX+=(myK.x+20-petX)*0.06+(Math.random()-0.5)*0.5;
+    petY+=(myK.y+70-petY)*0.06;
+    petEl.style.left=petX+'px'; petEl.style.top=petY+'px';
+    petEl.style.transform=myK.x>petX?'scaleX(1)':'scaleX(-1)';
+  }
+
+  // ===== TRAIL (iz) =====
+  let trailCanvas=null, trailCtx=null, trailParts=[];
+  function trailBaslat(){
+    trailCanvas=document.getElementById('kTrailCanvas');
+    if(!trailCanvas) return;
+    trailCanvas.width=window.innerWidth; trailCanvas.height=window.innerHeight;
+    trailCtx=trailCanvas.getContext('2d');
+    window.addEventListener('resize',()=>{ if(trailCanvas){trailCanvas.width=window.innerWidth;trailCanvas.height=window.innerHeight;} });
+  }
+  trailBaslat();
+  const IZ_RENK={mor:'rgba(108,99,255,0.7)',pembe:'rgba(255,100,180,0.7)',altin:'rgba(255,210,0,0.8)',yesil:'rgba(80,200,120,0.7)'};
+  const IZ_SEKIL={mor:'●',pembe:'♥',altin:'★',yesil:'✿'};
+  function trailEkle(K){
+    const iz=(JSON.parse(localStorage.getItem('ofis_karakter')||'{}')).iz;
+    if(!iz||iz==='yok'||!trailCtx) return;
+    if(Math.abs(K.vx)<0.2&&Math.abs(K.vy)<0.2&&K.state==='normal') return;
+    trailParts.push({x:K.x+32,y:K.y+70,life:1,color:IZ_RENK[iz]||'rgba(108,99,255,0.7)',sekil:IZ_SEKIL[iz]||'●',size:12+Math.random()*6});
+  }
+  function trailCiz(){
+    if(!trailCtx) return;
+    trailCtx.clearRect(0,0,trailCanvas.width,trailCanvas.height);
+    trailParts=trailParts.filter(p=>{
+      p.life-=0.04; if(p.life<=0) return false;
+      trailCtx.globalAlpha=p.life*0.8;
+      trailCtx.fillStyle=p.color;
+      trailCtx.font=`${p.size}px sans-serif`;
+      trailCtx.textAlign='center';
+      trailCtx.fillText(p.sekil,p.x,p.y);
+      return true;
+    });
+    trailCtx.globalAlpha=1;
+  }
+
+  // ===== EMOTE =====
+  const EMOTELER=[
+    {emoji:'❤️',count:7},{emoji:'⭐',count:8},{emoji:'🎉',count:10},
+    {emoji:'💥',count:5},{emoji:'✨',count:12},{emoji:'🌈',count:3},
+    {emoji:'💫',count:8},{emoji:'🔥',count:6}
+  ];
+  function emoteYap(emoteIdx){
+    const K=tumK[KULLANICI_ID]; if(!K) return;
+    const e=EMOTELER[emoteIdx]||EMOTELER[0];
+    for(let i=0;i<e.count;i++){
+      setTimeout(()=>{
+        const div=document.createElement('div');
+        div.className='k-emote';
+        div.textContent=e.emoji;
+        div.style.left=(K.x+Math.random()*80-10)+'px';
+        div.style.top=(K.y+Math.random()*40)+'px';
+        div.style.position='fixed';
+        div.style.animationDelay=(Math.random()*0.4)+'s';
+        document.body.appendChild(div);
+        setTimeout(()=>div.remove(),1400);
+      },i*60);
+    }
+    // Firebase'e emote yaz (kısa süreli)
+    setDoc(doc(db,'karakterler',KULLANICI_ID),{emote:{emoji:e.emoji,ts:Date.now()}},{merge:true});
+    setTimeout(()=>setDoc(doc(db,'karakterler',KULLANICI_ID),{emote:null},{merge:true}),2000);
+  }
+  window.emoteYap=emoteYap;
+
+  // Diğer kullanıcıların emotesini göster
+  function emoteGoster(uid, emote){
+    const K=tumK[uid]; if(!K||!emote||!emote.ts) return;
+    if(emote.ts<Date.now()-3000) return; // Eski emote
+    const div=document.createElement('div');
+    div.className='k-emote';
+    div.textContent=emote.emoji;
+    div.style.left=(K.x+20)+'px'; div.style.top=(K.y)+'px';
+    div.style.position='fixed';
+    document.body.appendChild(div);
+    setTimeout(()=>div.remove(),1400);
+  }
+
+    // Challenge listener - karakterler snapshot üzerinden çalışıyor
+
   // ---- OBJELEr ----
   const OBJ_CONFIG={
     bilgisayar:{emoji:'⌨️💻',mesaj:'Çalışıyorum...',dur:8000,state:'calisiyor'},
@@ -1124,7 +1279,7 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
   };
 
   // ---- EDITOR ----
-  let kCfg={isim:'',cinsiyet:'kadin',ten:TEN[0],sac:SAC[0],sacStil:0,goz:GOZ[1],kiy:KIY[0],aksesuar:'yok'};
+  let kCfg={isim:'',cinsiyet:'kadin',ten:TEN[0],sac:SAC[0],sacStil:0,goz:GOZ[1],kiy:KIY[0],aksesuar:'yok',boyut:1,aura:'yok',hayvan:'yok',iz:'yok'};
 
   window.karakterEditorAc=()=>{
     const s=localStorage.getItem('ofis_karakter');
@@ -1148,6 +1303,20 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
     if(lvl>=3) aks.push({v:'pelerin',l:'🦸 Pelerin'});
     if(lvl>=5) aks.push({v:'kanat',l:'🪽 Kanatlar'});
     document.getElementById('kAkRow').innerHTML=aks.map(a=>`<button class="k-ak-btn ${kCfg.aksesuar===a.v?'aktif':''}" onclick="kSet('aksesuar','${a.v}')">${a.l}</button>`).join('');
+    // Boyut
+    const boyutlar=[{v:0.7,l:'🔹 Küçük'},{v:1,l:'⬜ Normal'},{v:1.5,l:'🔷 Büyük'},{v:2,l:'🟦 Dev'}];
+    document.getElementById('kBoyutRow').innerHTML=boyutlar.map(b=>`<button class="k-size-btn ${(kCfg.boyut||1)===b.v?'aktif':''}" onclick="kSet('boyut',${b.v})">${b.l}</button>`).join('');
+    // Aura
+    const auralar=[{v:'yok',c:'#e8e8e8',l:'Yok'},{v:'#9b59b6',c:'#9b59b6',l:'Mor'},{v:'#FFD700',c:'#FFD700',l:'Altın'},{v:'#FF69B4',c:'#FF69B4',l:'Pembe'},{v:'#00CED1',c:'#00CED1',l:'Mavi'},{v:'#FF4500',c:'#FF4500',l:'Ateş'},{v:'gokkusagi',c:'linear-gradient(45deg,red,orange,yellow,green,blue,violet)',l:'🌈'}];
+    document.getElementById('kAuraRow').innerHTML=auralar.map(a=>`<div class="k-aura-swatch ${(kCfg.aura||'yok')===a.v?'aktif':''}" style="background:${a.c}" title="${a.l}" onclick="kSet('aura','${a.v}')"></div>`).join('');
+    // Hayvan
+    const hayvanlar=['yok','🐱','🐶','🐸','🦆','🐰','👾','🐼','🦊','🐧'];
+    document.getElementById('kHayvanRow').innerHTML=hayvanlar.map(h=>`<button class="k-hayvan-btn ${(kCfg.hayvan||'yok')===h?'aktif':''}" onclick="kSet('hayvan','${h}')">${h==='yok'?'❌':h}</button>`).join('');
+    // İz
+    const izler=[{v:'yok',l:'Yok'},{v:'mor',l:'💜 Mor'},{v:'pembe',l:'💗 Pembe'},{v:'altin',l:'⭐ Yıldız'},{v:'yesil',l:'✿ Çiçek'}];
+    document.getElementById('kIzRow').innerHTML=izler.map(i=>`<button class="k-btn ${(kCfg.iz||'yok')===i.v?'aktif':''}" onclick="kSet('iz','${i.v}')" style="flex:none;padding:5px 8px;font-size:0.76rem">${i.l}</button>`).join('');
+    // Emote bar (editörde önizleme)
+    document.getElementById('kEmoteBar').innerHTML=EMOTELER.map((e,i)=>`<button class="k-emote-btn" onclick="emoteYap(${i})" title="${e.emoji} x${e.count}">${e.emoji}</button>`).join('');
   }
   window.kSet=(key,val)=>{ kCfg[key]=val; kBuildUI(); kGuncelle(); };
   window.kGuncelle=()=>{
@@ -1167,6 +1336,9 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
     await setDoc(doc(db,'karakterler',KULLANICI_ID),{...full,guncellendi:serverTimestamp()});
     window.karakterEditorKapat();
     if(!tumK[KULLANICI_ID]) charElOlustur(KULLANICI_ID,full); else charElGuncelle(KULLANICI_ID,full);
+    petOlustur(full.hayvan);
+    charAuraSec(KULLANICI_ID,full.aura);
+    charBoyutuAyarla(KULLANICI_ID,full.boyut);
     if(!floatRaf) floatLoop();
   };
 
