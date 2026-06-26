@@ -71,7 +71,7 @@ header p { font-size:0.76rem; color:var(--yazi2); margin-top:2px; }
 .emoji-btn { background:var(--btn-bg); border:2px solid transparent; border-radius:20px; padding:5px 10px; font-size:0.95rem; cursor:pointer; transition:all 0.15s; display:flex; align-items:center; gap:3px; }
 .emoji-btn:hover { background:var(--alinti-bg); border-color:#6c63ff; }
 .emoji-btn.secildi { background:var(--alinti-bg); border-color:#6c63ff; }
-.emoji-btn .sayi { font-size:0.75rem; color:#000000(--yazi2); font-weight:600; }
+.emoji-btn .sayi { font-size:0.75rem; color:var(--yazi2); font-weight:600; }
 .bos-mesaj { text-align:center; color:var(--yazi3); padding:40px 0; font-size:0.93rem; }
 .bos-mesaj span { font-size:2rem; display:block; margin-bottom:8px; }
 .kendi-mesaj .mesaj-metin::before { content:"Sen • "; color:#6c63ff; font-size:0.75rem; font-weight:600; }
@@ -215,9 +215,219 @@ header p { font-size:0.76rem; color:var(--yazi2); margin-top:2px; }
 @media (max-width:400px) {
   .burc-grid { grid-template-columns:repeat(3,1fr); }
 }
+
+/* ====== KARAKTER SİSTEMİ ====== */
+.k-bar {
+  max-width:1400px; margin:0 auto 16px auto;
+  background:var(--kart); border-radius:16px;
+  padding:14px 20px; box-shadow:0 2px 8px var(--shadow);
+  overflow-x:auto; transition:background 0.3s;
+}
+.k-bar-baslik {
+  font-size:0.72rem; font-weight:700; color:var(--yazi2);
+  text-transform:uppercase; letter-spacing:0.06em;
+  margin-bottom:10px; display:flex; align-items:center;
+  justify-content:space-between;
+}
+.k-bar-ic {
+  display:flex; gap:20px; align-items:flex-end;
+  min-height:90px;
+}
+.k-item {
+  display:flex; flex-direction:column; align-items:center; gap:5px;
+  cursor:default;
+}
+.k-item canvas {
+  image-rendering:pixelated; image-rendering:crisp-edges;
+  width:56px; height:72px; display:block;
+}
+.k-item .k-isim {
+  font-size:0.68rem; color:var(--yazi2); font-weight:600;
+  text-align:center; max-width:64px;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.k-item.benim .k-isim { color:#6c63ff; }
+.k-item.benim canvas { filter:drop-shadow(0 0 6px #6c63ff88); }
+.k-yok { font-size:0.82rem; color:var(--yazi3); padding:8px 0; }
+
+/* FLOATING */
+.k-float {
+  position:fixed; z-index:999; pointer-events:none;
+  will-change:transform;
+}
+.k-float canvas {
+  image-rendering:pixelated; image-rendering:crisp-edges;
+  width:64px; height:82px; display:block;
+  filter:drop-shadow(1px 3px 5px rgba(0,0,0,0.25));
+}
+
+/* MODAL */
+.k-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,0.75);
+  z-index:3000; display:flex; align-items:center; justify-content:center;
+  padding:16px;
+}
+.k-modal {
+  background:var(--kart); border-radius:20px; padding:24px;
+  width:100%; max-width:520px; max-height:92vh;
+  overflow-y:auto; box-shadow:0 8px 40px rgba(0,0,0,0.4);
+}
+.k-modal h2 {
+  font-size:1.1rem; font-weight:800; color:var(--yazi);
+  margin-bottom:20px; display:flex; align-items:center; gap:8px;
+}
+.k-editor { display:flex; gap:20px; align-items:flex-start; }
+.k-preview-col {
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+  flex-shrink:0;
+}
+.k-preview-col canvas {
+  image-rendering:pixelated; image-rendering:crisp-edges;
+  width:120px; height:154px;
+  background:var(--yanit-bg); border-radius:12px;
+  border:2px solid var(--border);
+}
+.k-preview-ad {
+  font-size:0.78rem; font-weight:700; color:#6c63ff;
+  max-width:120px; text-align:center; overflow:hidden;
+  text-overflow:ellipsis; white-space:nowrap;
+}
+.k-options { flex:1; display:flex; flex-direction:column; gap:14px; }
+.k-opt-group label {
+  display:block; font-size:0.7rem; font-weight:700;
+  color:var(--yazi2); text-transform:uppercase;
+  letter-spacing:0.05em; margin-bottom:6px;
+}
+.k-opt-group input {
+  width:100%; border:2px solid var(--border); border-radius:10px;
+  padding:8px 10px; font-size:0.9rem; outline:none;
+  background:var(--input-bg); color:var(--yazi);
+  font-family:inherit; transition:border-color 0.2s;
+}
+.k-opt-group input:focus { border-color:#6c63ff; }
+.k-btn-row { display:flex; gap:6px; }
+.k-btn {
+  flex:1; padding:8px 6px; border:2px solid var(--border);
+  border-radius:10px; background:var(--btn-bg); color:var(--yazi2);
+  font-size:0.82rem; font-weight:600; cursor:pointer; transition:all 0.15s;
+  text-align:center;
+}
+.k-btn:hover { border-color:#6c63ff; background:var(--alinti-bg); color:#6c63ff; }
+.k-btn.aktif { border-color:#6c63ff; background:#6c63ff; color:#fff; }
+.k-color-row { display:flex; gap:5px; flex-wrap:wrap; }
+.k-swatch {
+  width:26px; height:26px; border-radius:50%; cursor:pointer;
+  border:3px solid transparent; transition:all 0.12s; flex-shrink:0;
+}
+.k-swatch:hover { transform:scale(1.15); }
+.k-swatch.aktif { border-color:#6c63ff; transform:scale(1.2); box-shadow:0 0 0 2px #6c63ff44; }
+.k-stil-row { display:flex; gap:6px; }
+.k-stil-btn {
+  width:40px; height:52px; border:2px solid var(--border);
+  border-radius:8px; cursor:pointer; background:var(--yanit-bg);
+  padding:0; overflow:hidden; transition:all 0.12s;
+}
+.k-stil-btn:hover { border-color:#6c63ff; }
+.k-stil-btn.aktif { border-color:#6c63ff; box-shadow:0 0 0 2px #6c63ff44; }
+.k-stil-btn canvas {
+  image-rendering:pixelated; image-rendering:crisp-edges;
+  width:40px; height:52px; display:block;
+}
+.k-ak-row { display:flex; gap:5px; flex-wrap:wrap; }
+.k-ak-btn {
+  padding:5px 8px; border:2px solid var(--border);
+  border-radius:8px; background:var(--btn-bg); color:var(--yazi2);
+  font-size:0.78rem; cursor:pointer; transition:all 0.12s;
+}
+.k-ak-btn:hover { border-color:#6c63ff; background:var(--alinti-bg); }
+.k-ak-btn.aktif { border-color:#6c63ff; background:#6c63ff; color:#fff; }
+.k-kaydet {
+  margin-top:20px; width:100%; background:#6c63ff; color:#fff;
+  border:none; border-radius:12px; padding:13px; font-size:0.95rem;
+  font-weight:700; cursor:pointer; transition:background 0.2s;
+}
+.k-kaydet:hover { background:#574fd6; }
+.k-duzenle-btn {
+  background:var(--btn-bg); border:2px solid var(--border);
+  border-radius:20px; padding:6px 14px; cursor:pointer;
+  font-size:0.82rem; color:var(--yazi); transition:all 0.2s;
+}
+.k-duzenle-btn:hover { border-color:#6c63ff; color:#6c63ff; }
+@media(max-width:520px){
+  .k-editor { flex-direction:column; align-items:center; }
+  .k-preview-col canvas { width:100px; height:128px; }
+}
 </style>
 </head>
 <body>
+
+
+<!-- KARAKTER ÇUBUĞU -->
+<div class="k-bar">
+  <div class="k-bar-baslik">
+    <span>🧑‍🤝‍🧑 Ofis Kadrosu</span>
+    <button class="k-duzenle-btn" onclick="karakterEditorAc()">🎨 Karakterimi Düzenle</button>
+  </div>
+  <div class="k-bar-ic" id="kBarIc">
+    <div class="k-yok">Henüz karakter yok — ilk sen oluştur!</div>
+  </div>
+</div>
+
+<!-- FLOAT KARAKTER -->
+<div class="k-float" id="kFloat" style="display:none">
+  <canvas id="kFloatCanvas"></canvas>
+</div>
+
+<!-- KARAKTER MODAL -->
+<div class="k-overlay" id="kModal" style="display:none" onclick="if(event.target===this)karakterEditorKapat()">
+  <div class="k-modal">
+    <h2>🎨 Karakterini Oluştur</h2>
+    <div class="k-editor">
+      <div class="k-preview-col">
+        <canvas id="kPreviewCanvas"></canvas>
+        <div class="k-preview-ad" id="kPreviewAd">Karakter</div>
+      </div>
+      <div class="k-options">
+        <div class="k-opt-group">
+          <label>İsim</label>
+          <input id="kIsimInput" type="text" maxlength="12" placeholder="Takma adın..." oninput="kGuncelle()">
+        </div>
+        <div class="k-opt-group">
+          <label>Cinsiyet</label>
+          <div class="k-btn-row">
+            <button class="k-btn" data-k="cinsiyet" data-v="kadin" onclick="kSet('cinsiyet','kadin')">👩 Kadın</button>
+            <button class="k-btn" data-k="cinsiyet" data-v="erkek" onclick="kSet('cinsiyet','erkek')">👨 Erkek</button>
+          </div>
+        </div>
+        <div class="k-opt-group">
+          <label>Ten Rengi</label>
+          <div class="k-color-row" id="kTenRow"></div>
+        </div>
+        <div class="k-opt-group">
+          <label>Saç Stili</label>
+          <div class="k-stil-row" id="kSacStilRow"></div>
+        </div>
+        <div class="k-opt-group">
+          <label>Saç Rengi</label>
+          <div class="k-color-row" id="kSacRow"></div>
+        </div>
+        <div class="k-opt-group">
+          <label>Göz Rengi</label>
+          <div class="k-color-row" id="kGozRow"></div>
+        </div>
+        <div class="k-opt-group">
+          <label>Kıyafet Rengi</label>
+          <div class="k-color-row" id="kKiyRow"></div>
+        </div>
+        <div class="k-opt-group">
+          <label>Aksesuar</label>
+          <div class="k-ak-row" id="kAkRow"></div>
+        </div>
+      </div>
+    </div>
+    <button class="k-kaydet" onclick="karakterKaydet()">✨ Kaydet & Sahneye Çık</button>
+  </div>
+</div>
 
 <div class="burc-bolum">
   <div class="burc-baslik">🔮 Günlük Burç Yorumu</div>
@@ -312,6 +522,249 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
   let tepkilerim=JSON.parse(localStorage.getItem("ofis_tepki")||"{}");
   let yTepkilerim=JSON.parse(localStorage.getItem("ofis_ytepki")||"{}");
   let tumMesajlar=[], tumYanitlar={}, acikYanitFormlar=new Set(), yanitFormHedef={};
+
+
+  // ======= KARAKTER SİSTEMİ =======
+
+  // ---- DRAW FONKSİYONU ----
+  function drawKarakter(canvas, cfg, cssW, cssH) {
+    const GW=20, GH=26, S=4;
+    canvas.width=GW*S; canvas.height=GH*S;
+    if(cssW){ canvas.style.width=cssW+'px'; canvas.style.height=(cssH||Math.round(cssW*GH/GW))+'px'; }
+    const ctx=canvas.getContext('2d');
+    ctx.imageSmoothingEnabled=false;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    const ten = cfg.ten||'#FFCBA4';
+    const sac = cfg.sac||'#3D2B1F';
+    const goz = cfg.goz||'#4A90D9';
+    const kiy = cfg.kiy||'#FF9EC4';
+    const st  = cfg.sacStil||0;
+    const ak  = cfg.aksesuar||'yok';
+
+    function p(x,y,w,h,color){ ctx.fillStyle=color; ctx.fillRect(x*S,y*S,(w||1)*S,(h||1)*S); }
+    function pa(x,y,w,h,color){ ctx.fillStyle=color; ctx.fillRect(x*S,y*S,(w||1)*S,(h||1)*S); } // alias
+
+    // --- Long hair back ---
+    if(st===1||st===3){ p(1,8,2,11,sac); p(17,8,2,11,sac); }
+
+    // --- Head ---
+    p(5,2,10,1,ten); p(4,3,12,1,ten); p(3,4,14,10,ten); p(4,14,12,1,ten); p(5,15,10,1,ten);
+
+    // --- Hair ---
+    if(st===0){ // Short bob
+      p(4,0,12,1,sac); p(3,1,14,2,sac); p(2,2,3,5,sac); p(15,2,3,5,sac);
+    } else if(st===1){ // Long straight
+      p(4,0,12,1,sac); p(3,1,14,2,sac); p(2,2,3,5,sac); p(15,2,3,5,sac);
+    } else if(st===2){ // Twin buns
+      p(4,1,12,2,sac); p(2,2,3,4,sac); p(15,2,3,4,sac);
+      p(0,0,5,5,sac); p(15,0,5,5,sac); // buns
+    } else if(st===3){ // Wavy/spiky
+      p(5,0,2,2,sac); p(9,0,2,3,sac); p(13,0,2,2,sac);
+      p(4,1,12,2,sac); p(2,2,3,5,sac); p(15,2,3,5,sac);
+    }
+
+    // --- Outline head over hair ---
+    p(5,2,10,1,ten); p(4,3,12,1,ten); p(3,4,14,10,ten); p(4,14,12,1,ten); p(5,15,10,1,ten);
+
+    // --- Eyes ---
+    // Left
+    p(4,7,5,4,'white'); p(5,8,3,3,goz); p(7,8,1,2,'#111');
+    p(4,6,5,1,'#333'); p(5,8,1,1,'rgba(255,255,255,0.9)');
+    // Right
+    p(11,7,5,4,'white'); p(12,8,3,3,goz); p(14,8,1,2,'#111');
+    p(11,6,5,1,'#333'); p(12,8,1,1,'rgba(255,255,255,0.9)');
+
+    // --- Blush ---
+    ctx.fillStyle='rgba(255,120,120,0.3)'; ctx.fillRect(2*S,10*S,3*S,2*S); ctx.fillRect(15*S,10*S,3*S,2*S);
+
+    // --- Mouth ---
+    p(8,13,1,1,'#FF8888'); p(9,14,2,1,'#FF8888'); p(11,13,1,1,'#FF8888');
+
+    // --- Neck ---
+    p(8,16,4,2,ten);
+
+    // --- Body ---
+    p(5,18,10,6,kiy); p(2,19,4,5,kiy); p(14,19,4,5,kiy);
+
+    // --- Aksesuar ---
+    if(ak==='gozluk'){
+      ctx.fillStyle='rgba(150,220,255,0.2)'; ctx.fillRect(4*S,7*S,5*S,4*S); ctx.fillRect(11*S,7*S,5*S,4*S);
+      p(4,7,5,1,'rgba(50,50,50,0.7)'); p(4,10,5,1,'rgba(50,50,50,0.7)');
+      p(4,7,1,4,'rgba(50,50,50,0.7)'); p(8,7,1,4,'rgba(50,50,50,0.7)');
+      p(11,7,5,1,'rgba(50,50,50,0.7)'); p(11,10,5,1,'rgba(50,50,50,0.7)');
+      p(11,7,1,4,'rgba(50,50,50,0.7)'); p(15,7,1,4,'rgba(50,50,50,0.7)');
+      p(9,8,2,1,'#444');
+    } else if(ak==='sapka'){
+      p(4,0,12,3,'#E63946'); p(2,2,16,2,'#E63946'); p(7,2,6,1,'white');
+    } else if(ak==='tac'){
+      p(4,1,2,4,'#FFD700'); p(8,0,2,5,'#FFD700'); p(13,1,2,4,'#FFD700');
+      p(4,4,12,2,'#FFD700');
+      p(8,0,4,2,'#FFD700'); p(9,0,2,2,'#FF0055');
+    } else if(ak==='biyik'){
+      p(5,13,4,2,'#555'); p(11,13,4,2,'#555'); p(9,14,2,1,'#555');
+    } else if(ak==='kulaklik'){
+      p(0,6,2,7,'#222'); p(18,6,2,7,'#222');
+      p(0,5,2,3,'#FF6B6B'); p(18,5,2,3,'#FF6B6B');
+      p(0,10,2,3,'#FF6B6B'); p(18,10,2,3,'#FF6B6B');
+    }
+  }
+
+  // ---- RENK & SEÇENEK PALETTES ----
+  const TEN_RENKLERI = ['#FFDFC4','#F0C196','#D4956A','#A0613A','#6B3A2A'];
+  const SAC_RENKLERI = ['#1A0A00','#4A2E0E','#7B4F2C','#C49A3A','#E8C87A','#CC3333','#FF85A2','#A0C8FF'];
+  const GOZ_RENKLERI = ['#5B3A1E','#4A90D9','#3AA86B','#9B59B6','#888888','#E67E22'];
+  const KIY_RENKLERI = ['#FF9EC4','#6BA3D6','#7BC67E','#E8A44A','#9B6BD6','#E05252','#5BC8C8','#888'];
+  const AKSESUARLAR = [
+    {v:'yok',   l:'Yok'},
+    {v:'gozluk',l:'🕶️ Gözlük'},
+    {v:'sapka', l:'🎩 Şapka'},
+    {v:'tac',   l:'👑 Taç'},
+    {v:'biyik', l:'👨 Bıyık'},
+    {v:'kulaklik',l:'🎧 Kulaklık'},
+  ];
+
+  // ---- EDITOR STATE ----
+  let kCfg = {
+    isim:'', cinsiyet:'kadin', ten:TEN_RENKLERI[0],
+    sac:SAC_RENKLERI[0], sacStil:0, goz:GOZ_RENKLERI[1],
+    kiy:KIY_RENKLERI[0], aksesuar:'yok'
+  };
+
+  function karakterEditorAc(){
+    // Mevcut kaydedilmiş karakteri yükle
+    const saved = localStorage.getItem('ofis_karakter');
+    if(saved){ try{ kCfg={...kCfg,...JSON.parse(saved)}; }catch(_){} }
+    document.getElementById('kIsimInput').value = kCfg.isim||'';
+    kBuildUI();
+    kGuncelle();
+    document.getElementById('kModal').style.display='flex';
+  }
+  window.karakterEditorAc = karakterEditorAc;
+
+  function karakterEditorKapat(){ document.getElementById('kModal').style.display='none'; }
+  window.karakterEditorKapat = karakterEditorKapat;
+
+  function kBuildUI(){
+    // Renk swatches
+    function swatches(containerId, colors, key){
+      document.getElementById(containerId).innerHTML = colors.map(c=>`
+        <div class="k-swatch ${kCfg[key]===c?'aktif':''}" style="background:${c}"
+          onclick="kSet('${key}','${c}')"></div>`).join('');
+    }
+    swatches('kTenRow', TEN_RENKLERI, 'ten');
+    swatches('kSacRow', SAC_RENKLERI, 'sac');
+    swatches('kGozRow', GOZ_RENKLERI, 'goz');
+    swatches('kKiyRow', KIY_RENKLERI, 'kiy');
+
+    // Saç stili (küçük canvas önizleme)
+    const stilRow = document.getElementById('kSacStilRow');
+    stilRow.innerHTML = '';
+    for(let i=0;i<4;i++){
+      const btn=document.createElement('button');
+      btn.className='k-stil-btn'+(kCfg.sacStil===i?' aktif':'');
+      btn.onclick=()=>kSet('sacStil',i);
+      const c=document.createElement('canvas');
+      drawKarakter(c,{...kCfg,sacStil:i},40,52);
+      btn.appendChild(c); stilRow.appendChild(btn);
+    }
+
+    // Cinsiyet butonları
+    document.querySelectorAll('[data-k="cinsiyet"]').forEach(b=>{
+      b.classList.toggle('aktif', b.dataset.v===kCfg.cinsiyet);
+    });
+
+    // Aksesuar
+    document.getElementById('kAkRow').innerHTML = AKSESUARLAR.map(a=>`
+      <button class="k-ak-btn ${kCfg.aksesuar===a.v?'aktif':''}"
+        onclick="kSet('aksesuar','${a.v}')">${a.l}</button>`).join('');
+  }
+
+  window.kSet = function(key, val){
+    kCfg[key]=val; kBuildUI(); kGuncelle();
+  };
+
+  function kGuncelle(){
+    kCfg.isim = document.getElementById('kIsimInput').value||'';
+    document.getElementById('kPreviewAd').textContent = kCfg.isim||'Karakter';
+    drawKarakter(document.getElementById('kPreviewCanvas'), kCfg, 120, 154);
+    document.querySelectorAll('[data-k="cinsiyet"]').forEach(b=>{
+      b.classList.toggle('aktif', b.dataset.v===kCfg.cinsiyet);
+    });
+  }
+  window.kGuncelle = kGuncelle;
+
+  async function karakterKaydet(){
+    kCfg.isim = (document.getElementById('kIsimInput').value||'').trim();
+    if(!kCfg.isim){ alert('Lütfen bir isim gir!'); return; }
+    localStorage.setItem('ofis_karakter', JSON.stringify(kCfg));
+    await setDoc(doc(db,'karakterler',KULLANICI_ID), {...kCfg, uid:KULLANICI_ID, guncellendi:serverTimestamp()});
+    karakterEditorKapat();
+    floatBaslat();
+  }
+  window.karakterKaydet = karakterKaydet;
+
+  // ---- TOP BAR ----
+  function kBarRender(karakterler){
+    const ic = document.getElementById('kBarIc');
+    if(!karakterler.length){
+      ic.innerHTML='<div class="k-yok">Henüz karakter yok — ilk sen oluştur! 👆</div>'; return;
+    }
+    ic.innerHTML='';
+    karakterler.forEach(k=>{
+      const div=document.createElement('div');
+      div.className='k-item'+(k.uid===KULLANICI_ID?' benim':'');
+      const c=document.createElement('canvas');
+      drawKarakter(c,k,56,72);
+      const ad=document.createElement('div');
+      ad.className='k-isim'; ad.textContent=k.isim||(k.uid===KULLANICI_ID?'Sen':'???');
+      div.appendChild(c); div.appendChild(ad);
+      ic.appendChild(div);
+    });
+  }
+
+  // Firebase listener for all characters
+  onSnapshot(collection(db,'karakterler'), snap=>{
+    const kList = snap.docs.map(d=>({uid:d.id,...d.data()}));
+    kBarRender(kList);
+  });
+
+  // ---- FLOATING CHARACTER ----
+  let floatX=100, floatY=200, floatVx=1.2, floatVy=0.8;
+  let floatT=0, floatRaf=null, floatFlip=false;
+
+  function floatBaslat(){
+    const saved=localStorage.getItem('ofis_karakter');
+    if(!saved) return;
+    let cfg; try{ cfg=JSON.parse(saved); }catch(_){ return; }
+    const floatEl=document.getElementById('kFloat');
+    const fc=document.getElementById('kFloatCanvas');
+    drawKarakter(fc, cfg, 64, 82);
+    floatEl.style.display='block';
+    floatX=Math.random()*(window.innerWidth-100)+50;
+    floatY=Math.random()*(window.innerHeight-150)+50;
+    if(floatRaf) cancelAnimationFrame(floatRaf);
+    floatLoop();
+  }
+
+  function floatLoop(){
+    floatT++;
+    const bob = Math.sin(floatT*0.05)*4;
+    floatX+=floatVx; floatY+=floatVy;
+    const W=window.innerWidth-80, H=window.innerHeight-100;
+    if(floatX<10||floatX>W){ floatVx*=-1; floatFlip=floatVx<0; }
+    if(floatY<10||floatY>H){ floatVy*=-1; }
+    const el=document.getElementById('kFloat');
+    el.style.left=floatX+'px';
+    el.style.top=(floatY+bob)+'px';
+    el.style.transform=floatFlip?'scaleX(-1)':'scaleX(1)';
+    floatRaf=requestAnimationFrame(floatLoop);
+  }
+
+  // Kayıtlı karakter varsa başlat
+  if(localStorage.getItem('ofis_karakter')) floatBaslat();
+  // Hiç karakter yoksa modal'ı ilk girişte göster
+  else setTimeout(()=>{ if(!localStorage.getItem('ofis_karakter')) karakterEditorAc(); }, 1500);
 
   // ---- 24 SAAT SONRA SİL ----
   async function eskiMesajlariSil() {
