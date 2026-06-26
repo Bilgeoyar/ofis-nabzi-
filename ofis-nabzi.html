@@ -666,9 +666,9 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
 
   // ======= KARAKTER SİSTEMİ v2 =======
 
-  function uidHash(uid){ let h=0; for(let i=0;i<uid.length;i++) h=Math.imul(31,h)+uid.charCodeAt(i)|0; return Math.abs(h); }
+  function uidHash(s){let h=0;for(let i=0;i<s.length;i++)h=Math.imul(31,h)+s.charCodeAt(i)|0;return Math.abs(h);}
 
-  // ---- DRAW ----
+  // ─── DRAW ───────────────────────────────────────────────────────────────
   function drawKarakter(canvas, cfg, cssW, cssH){
     const GW=20,GH=26,S=4;
     canvas.width=GW*S; canvas.height=GH*S;
@@ -676,343 +676,369 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
     const ctx=canvas.getContext('2d');
     ctx.imageSmoothingEnabled=false;
     ctx.clearRect(0,0,canvas.width,canvas.height);
-
     const ten=cfg.ten||'#FFCBA4',sac=cfg.sac||'#3D2B1F',goz=cfg.goz||'#4A90D9',kiy=cfg.kiy||'#FF9EC4';
-    const st=cfg.sacStil||0,ak=cfg.aksesuar||'yok',expr=cfg.expr||'normal',lvl=cfg.level||1;
-
+    const st=Math.min(cfg.sacStil||0,7),ak=cfg.aksesuar||'yok';
+    const expr=cfg.expr||'normal',lvl=cfg.level||1;
     function p(x,y,w,h,c){ctx.fillStyle=c;ctx.fillRect(x*S,y*S,(w||1)*S,(h||1)*S);}
-
-    // Level 5 aura
-    if(lvl>=5){const g=ctx.createRadialGradient(10*S,13*S,2*S,10*S,13*S,15*S);g.addColorStop(0,'rgba(255,215,0,0.25)');g.addColorStop(1,'rgba(255,215,0,0)');ctx.fillStyle=g;ctx.fillRect(0,0,canvas.width,canvas.height);}
-
+    // Aura bg
+    if(lvl>=5){const g=ctx.createRadialGradient(10*S,13*S,2*S,10*S,13*S,15*S);g.addColorStop(0,'rgba(255,215,0,0.22)');g.addColorStop(1,'rgba(255,215,0,0)');ctx.fillStyle=g;ctx.fillRect(0,0,canvas.width,canvas.height);}
     // Long hair back
-    if(st===1||st===3){p(1,8,2,11,sac);p(17,8,2,11,sac);}
-
-    // Head base
+    if(st===1||st===6){p(1,8,2,11,sac);p(17,8,2,11,sac);}
+    // Head
     p(5,2,10,1,ten);p(4,3,12,1,ten);p(3,4,14,10,ten);p(4,14,12,1,ten);p(5,15,10,1,ten);
-
-    // Hair
-    const hairStyles=[
-      ()=>{p(4,0,12,1,sac);p(3,1,14,2,sac);p(2,2,3,5,sac);p(15,2,3,5,sac);}, // 0 kısa
-      ()=>{p(4,0,12,1,sac);p(3,1,14,2,sac);p(2,2,3,7,sac);p(15,2,3,7,sac);}, // 1 uzun
+    // Hair styles
+    const HS=[
+      ()=>{p(4,0,12,1,sac);p(3,1,14,2,sac);p(2,2,3,5,sac);p(15,2,3,5,sac);},           // 0 kısa
+      ()=>{p(4,0,12,1,sac);p(3,1,14,2,sac);p(2,2,3,7,sac);p(15,2,3,7,sac);},           // 1 uzun
       ()=>{p(4,1,12,2,sac);p(2,2,3,4,sac);p(15,2,3,4,sac);p(0,0,5,5,sac);p(15,0,5,5,sac);}, // 2 topuz
       ()=>{p(5,0,2,2,sac);p(9,0,2,3,sac);p(13,0,2,2,sac);p(4,1,12,2,sac);p(2,2,3,5,sac);p(15,2,3,5,sac);}, // 3 dalgalı
-      ()=>{p(3,0,14,3,sac);p(2,2,3,4,sac);p(15,0,2,8,sac);}, // 4 yan taraf
-      ()=>{p(3,0,14,4,sac);p(2,0,4,7,sac);p(14,0,4,7,sac);p(6,0,8,2,sac);}, // 5 kabarık afro
-      ()=>{p(4,0,12,2,sac);p(3,2,3,4,sac);p(15,2,3,4,sac);p(8,0,4,14,sac);}, // 6 at kuyruğu
-      ()=>{p(8,0,4,8,sac);p(7,2,2,3,sac);p(11,2,2,3,sac);}, // 7 mohawk
+      ()=>{p(3,0,14,3,sac);p(2,2,3,4,sac);p(15,0,2,8,sac);},                           // 4 yan taraf
+      ()=>{p(3,0,14,4,sac);p(2,0,4,7,sac);p(14,0,4,7,sac);p(6,0,8,2,sac);},           // 5 afro
+      ()=>{p(4,0,12,2,sac);p(3,2,3,4,sac);p(15,2,3,4,sac);p(8,0,4,14,sac);},          // 6 at kuyruğu
+      ()=>{p(8,0,4,8,sac);p(7,2,2,3,sac);p(11,2,2,3,sac);},                            // 7 mohawk
     ];
-    (hairStyles[Math.min(st,7)]||hairStyles[0])();
-
-    // Head over hair
+    HS[st]();
+    // Head (over hair)
     p(5,2,10,1,ten);p(4,3,12,1,ten);p(3,4,14,10,ten);p(4,14,12,1,ten);p(5,15,10,1,ten);
-
     // Eyes
     p(4,7,5,4,'white');p(5,8,3,3,goz);p(7,8,1,2,'#111');p(4,6,5,1,'#333');p(5,8,1,1,'rgba(255,255,255,0.9)');
     p(11,7,5,4,'white');p(12,8,3,3,goz);p(14,8,1,2,'#111');p(11,6,5,1,'#333');p(12,8,1,1,'rgba(255,255,255,0.9)');
-
-    // Blush
+    // Base blush + mouth
     ctx.fillStyle='rgba(255,120,120,0.3)';ctx.fillRect(2*S,10*S,3*S,2*S);ctx.fillRect(15*S,10*S,3*S,2*S);
-
-    // Normal mouth
     p(8,13,1,1,'#FF8888');p(9,14,2,1,'#FF8888');p(11,13,1,1,'#FF8888');
-
-    // === EXPRESSIONS ===
+    // Expressions
     if(expr==='mutlu'){
-      p(7,13,6,2,ten);
-      p(7,13,1,1,'#FF5555');p(8,14,4,1,'#FF4444');p(12,13,1,1,'#FF5555');
-      ctx.fillStyle='rgba(255,70,70,0.5)';ctx.fillRect(2*S,9*S,4*S,3*S);ctx.fillRect(14*S,9*S,4*S,3*S);
-    } else if(expr==='uzgun'){
-      p(7,13,6,2,ten);
-      p(7,14,1,1,'#999');p(8,13,4,1,'#999');p(12,14,1,1,'#999');
+      p(7,13,6,2,ten);p(7,13,1,1,'#FF5555');p(8,14,4,1,'#FF4444');p(12,13,1,1,'#FF5555');
+      ctx.fillStyle='rgba(255,70,70,0.45)';ctx.fillRect(2*S,9*S,4*S,3*S);ctx.fillRect(14*S,9*S,4*S,3*S);
+    }else if(expr==='uzgun'){
+      p(7,13,6,2,ten);p(7,14,1,1,'#999');p(8,13,4,1,'#999');p(12,14,1,1,'#999');
       p(6,11,1,3,'rgba(150,200,255,0.8)');p(13,11,1,3,'rgba(150,200,255,0.8)');
-    } else if(expr==='sinirli'){
+    }else if(expr==='sinirli'){
       p(4,5,2,1,'#333');p(6,6,3,1,'#333');p(11,5,3,1,'#333');p(14,6,2,1,'#333');
       p(7,13,6,2,ten);p(7,13,6,1,'#AA4444');
-      ctx.fillStyle='rgba(255,0,0,0.07)';ctx.fillRect(0,0,canvas.width,canvas.height);
-    } else if(expr==='uykulu'){
-      p(4,7,5,4,ten);p(4,9,5,1,'#333');
-      p(11,7,5,4,ten);p(11,9,5,1,'#333');
-      ctx.fillStyle='rgba(120,160,255,0.9)';ctx.font=`bold ${S*2}px sans-serif`;
-      ctx.fillText('z',17*S,3*S);ctx.font=`bold ${S*1.4}px sans-serif`;ctx.fillText('z',19*S,1*S);
-      p(10,14,1,2,'rgba(150,200,255,0.7)');
-    } else if(expr==='energik'){
-      ctx.fillStyle='rgba(255,255,0,0.15)';ctx.fillRect(0,0,canvas.width,canvas.height);
-      ctx.fillStyle='rgba(255,200,0,0.8)';ctx.font=`bold ${S*1.5}px sans-serif`;ctx.fillText('⚡',17*S,3*S);
+      ctx.fillStyle='rgba(255,0,0,0.06)';ctx.fillRect(0,0,canvas.width,canvas.height);
+    }else if(expr==='uykulu'){
+      p(4,7,5,4,ten);p(4,9,5,1,'#333');p(11,7,5,4,ten);p(11,9,5,1,'#333');
+      ctx.fillStyle='rgba(120,160,255,0.9)';ctx.font=`bold ${S*2}px sans-serif`;ctx.fillText('z',17*S,3*S);
+      ctx.font=`bold ${S*1.4}px sans-serif`;ctx.fillText('z',19*S,1*S);
+    }else if(expr==='energik'){
+      ctx.fillStyle='rgba(255,255,0,0.12)';ctx.fillRect(0,0,canvas.width,canvas.height);
+      ctx.fillStyle='rgba(255,200,0,0.9)';ctx.font=`bold ${S*1.5}px sans-serif`;ctx.fillText('⚡',17*S,3*S);
     }
-
     // Neck + body
     p(8,16,4,2,ten);p(5,18,10,6,kiy);p(2,19,4,5,kiy);p(14,19,4,5,kiy);
-
     // Accessories
-    if(ak==='gozluk'){
-      ctx.fillStyle='rgba(150,220,255,0.2)';ctx.fillRect(4*S,7*S,5*S,4*S);ctx.fillRect(11*S,7*S,5*S,4*S);
-      p(4,7,5,1,'rgba(50,50,50,0.7)');p(4,10,5,1,'rgba(50,50,50,0.7)');p(4,7,1,4,'rgba(50,50,50,0.7)');p(8,7,1,4,'rgba(50,50,50,0.7)');
-      p(11,7,5,1,'rgba(50,50,50,0.7)');p(11,10,5,1,'rgba(50,50,50,0.7)');p(11,7,1,4,'rgba(50,50,50,0.7)');p(15,7,1,4,'rgba(50,50,50,0.7)');
-      p(9,8,2,1,'#444');
-    } else if(ak==='sapka'){p(4,0,12,3,'#E63946');p(2,2,16,2,'#E63946');p(7,2,6,1,'white');}
-    else if(ak==='tac'){p(4,1,2,4,'#FFD700');p(8,0,2,5,'#FFD700');p(13,1,2,4,'#FFD700');p(4,4,12,2,'#FFD700');p(9,0,2,2,'#FF0055');}
-    else if(ak==='biyik'){p(5,13,4,2,'#555');p(11,13,4,2,'#555');p(9,14,2,1,'#555');}
-    else if(ak==='kulaklik'){p(0,6,2,7,'#222');p(18,6,2,7,'#222');p(0,5,2,3,'#FF6B6B');p(18,5,2,3,'#FF6B6B');p(0,10,2,3,'#FF6B6B');p(18,10,2,3,'#FF6B6B');}
-    else if(ak==='pelerin'){p(3,18,3,8,'rgba(128,0,255,0.75)');p(14,18,3,8,'rgba(128,0,255,0.75)');p(3,18,14,1,'#7B00FF');}
-    else if(ak==='kanat'){p(0,12,3,8,'rgba(255,215,0,0.65)');p(17,12,3,8,'rgba(255,215,0,0.65)');p(0,10,2,5,'rgba(255,215,0,0.4)');p(18,10,2,5,'rgba(255,215,0,0.4)');}
-
+    const akFn={
+      gozluk:()=>{ctx.fillStyle='rgba(150,220,255,0.2)';ctx.fillRect(4*S,7*S,5*S,4*S);ctx.fillRect(11*S,7*S,5*S,4*S);p(4,7,5,1,'rgba(50,50,50,0.7)');p(4,10,5,1,'rgba(50,50,50,0.7)');p(4,7,1,4,'rgba(50,50,50,0.7)');p(8,7,1,4,'rgba(50,50,50,0.7)');p(11,7,5,1,'rgba(50,50,50,0.7)');p(11,10,5,1,'rgba(50,50,50,0.7)');p(11,7,1,4,'rgba(50,50,50,0.7)');p(15,7,1,4,'rgba(50,50,50,0.7)');p(9,8,2,1,'#444');},
+      sapka:()=>{p(4,0,12,3,'#E63946');p(2,2,16,2,'#E63946');p(7,2,6,1,'white');},
+      tac:()=>{p(4,1,2,4,'#FFD700');p(8,0,2,5,'#FFD700');p(13,1,2,4,'#FFD700');p(4,4,12,2,'#FFD700');p(9,0,2,2,'#FF0055');},
+      biyik:()=>{p(5,13,4,2,'#555');p(11,13,4,2,'#555');p(9,14,2,1,'#555');},
+      kulaklik:()=>{p(0,6,2,7,'#222');p(18,6,2,7,'#222');p(0,5,2,3,'#FF6B6B');p(18,5,2,3,'#FF6B6B');p(0,10,2,3,'#FF6B6B');p(18,10,2,3,'#FF6B6B');},
+      pelerin:()=>{p(3,18,3,8,'rgba(128,0,255,0.75)');p(14,18,3,8,'rgba(128,0,255,0.75)');p(3,18,14,1,'#7B00FF');},
+      kanat:()=>{p(0,12,3,8,'rgba(255,215,0,0.65)');p(17,12,3,8,'rgba(255,215,0,0.65)');p(0,10,2,5,'rgba(255,215,0,0.4)');p(18,10,2,5,'rgba(255,215,0,0.4)');},
+    };
+    if(akFn[ak]) akFn[ak]();
     // Level badge
-    if(lvl>=2){
-      ctx.font=`bold ${S*2}px sans-serif`;
-      ctx.fillText(['','','⭐','🌟','💫','✨'][Math.min(lvl,5)],0*S,S*2.5);
-    }
+    if(lvl>=2){ctx.font=`bold ${S*2}px sans-serif`;ctx.fillText(['','','⭐','🌟','💫','✨'][Math.min(lvl,5)],0,S*2.5);}
   }
 
-  // ---- PALETTES ----
+  // ─── PALETTES ────────────────────────────────────────────────────────────
   const TEN=['#FFDFC4','#F0C196','#D4956A','#A0613A','#6B3A2A'];
   const SAC=['#1A0A00','#4A2E0E','#7B4F2C','#C49A3A','#E8C87A','#CC3333','#FF85A2','#A0C8FF'];
   const GOZ=['#5B3A1E','#4A90D9','#3AA86B','#9B59B6','#888','#E67E22'];
   const KIY=['#FF9EC4','#6BA3D6','#7BC67E','#E8A44A','#9B6BD6','#E05252','#5BC8C8','#888'];
   const AKSESUARLAR=[{v:'yok',l:'Yok'},{v:'gozluk',l:'🕶️ Gözlük'},{v:'sapka',l:'🎩 Şapka'},{v:'tac',l:'👑 Taç'},{v:'biyik',l:'👨 Bıyık'},{v:'kulaklik',l:'🎧 Kulaklık'}];
+  const EMOTELER=[{e:'❤️',n:7},{e:'⭐',n:9},{e:'🎉',n:10},{e:'💥',n:5},{e:'✨',n:12},{e:'🌈',n:4},{e:'💫',n:8},{e:'🔥',n:6}];
+  const IZ_STYLE={mor:{color:'rgba(108,99,255,0.7)',ch:'●'},pembe:{color:'rgba(255,100,180,0.7)',ch:'♥'},altin:{color:'rgba(255,210,0,0.8)',ch:'★'},yesil:{color:'rgba(80,200,120,0.7)',ch:'✿'}};
+  const AURA_COLORS={'yok':null,'#9b59b6':'#9b59b6','#FFD700':'#FFD700','#FF69B4':'#FF69B4','#00CED1':'#00CED1','#FF4500':'#FF4500','gokkusagi':'gokkusagi'};
 
-  // ---- XP / LEVEL ----
+  // ─── XP / LEVEL ──────────────────────────────────────────────────────────
   const XP_TH=[0,50,150,350,700,1200];
-  function xpToLevel(xp){ for(let i=XP_TH.length-1;i>=0;i--) if(xp>=XP_TH[i]) return i+1; return 1; }
+  function xpToLevel(xp){for(let i=XP_TH.length-1;i>=0;i--)if(xp>=XP_TH[i])return i+1;return 1;}
   async function xpKazan(n){
     const s=JSON.parse(localStorage.getItem('ofis_karakter')||'{}');
-    const oldXp=s.xp||0, newXp=oldXp+n, oldLvl=xpToLevel(oldXp), newLvl=xpToLevel(newXp);
-    s.xp=newXp; s.level=newLvl;
+    const oldXp=s.xp||0,newXp=oldXp+n,oldLvl=xpToLevel(oldXp),newLvl=xpToLevel(newXp);
+    s.xp=newXp;s.level=newLvl;
     localStorage.setItem('ofis_karakter',JSON.stringify(s));
     await setDoc(doc(db,'karakterler',KULLANICI_ID),{xp:newXp,level:newLvl},{merge:true});
-    if(newLvl>oldLvl) lvlUpGoster(newLvl);
-    return newLvl;
+    if(newLvl>oldLvl)lvlUpGoster(newLvl);
   }
   function lvlUpGoster(lvl){
     const el=document.createElement('div');
-    el.className='lvl-popup';
+    el.style.cssText='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:9999;background:linear-gradient(135deg,#6c63ff,#a78bfa);color:#fff;border-radius:20px;padding:20px 30px;font-size:1.2rem;font-weight:900;text-align:center;box-shadow:0 8px 30px rgba(108,99,255,0.5);animation:popIn 0.4s ease';
     el.innerHTML=`🎉 SEVİYE ATLADIN!<br><span style="font-size:2rem">${['','⭐','🌟','💫','✨'][Math.min(lvl-1,4)]}</span><br>Seviye ${lvl}${lvl>=3?' — Yeni aksesuar açıldı!':''}`;
-    document.body.appendChild(el);
-    setTimeout(()=>el.remove(),3500);
+    document.body.appendChild(el);setTimeout(()=>el.remove(),3500);
   }
-  // Günlük giriş XP
   const todayK='xp_'+new Date().toISOString().slice(0,10);
-  if(!localStorage.getItem(todayK)){ localStorage.setItem(todayK,'1'); setTimeout(()=>xpKazan(10),2000); }
+  if(!localStorage.getItem(todayK)){localStorage.setItem(todayK,'1');setTimeout(()=>xpKazan(10),2000);}
 
-  // ---- MOOD ----
+  // ─── MOOD ─────────────────────────────────────────────────────────────────
   let benimMood=localStorage.getItem('ofis_mood')||'normal';
+  let myExpr='normal';
   const MOODS=[{v:'normal',l:'😊 Normal',spd:1},{v:'energik',l:'💪 Enerjik',spd:2.2},{v:'uykulu',l:'😴 Uykulu',spd:0.35},{v:'sinirli',l:'😤 Sinirli',spd:1.7}];
-  function moodBarRender(){
-    document.getElementById('kMoodRow').innerHTML=MOODS.map(m=>`<button class="k-mood-btn ${benimMood===m.v?'aktif':''}" onclick="moodSec('${m.v}')">${m.l}</button>`).join('');
-  }
-  window.moodSec=v=>{ benimMood=v; localStorage.setItem('ofis_mood',v); setDoc(doc(db,'karakterler',KULLANICI_ID),{mood:v},{merge:true}); moodBarRender(); };
+  function moodBarRender(){document.getElementById('kMoodRow').innerHTML=MOODS.map(m=>`<button class="k-mood-btn ${benimMood===m.v?'aktif':''}" onclick="moodSec('${m.v}')">${m.l}</button>`).join('');}
+  window.moodSec=v=>{benimMood=v;localStorage.setItem('ofis_mood',v);setDoc(doc(db,'karakterler',KULLANICI_ID),{mood:v},{merge:true});moodBarRender();};
   moodBarRender();
 
-  // ---- FLOAT SYSTEM ----
-  let tumK={};
-  let myExpr='normal'; // global, kBarRender'da kullanılır
-  let floatT=0, floatRaf=null;
+  // ─── TRAIL ───────────────────────────────────────────────────────────────
+  let trailCanvas=document.getElementById('kTrailCanvas'),trailCtx=null,trailParts=[];
+  function trailBaslat(){
+    if(!trailCanvas)return;
+    trailCanvas.width=window.innerWidth;trailCanvas.height=window.innerHeight;
+    trailCtx=trailCanvas.getContext('2d');
+    window.addEventListener('resize',()=>{if(trailCanvas){trailCanvas.width=window.innerWidth;trailCanvas.height=window.innerHeight;}});
+  }
+  trailBaslat();
+  function trailEkle(K){
+    const s=JSON.parse(localStorage.getItem('ofis_karakter')||'{}');
+    const iz=s.iz;if(!iz||iz==='yok'||!trailCtx)return;
+    const style=IZ_STYLE[iz];if(!style)return;
+    if(Math.abs(K.vx)<0.15&&Math.abs(K.vy)<0.15&&K.state==='normal')return;
+    trailParts.push({x:K.x+32,y:K.y+72,life:1.0,color:style.color,ch:style.ch,size:10+Math.random()*7});
+  }
+  function trailCiz(){
+    if(!trailCtx)return;
+    trailCtx.clearRect(0,0,trailCanvas.width,trailCanvas.height);
+    trailParts=trailParts.filter(p=>{
+      p.life-=0.045;if(p.life<=0)return false;
+      trailCtx.globalAlpha=p.life*0.85;trailCtx.fillStyle=p.color;
+      trailCtx.font=`${p.size}px sans-serif`;trailCtx.textAlign='center';
+      trailCtx.fillText(p.ch,p.x,p.y);return true;
+    });
+    trailCtx.globalAlpha=1;
+  }
 
-  function charElOlustur(uid, cfg){
-    if(tumK[uid]) return;
+  // ─── PET ─────────────────────────────────────────────────────────────────
+  let petEl=null,petX=150,petY=300;
+  function petOlustur(emoji){
+    if(petEl){petEl.remove();petEl=null;}
+    if(!emoji||emoji==='yok')return;
+    petEl=document.createElement('div');
+    petEl.style.cssText='position:fixed;z-index:999;pointer-events:none;font-size:1.4rem;filter:drop-shadow(0 2px 3px rgba(0,0,0,0.2));';
+    petEl.textContent=emoji;
+    document.body.appendChild(petEl);
+  }
+  function petGuncelle(myK){
+    if(!petEl||!myK)return;
+    petX+=(myK.x+20-petX)*0.055+(Math.random()-0.5)*0.3;
+    petY+=(myK.y+68-petY)*0.055;
+    petEl.style.left=petX+'px';petEl.style.top=petY+'px';
+    petEl.style.transform=myK.x>petX?'scaleX(1)':'scaleX(-1)';
+  }
+
+  // ─── EMOTE ───────────────────────────────────────────────────────────────
+  function emoteYap(idx){
+    const K=tumK[KULLANICI_ID];if(!K)return;
+    const e=EMOTELER[idx%EMOTELER.length];
+    for(let i=0;i<e.n;i++){
+      setTimeout(()=>{
+        const d=document.createElement('div');
+        d.textContent=e.e;
+        d.style.cssText=`position:fixed;z-index:9999;pointer-events:none;font-size:1.3rem;left:${K.x+Math.random()*80}px;top:${K.y+Math.random()*30}px;animation:emoteFloat 1.2s ease ${Math.random()*0.3}s forwards`;
+        document.body.appendChild(d);setTimeout(()=>d.remove(),1500);
+      },i*55);
+    }
+    setDoc(doc(db,'karakterler',KULLANICI_ID),{emote:{e:e.e,ts:Date.now()}},{merge:true});
+    setTimeout(()=>setDoc(doc(db,'karakterler',KULLANICI_ID),{emote:null},{merge:true}),2000);
+  }
+  window.emoteYap=emoteYap;
+  function emoteGoster(uid,emote){
+    const K=tumK[uid];if(!K||!emote||!emote.ts||emote.ts<Date.now()-3000)return;
+    const d=document.createElement('div');
+    d.textContent=emote.e;
+    d.style.cssText=`position:fixed;z-index:9998;pointer-events:none;font-size:1.3rem;left:${K.x+20}px;top:${K.y}px;animation:emoteFloat 1.2s ease forwards`;
+    document.body.appendChild(d);setTimeout(()=>d.remove(),1400);
+  }
+
+  // ─── AURA / BOYUT ────────────────────────────────────────────────────────
+  function charBoyutuAyarla(uid,boyut){
+    const K=tumK[uid];if(!K)return;
+    const sc=boyut||1,w=Math.round(64*sc),h=Math.round(82*sc);
+    K.canvas.style.width=w+'px';K.canvas.style.height=h+'px';
+  }
+  function charAuraSec(uid,aura){
+    const K=tumK[uid];if(!K)return;
+    if(!aura||aura==='yok'){K.el.style.filter='drop-shadow(1px 3px 5px rgba(0,0,0,0.2))';return;}
+    if(aura==='gokkusagi')K.el.style.filter='drop-shadow(0 0 6px red) drop-shadow(0 0 10px blue) drop-shadow(0 0 8px yellow)';
+    else K.el.style.filter=`drop-shadow(0 0 8px ${aura}) drop-shadow(0 0 3px ${aura})`;
+  }
+
+  // ─── FLOAT CHARACTERS ────────────────────────────────────────────────────
+  let tumK={},floatT=0,floatRaf=null;
+  function charElOlustur(uid,cfg){
+    if(tumK[uid])return;
     const el=document.createElement('div');
     el.className='k-float'+(uid!==KULLANICI_ID?' k-float-other':'');
-    el.style.display='none';
-    if(uid!==KULLANICI_ID){
-      el.title=(cfg.isim||'???')+' — Taş Kağıt Makas oyna!';
-      el.onclick=()=>rpsBaslat(uid);
-    } else {
-      el.style.cursor='pointer';
-      el.title='Tıkla - emote yap!';
-      el.onclick=()=>emoteYap(Math.floor(Math.random()*EMOTELER.length));
-    }
+    el.style.cssText='display:none;position:fixed;z-index:998;will-change:transform;'+(uid!==KULLANICI_ID?'pointer-events:auto;cursor:pointer;':'pointer-events:auto;cursor:pointer;');
+    if(uid!==KULLANICI_ID){el.title=(cfg.isim||'???')+' — Taş Kağıt Makas!';el.onclick=()=>rpsBaslat(uid);}
+    else{el.title='Tıkla — emote!';el.onclick=()=>emoteYap(Math.floor(Math.random()*EMOTELER.length));}
     const c=document.createElement('canvas');
     drawKarakter(c,cfg,64,82);
     el.appendChild(c);
     document.body.appendChild(el);
     const h=uidHash(uid);
     tumK[uid]={cfg,el,canvas:c,
-      x:80+(h%300), y:80+((h>>4)%300),
+      x:80+(h%300),y:80+((h>>4)%250),
       vx:(uid===KULLANICI_ID?1.2:(0.5+(h%10)*0.1))*(h%2?1:-1),
       vy:(uid===KULLANICI_ID?0.8:(0.4+((h>>4)%8)*0.1))*((h>>8)%2?1:-1),
-      state:'normal', stateTimer:0, flip:false, danceAngle:0,
-      phaseX:(h%628)/100, phaseY:((h>>4)%628)/100};
-    charBoyutuAyarla(uid, cfg.boyut);
-    charAuraSec(uid, cfg.aura);
-    if(uid===KULLANICI_ID){ const s=JSON.parse(localStorage.getItem('ofis_karakter')||'{}'); petOlustur(s.hayvan); }
+      state:'normal',stateTimer:0,flip:false,danceAngle:0,
+      phaseX:(h%628)/100,phaseY:((h>>4)%628)/100};
+    charBoyutuAyarla(uid,cfg.boyut);
+    charAuraSec(uid,cfg.aura);
+    if(uid===KULLANICI_ID){const s=JSON.parse(localStorage.getItem('ofis_karakter')||'{}');petOlustur(s.hayvan);}
   }
-  function charElGuncelle(uid, cfg){
-    if(!tumK[uid]) return;
+  function charElGuncelle(uid,cfg){
+    if(!tumK[uid])return;
     tumK[uid].cfg={...tumK[uid].cfg,...cfg};
-    drawKarakter(tumK[uid].canvas, tumK[uid].cfg, 64, 82);
-    if(uid!==KULLANICI_ID) tumK[uid].el.title=(cfg.isim||'???')+' — Taş Kağıt Makas oyna!';
-    charBoyutuAyarla(uid, cfg.boyut);
-    charAuraSec(uid, cfg.aura);
+    drawKarakter(tumK[uid].canvas,tumK[uid].cfg,64,82);
+    if(uid!==KULLANICI_ID)tumK[uid].el.title=(cfg.isim||'???')+' — Taş Kağıt Makas!';
+    charBoyutuAyarla(uid,cfg.boyut);
+    charAuraSec(uid,cfg.aura);
   }
-
-  function charBubble(el, txt){
+  function charBubble(el,txt){
     const b=document.createElement('div');
-    b.style.cssText='position:absolute;top:-38px;left:50%;transform:translateX(-50%);font-size:1.2rem;pointer-events:none;animation:bubbleUp 2s ease forwards;z-index:10;white-space:nowrap;background:rgba(255,255,255,0.92);border-radius:20px;padding:3px 8px;color:#333;box-shadow:0 2px 6px rgba(0,0,0,0.2)';
-    b.textContent=txt; el.appendChild(b); setTimeout(()=>b.remove(),2000);
+    b.style.cssText='position:absolute;top:-38px;left:50%;transform:translateX(-50%);font-size:1.1rem;pointer-events:none;animation:bubbleUp 2s ease forwards;z-index:10;white-space:nowrap;background:rgba(255,255,255,0.93);border-radius:20px;padding:3px 8px;color:#333;box-shadow:0 2px 6px rgba(0,0,0,0.18)';
+    b.textContent=txt;el.style.position='fixed';el.appendChild(b);setTimeout(()=>b.remove(),2000);
   }
 
-  // ---- ÇARPIŞMA ----
+  // ─── AKTIVITE BADGE ───────────────────────────────────────────────────────
+  function aktiviteBadgeGuncelle(uid,aktiflik){
+    const K=tumK[uid];if(!K)return;
+    let b=K.el.querySelector('.k-aktivite-badge');
+    if(!aktiflik||!aktiflik.bitis||aktiflik.bitis<Date.now()){if(b)b.remove();return;}
+    if(!b){b=document.createElement('div');b.className='k-aktivite-badge';K.el.appendChild(b);}
+    b.textContent=aktiflik.emoji||'✨';
+    // Pozisyona git
+    if(typeof aktiflik.x==='number'){
+      const dx=aktiflik.x-K.x,dy=aktiflik.y-K.y,dist=Math.sqrt(dx*dx+dy*dy);
+      if(dist>120){K.x=aktiflik.x;K.y=aktiflik.y;}
+      else if(dist>5){K.x+=dx*0.08;K.y+=dy*0.08;}
+      K.state='atObj';
+    }
+  }
+
+  // ─── ÇARPIŞMA ─────────────────────────────────────────────────────────────
   function carpismKontrol(){
     const uids=Object.keys(tumK);
-    for(let i=0;i<uids.length;i++) for(let j=i+1;j<uids.length;j++){
-      const a=tumK[uids[i]], b=tumK[uids[j]];
-      if(!a||!b||a.state!=='normal'||b.state!=='normal') continue;
-      const dx=a.x-b.x, dy=a.y-b.y;
+    for(let i=0;i<uids.length;i++)for(let j=i+1;j<uids.length;j++){
+      const a=tumK[uids[i]],b=tumK[uids[j]];
+      if(!a||!b||a.state!=='normal'||b.state!=='normal')continue;
+      const dx=a.x-b.x,dy=a.y-b.y;
       if(Math.sqrt(dx*dx+dy*dy)<80){
-        const anims=['wave','dance','runaway'];
-        const anim=anims[Math.floor(Math.random()*3)];
-        a.state=anim; a.stateTimer=200; b.state=anim; b.stateTimer=200;
-        if(anim==='runaway'){ a.vx=-dx*0.04; a.vy=-dy*0.04; b.vx=dx*0.04; b.vy=dy*0.04; }
-        const e={wave:'👋👋',dance:'🕺💃',runaway:'😱💨'};
-        charBubble(a.el, e[anim]); charBubble(b.el, e[anim]);
+        const ANIMS=['wave','dance','runaway'],anim=ANIMS[Math.floor(Math.random()*3)];
+        a.state=anim;a.stateTimer=200;b.state=anim;b.stateTimer=200;
+        if(anim==='runaway'){a.vx=-dx*0.04;a.vy=-dy*0.04;b.vx=dx*0.04;b.vy=dy*0.04;}
+        const E={wave:'👋👋',dance:'🕺💃',runaway:'😱💨'};
+        charBubble(a.el,E[anim]);charBubble(b.el,E[anim]);
       }
     }
   }
 
-  // ---- ZAMAN KONTROL ----
+  // ─── ZAMAN KONTROL ────────────────────────────────────────────────────────
   function zamanKontrol(){
-    const n=new Date(), h=n.getHours(), gn=n.getDay();
-    const isOgle=h===12; const isCumaAkşam=gn===5&&h>=14;
+    const n=new Date(),h=n.getHours(),gn=n.getDay();
     const lt=document.getElementById('kLunchTable');
-    if(isOgle){
-      lt.style.display='block';
+    if(h===12){
+      if(lt)lt.style.display='block';
       Object.values(tumK).forEach(K=>{if(K.state==='normal'){K.state='lunch';K.stateTimer=1800;}});
-    } else { lt.style.display='none'; }
-    if(isCumaAkşam){
-      Object.values(tumK).forEach(K=>{if(K.state!=='dance'){K.state='dance';K.stateTimer=99999;}});
-    }
+    }else{if(lt)lt.style.display='none';}
+    if(gn===5&&h>=14)Object.values(tumK).forEach(K=>{if(K.state!=='dance'){K.state='dance';K.stateTimer=99999;}});
   }
+  const YEMEK_X=()=>window.innerWidth*0.5-30,YEMEK_Y=()=>window.innerHeight*0.6;
 
-  const YEMEK_X=()=>window.innerWidth*0.5-30, YEMEK_Y=()=>window.innerHeight*0.6;
-
-  // ---- ANA DÖNGÜ ----
+  // ─── ANA DÖNGÜ ────────────────────────────────────────────────────────────
   function floatLoop(){
     floatT++;
     const moodData=MOODS.find(m=>m.v===benimMood)||MOODS[0];
-    // Score expression
     const ort=parseFloat(document.getElementById('puanOrt')?.textContent)||5;
     const scoreExpr=ort>=7?'mutlu':ort<=3?'uzgun':'normal';
     myExpr=benimMood==='uykulu'?'uykulu':benimMood==='sinirli'?'sinirli':benimMood==='energik'?'energik':scoreExpr;
 
     Object.entries(tumK).forEach(([uid,K])=>{
-      if(!K.el) return;
+      if(!K.el)return;
       K.el.style.display='block';
       const isMine=uid===KULLANICI_ID;
       const spd=isMine?moodData.spd:1;
-      // State timer
-      if(K.stateTimer>0){ K.stateTimer--; if(K.stateTimer===0) K.state='normal'; }
-      // Movement
+      if(K.stateTimer>0){K.stateTimer--;if(K.stateTimer===0)K.state='normal';}
+      // Hareket
       if(K.state==='gidiyor'){
-        const dx=K.hedefX-K.x, dy=K.hedefY-K.y;
-        const dist=Math.sqrt(dx*dx+dy*dy);
-        if(dist<8){ K.x=K.hedefX; K.y=K.hedefY; if(K.varinca){K.varinca();K.varinca=null;} }
-        else { K.x+=dx*0.06; K.y+=dy*0.06; K.flip=dx<0; }
-      } else if(K.state==='lunch'){
-        const tx=YEMEK_X(), ty=YEMEK_Y();
-        K.x+=(tx-K.x)*0.025; K.y+=(ty-K.y)*0.025;
-      } else if(K.state==='dance'){
-        K.danceAngle+=0.12; K.x+=Math.sin(K.danceAngle)*2.5*spd; K.y+=Math.cos(K.danceAngle*0.7)*1.2;
-      } else if(K.state==='wave'){
-        K.x+=Math.sin(floatT*0.18)*2; K.y+=K.vy*0.3;
-      } else if(['calisiyor','okuyor','toplanti','tahtada','kahve','yiyor','bitki','dart','yazici','atObj'].includes(K.state)){
-        // Obje animasyonu — hafif sallanma
-        K.x+=Math.sin(floatT*0.08)*0.5;
-      } else {
-        K.x+=K.vx*spd; K.y+=K.vy*spd;
-      }
-      // Bounce
-      const W=window.innerWidth-80, H=window.innerHeight-100;
-      if(K.x<10){K.x=10;K.vx=Math.abs(K.vx)*spd*0.5;K.flip=false;}
-      if(K.x>W){K.x=W;K.vx=-Math.abs(K.vx)*spd*0.5;K.flip=true;}
+        const dx=K.hedefX-K.x,dy=K.hedefY-K.y,dist=Math.sqrt(dx*dx+dy*dy);
+        if(dist<8){K.x=K.hedefX;K.y=K.hedefY;if(K.varinca){K.varinca();K.varinca=null;}}
+        else{K.x+=dx*0.06;K.y+=dy*0.06;K.flip=dx<0;}
+      }else if(K.state==='lunch'){
+        const tx=YEMEK_X(),ty=YEMEK_Y();K.x+=(tx-K.x)*0.025;K.y+=(ty-K.y)*0.025;
+      }else if(K.state==='dance'){
+        K.danceAngle+=0.12;K.x+=Math.sin(K.danceAngle)*2.5*spd;K.y+=Math.cos(K.danceAngle*0.7)*1.2;
+      }else if(K.state==='wave'){
+        K.x+=Math.sin(floatT*0.18)*2;K.y+=K.vy*0.3;
+      }else if(['calisiyor','okuyor','tahtada','kahve','yiyor','bitki','yazici','atObj'].includes(K.state)){
+        K.x+=Math.sin(floatT*0.08+K.phaseX)*0.4;
+      }else{K.x+=K.vx*spd;K.y+=K.vy*spd;}
+      // Sınır
+      const W=window.innerWidth-80,H=window.innerHeight-100;
+      if(K.x<10){K.x=10;K.vx=Math.abs(K.vx);K.flip=false;}
+      if(K.x>W){K.x=W;K.vx=-Math.abs(K.vx);K.flip=true;}
       if(K.y<10){K.y=10;K.vy=Math.abs(K.vy);}
       if(K.y>H){K.y=H;K.vy=-Math.abs(K.vy);}
-      // Bob
+      // Bob + konum
       const bob=Math.sin(floatT*0.05+K.phaseX)*3.5;
-      K.el.style.left=K.x+'px'; K.el.style.top=(K.y+bob)+'px';
+      K.el.style.left=K.x+'px';K.el.style.top=(K.y+bob)+'px';
       let tr=K.flip?'scaleX(-1)':'scaleX(1)';
-      if(K.state==='dance') tr+=' rotate('+Math.sin(floatT*0.12)*10+'deg)';
+      if(K.state==='dance')tr+=' rotate('+Math.sin(floatT*0.12)*10+'deg)';
       K.el.style.transform=tr;
-      // Redraw own char with expression
-      if(isMine && floatT%45===0){
+      // Kendi karakterim: yüz ifadesi güncelle
+      if(isMine&&floatT%45===0){
         const s=JSON.parse(localStorage.getItem('ofis_karakter')||'{}');
         drawKarakter(K.canvas,{...K.cfg,expr:myExpr,level:xpToLevel(s.xp||0)},64,82);
       }
     });
-    if(floatT%60===0) carpismKontrol();
-    if(floatT%90===0){ const li=Object.values(tumK).map(k=>k.cfg).filter(Boolean).map(c=>({...c,uid:c.uid||KULLANICI_ID})); if(li.length) kBarRender(li.map(c=>({...c}))); }
-    if(floatT%600===0) zamanKontrol();
+    // Trail + pet
+    const myK=tumK[KULLANICI_ID];
+    if(myK&&floatT%4===0)trailEkle(myK);
+    trailCiz();
+    petGuncelle(myK);
+    if(floatT%60===0)carpismKontrol();
+    if(floatT%600===0)zamanKontrol();
     floatRaf=requestAnimationFrame(floatLoop);
   }
 
-  // ---- TOP BAR ----
+  // ─── TOP BAR ──────────────────────────────────────────────────────────────
   function kBarRender(kList){
     const ic=document.getElementById('kBarIc');
     if(!kList.length){ic.innerHTML='<div class="k-yok">Henüz karakter yok — ilk sen oluştur! 👆</div>';return;}
     ic.innerHTML='';
     kList.forEach(k=>{
-      const lvl=k.level||1, xp=k.xp||0;
-      const div=document.createElement('div');
-      div.className='k-item'+(k.uid===KULLANICI_ID?' benim':'');
+      const lvl=k.level||1,xp=k.xp||0;
+      const div=document.createElement('div');div.className='k-item'+(k.uid===KULLANICI_ID?' benim':'');
       const c=document.createElement('canvas');
-      // Expression based on uid mood from Firebase + score
-      const ort2=parseFloat(document.getElementById('puanOrt')?.textContent)||5;
+      const kMood=k.mood||'normal',ort2=parseFloat(document.getElementById('puanOrt')?.textContent)||5;
       const scoreExpr2=ort2>=7?'mutlu':ort2<=3?'uzgun':'normal';
-      const kMood=k.mood||'normal';
       const kExpr=kMood==='uykulu'?'uykulu':kMood==='sinirli'?'sinirli':kMood==='energik'?'energik':(k.uid===KULLANICI_ID?myExpr:scoreExpr2);
       drawKarakter(c,{...k,level:lvl,expr:kExpr},54,70);
-      const ad=document.createElement('div'); ad.className='k-isim';
-      ad.textContent=(k.isim||'???')+' Lv'+lvl;
-      const xpBar=document.createElement('div'); xpBar.className='k-xp-bar';
-      const xpFill=document.createElement('div'); xpFill.className='k-xp-fill';
-      const nextXp=XP_TH[Math.min(lvl,XP_TH.length-1)]||1, prevXp=XP_TH[lvl-1]||0;
+      const ad=document.createElement('div');ad.className='k-isim';ad.textContent=(k.isim||'???')+' Lv'+lvl;
+      const xpBar=document.createElement('div');xpBar.className='k-xp-bar';
+      const xpFill=document.createElement('div');xpFill.className='k-xp-fill';
+      const nextXp=XP_TH[Math.min(lvl,XP_TH.length-1)]||1,prevXp=XP_TH[lvl-1]||0;
       xpFill.style.width=Math.min(100,((xp-prevXp)/(nextXp-prevXp))*100)+'%';
-      xpBar.appendChild(xpFill);
-      div.appendChild(c); div.appendChild(ad); div.appendChild(xpBar);
-      ic.appendChild(div);
+      xpBar.appendChild(xpFill);div.appendChild(c);div.appendChild(ad);div.appendChild(xpBar);ic.appendChild(div);
     });
   }
 
-  // Aktivite badge güncelle + karakteri o pozisyona götür
-  function aktiviteBadgeGuncelle(uid, aktiflik){
-    const K=tumK[uid]; if(!K) return;
-    let b=K.el.querySelector('.k-aktivite-badge');
-    if(!aktiflik||!aktiflik.bitis||aktiflik.bitis<Date.now()){
-      if(b) b.remove();
-      return;
-    }
-    // Badge göster
-    if(!b){ b=document.createElement('div'); b.className='k-aktivite-badge'; K.el.style.position='fixed'; K.el.appendChild(b); }
-    b.textContent=aktiflik.emoji||'✨';
-    // Karakteri aktivite konumuna götür (eğer konum var ve uzaktaysa)
-    if(typeof aktiflik.x==='number' && typeof aktiflik.y==='number'){
-      const dx=aktiflik.x-K.x, dy=aktiflik.y-K.y;
-      const dist=Math.sqrt(dx*dx+dy*dy);
-      if(dist>120){
-        // Anlık ışınla (uzaktaysa)
-        K.x=aktiflik.x; K.y=aktiflik.y;
-      } else if(dist>5){
-        // Smooth git
-        K.x+=dx*0.08; K.y+=dy*0.08;
-      }
-      K.state='atObj'; // Hareketi durdur
-    }
-  }
-
-  // Firebase listener
-  onSnapshot(collection(db,'karakterler'), snap=>{
+  // ─── FIREBASE LİSTENERS ───────────────────────────────────────────────────
+  onSnapshot(collection(db,'karakterler'),snap=>{
     const list=snap.docs.map(d=>({uid:d.id,...d.data()}));
     kBarRender(list);
     list.forEach(k=>{
-      if(!tumK[k.uid]) charElOlustur(k.uid,k); else charElGuncelle(k.uid,k);
-      // Kendi aktivitemizi gösterme (zaten charBubble var)
-      if(k.uid!==KULLANICI_ID) aktiviteBadgeGuncelle(k.uid, k.aktiflik);
-      if(k.uid!==KULLANICI_ID && k.emote) emoteGoster(k.uid, k.emote);
-      // Gelen challenge kontrolü
-      if(k.uid===KULLANICI_ID && k.pendingChallenge && k.pendingChallenge.ts){
+      if(!tumK[k.uid])charElOlustur(k.uid,k);else charElGuncelle(k.uid,k);
+      if(k.uid!==KULLANICI_ID){
+        aktiviteBadgeGuncelle(k.uid,k.aktiflik);
+        if(k.emote)emoteGoster(k.uid,k.emote);
+      }
+      // Gelen RPS challenge
+      if(k.uid===KULLANICI_ID&&k.pendingChallenge&&k.pendingChallenge.ts){
         const pc=k.pendingChallenge;
-        // Eski challenge değilse ve hâlâ bekleniyorsa göster
-        if(pc.ts > Date.now()-30000 && rpsGameId!==pc.gameId){
-          rpsGameId=pc.gameId; rpsRole='opponent'; rpsHedefUid=pc.fromUid;
+        if(pc.ts>Date.now()-30000&&rpsGameId!==pc.gameId){
+          rpsGameId=pc.gameId;rpsRole='opponent';rpsHedefUid=pc.fromUid;
           const rcText=document.getElementById('rcText');
           rcText.textContent=(pc.fromIsim||'Biri')+' sana taş kağıt makas oynamak istiyor!';
           rcText.dataset.isim=pc.fromIsim||'???';
@@ -1022,32 +1048,21 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
         }
       }
     });
-    if(!floatRaf) floatLoop();
+    if(!floatRaf)floatLoop();
   });
 
-  // ---- RPS MULTIPLAYER ----
-  let rpsGameId=null, rpsRole=null, rpsHedefUid=null;
+  // ─── RPS MULTİPLAYER ──────────────────────────────────────────────────────
+  let rpsGameId=null,rpsRole=null,rpsHedefUid=null,rpsUnsub=null;
   const RPS_BEATS={tas:'makas',kagit:'tas',makas:'kagit'};
   const RPS_EMOJI={tas:'🪨',kagit:'📄',makas:'✂️'};
 
   window.rpsBaslat=async uid=>{
     rpsHedefUid=uid;
-    const k=tumK[uid]; const isim=k?.cfg?.isim||'???';
-    rpsGameId=KULLANICI_ID+'_'+uid+'_'+Date.now();
-    rpsRole='challenger';
+    const k=tumK[uid];const isim=k?.cfg?.isim||'???';
+    rpsGameId=KULLANICI_ID+'_'+uid+'_'+Date.now();rpsRole='challenger';
     const benimIsim=JSON.parse(localStorage.getItem('ofis_karakter')||'{}').isim||'???';
-    // Oyun dokümanı oluştur
-    await setDoc(doc(db,'rps_games',rpsGameId),{
-      challenger:KULLANICI_ID, challengerIsim:benimIsim,
-      opponent:uid, opponentIsim:isim,
-      challengerChoice:null, opponentChoice:null,
-      status:'waiting', ts:serverTimestamp()
-    });
-    // Rakibin karakterler dokümanına challenge yaz (compound query gerekmez)
-    await setDoc(doc(db,'karakterler',uid),{
-      pendingChallenge:{gameId:rpsGameId, fromUid:KULLANICI_ID, fromIsim:benimIsim, ts:Date.now()}
-    },{merge:true});
-    // Challenger modal aç
+    await setDoc(doc(db,'rps_games',rpsGameId),{challenger:KULLANICI_ID,challengerIsim:benimIsim,opponent:uid,opponentIsim:isim,challengerChoice:null,opponentChoice:null,status:'waiting',ts:serverTimestamp()});
+    await setDoc(doc(db,'karakterler',uid),{pendingChallenge:{gameId:rpsGameId,fromUid:KULLANICI_ID,fromIsim:benimIsim,ts:Date.now()}},{merge:true});
     document.getElementById('rpsHedefIsim').textContent=isim+' ile oynuyorsun';
     document.getElementById('rpsBekle').style.display='none';
     document.getElementById('rpsSecimAlan').style.display='block';
@@ -1055,64 +1070,55 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
     document.getElementById('rpsModal').style.display='flex';
     rpsGameListen(rpsGameId);
   };
-
-  let rpsUnsub=null;
+  let rpsGosterSonucDone=false;
   function rpsGameListen(gameId){
-    if(rpsUnsub) rpsUnsub();
-    rpsUnsub=onSnapshot(doc(db,'rps_games',gameId), snap=>{
-      if(!snap.exists()) return;
+    if(rpsUnsub)rpsUnsub();
+    rpsGosterSonucDone=false;
+    rpsUnsub=onSnapshot(doc(db,'rps_games',gameId),snap=>{
+      if(!snap.exists()||rpsGosterSonucDone)return;
       const d=snap.data();
-      if(d.status==='result') rpsGosterSonuc(d);
+      if(d.status==='result'){rpsGosterSonucDone=true;rpsGosterSonuc(d);}
     });
   }
-
   window.rpsSec=async v=>{
-    if(!rpsGameId) return;
+    if(!rpsGameId)return;
     document.getElementById('rpsSecimAlan').style.display='none';
     document.getElementById('rpsBekle').style.display='block';
-    document.getElementById('rpsBekle').textContent='⏳ Rakibin seçimi bekleniyor...';
     const field=rpsRole==='challenger'?'challengerChoice':'opponentChoice';
+    const otherField=rpsRole==='challenger'?'opponentChoice':'challengerChoice';
     const snap=await getDoc(doc(db,'rps_games',rpsGameId));
-    if(!snap.exists()) return;
+    if(!snap.exists())return;
     const d=snap.data();
     const update={[field]:v};
-    // Check if other already chose
-    const otherField=rpsRole==='challenger'?'opponentChoice':'challengerChoice';
     if(d[otherField]){
-      update.status='result';
-      const cc=rpsRole==='challenger'?v:d[otherField];
-      const oc=rpsRole==='challenger'?d[otherField]:v;
-      update.challengerChoice=cc; update.opponentChoice=oc;
+      const cc=rpsRole==='challenger'?v:d[otherField],oc=rpsRole==='challenger'?d[otherField]:v;
+      update.status='result';update.challengerChoice=cc;update.opponentChoice=oc;
       update.winner=cc===oc?'draw':RPS_BEATS[cc]===oc?'challenger':'opponent';
     }
     await updateDoc(doc(db,'rps_games',rpsGameId),update);
   };
-
   async function rpsGosterSonuc(d){
     const isCh=rpsRole==='challenger';
     const benimSecim=isCh?d.challengerChoice:d.opponentChoice;
     const onunSecim=isCh?d.opponentChoice:d.challengerChoice;
     const kazandim=(d.winner==='challenger'&&isCh)||(d.winner==='opponent'&&!isCh);
     const berabere=d.winner==='draw';
-    let html=`<div style="font-size:1.5rem;text-align:center;margin-bottom:8px">${RPS_EMOJI[benimSecim]} vs ${RPS_EMOJI[onunSecim]}</div>`;
-    if(berabere) html+='<div style="color:#888;font-size:1.05rem;text-align:center">Berabere! 🤝</div>';
-    else if(kazandim){ html+='<div style="color:#4CAF50;font-size:1.1rem;font-weight:700;text-align:center">Kazandın! 🎉 +15 XP</div>'; await xpKazan(15); }
-    else{ html+='<div style="color:#E05252;font-size:1.05rem;text-align:center">Kaybettin! 😢 +3 XP</div>'; await xpKazan(3); }
+    let html=`<div style="font-size:1.5rem;text-align:center;margin-bottom:8px">${RPS_EMOJI[benimSecim]||'?'} vs ${RPS_EMOJI[onunSecim]||'?'}</div>`;
+    if(berabere)html+='<div style="color:#888;font-size:1.1rem;text-align:center">Berabere! 🤝</div>';
+    else if(kazandim){html+='<div style="color:#4CAF50;font-size:1.1rem;font-weight:700;text-align:center">Kazandın! 🎉 +15 XP</div>';await xpKazan(15);}
+    else{html+='<div style="color:#E05252;font-size:1.05rem;text-align:center">Kaybettin 😢 +3 XP</div>';await xpKazan(3);}
     document.getElementById('rpsBekle').style.display='none';
     document.getElementById('rpsSonuc').innerHTML=html;
     document.getElementById('rpsSonucAlan').style.display='block';
-    // Cleanup game after 10s
     setTimeout(()=>deleteDoc(doc(db,'rps_games',rpsGameId)).catch(()=>{}),10000);
   }
-
   window.rpsKapat=()=>{
     document.getElementById('rpsModal').style.display='none';
     if(rpsUnsub){rpsUnsub();rpsUnsub=null;}
-    rpsGameId=null; rpsRole=null; rpsHedefUid=null;
+    rpsGameId=null;rpsRole=null;rpsHedefUid=null;
   };
   window.rpsKabul=async()=>{
     document.getElementById('rpsChallenge').style.display='none';
-    // pendingChallenge'ı temizle (tekrar tetiklenmesin)
     await setDoc(doc(db,'karakterler',KULLANICI_ID),{pendingChallenge:null},{merge:true});
     document.getElementById('rpsHedefIsim').textContent=(document.getElementById('rcText').dataset.isim||'???')+' ile oynuyorsun';
     document.getElementById('rpsBekle').style.display='none';
@@ -1123,202 +1129,86 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
   window.rpsReddet=async()=>{
     document.getElementById('rpsChallenge').style.display='none';
     await setDoc(doc(db,'karakterler',KULLANICI_ID),{pendingChallenge:null},{merge:true});
-    if(rpsGameId) await deleteDoc(doc(db,'rps_games',rpsGameId)).catch(()=>{});
-    rpsGameId=null; rpsRole=null; rpsHedefUid=null;
-    if(rpsUnsub){rpsUnsub();rpsUnsub=null;}
+    if(rpsGameId)await deleteDoc(doc(db,'rps_games',rpsGameId)).catch(()=>{});
+    rpsGameId=null;rpsRole=null;rpsHedefUid=null;if(rpsUnsub){rpsUnsub();rpsUnsub=null;}
   };
 
-  // Challenge listener - karakterler snapshot üzerinden çalışıyor
-
-  // ===== BOYUT =====
-  function charBoyutuAyarla(uid, boyut){
-    const K=tumK[uid]; if(!K) return;
-    const scale=boyut||1;
-    const w=Math.round(64*scale), h=Math.round(82*scale);
-    K.canvas.style.width=w+'px'; K.canvas.style.height=h+'px';
-  }
-
-  // ===== AURA =====
-  function charAuraSec(uid, aura){
-    const K=tumK[uid]; if(!K) return;
-    if(!aura||aura==='yok'){ K.el.style.filter='drop-shadow(1px 3px 5px rgba(0,0,0,0.2))'; K.el.classList.remove('has-aura'); return; }
-    if(aura==='gokkusagi'){
-      K.el.style.filter='drop-shadow(0 0 8px red) drop-shadow(0 0 12px blue) drop-shadow(0 0 6px yellow)';
-    } else {
-      K.el.style.filter=`drop-shadow(0 0 8px ${aura}) drop-shadow(0 0 4px ${aura})`;
-    }
-    K.el.classList.add('has-aura');
-  }
-
-  // ===== PET HAYVAN =====
-  let petEl=null, petX=100, petY=200;
-  function petOlustur(emoji){
-    if(petEl) petEl.remove();
-    if(!emoji||emoji==='yok') return;
-    petEl=document.createElement('div');
-    petEl.className='k-pet'; petEl.textContent=emoji;
-    document.body.appendChild(petEl);
-  }
-  function petGuncelle(myK){
-    if(!petEl||!myK) return;
-    petX+=(myK.x+20-petX)*0.06+(Math.random()-0.5)*0.5;
-    petY+=(myK.y+70-petY)*0.06;
-    petEl.style.left=petX+'px'; petEl.style.top=petY+'px';
-    petEl.style.transform=myK.x>petX?'scaleX(1)':'scaleX(-1)';
-  }
-
-  // ===== TRAIL (iz) =====
-  let trailCanvas=null, trailCtx=null, trailParts=[];
-  function trailBaslat(){
-    trailCanvas=document.getElementById('kTrailCanvas');
-    if(!trailCanvas) return;
-    trailCanvas.width=window.innerWidth; trailCanvas.height=window.innerHeight;
-    trailCtx=trailCanvas.getContext('2d');
-    window.addEventListener('resize',()=>{ if(trailCanvas){trailCanvas.width=window.innerWidth;trailCanvas.height=window.innerHeight;} });
-  }
-  trailBaslat();
-  const IZ_RENK={mor:'rgba(108,99,255,0.7)',pembe:'rgba(255,100,180,0.7)',altin:'rgba(255,210,0,0.8)',yesil:'rgba(80,200,120,0.7)'};
-  const IZ_SEKIL={mor:'●',pembe:'♥',altin:'★',yesil:'✿'};
-  function trailEkle(K){
-    const iz=(JSON.parse(localStorage.getItem('ofis_karakter')||'{}')).iz;
-    if(!iz||iz==='yok'||!trailCtx) return;
-    if(Math.abs(K.vx)<0.2&&Math.abs(K.vy)<0.2&&K.state==='normal') return;
-    trailParts.push({x:K.x+32,y:K.y+70,life:1,color:IZ_RENK[iz]||'rgba(108,99,255,0.7)',sekil:IZ_SEKIL[iz]||'●',size:12+Math.random()*6});
-  }
-  function trailCiz(){
-    if(!trailCtx) return;
-    trailCtx.clearRect(0,0,trailCanvas.width,trailCanvas.height);
-    trailParts=trailParts.filter(p=>{
-      p.life-=0.04; if(p.life<=0) return false;
-      trailCtx.globalAlpha=p.life*0.8;
-      trailCtx.fillStyle=p.color;
-      trailCtx.font=`${p.size}px sans-serif`;
-      trailCtx.textAlign='center';
-      trailCtx.fillText(p.sekil,p.x,p.y);
-      return true;
-    });
-    trailCtx.globalAlpha=1;
-  }
-
-  // ===== EMOTE =====
-  const EMOTELER=[
-    {emoji:'❤️',count:7},{emoji:'⭐',count:8},{emoji:'🎉',count:10},
-    {emoji:'💥',count:5},{emoji:'✨',count:12},{emoji:'🌈',count:3},
-    {emoji:'💫',count:8},{emoji:'🔥',count:6}
-  ];
-  function emoteYap(emoteIdx){
-    const K=tumK[KULLANICI_ID]; if(!K) return;
-    const e=EMOTELER[emoteIdx]||EMOTELER[0];
-    for(let i=0;i<e.count;i++){
-      setTimeout(()=>{
-        const div=document.createElement('div');
-        div.className='k-emote';
-        div.textContent=e.emoji;
-        div.style.left=(K.x+Math.random()*80-10)+'px';
-        div.style.top=(K.y+Math.random()*40)+'px';
-        div.style.position='fixed';
-        div.style.animationDelay=(Math.random()*0.4)+'s';
-        document.body.appendChild(div);
-        setTimeout(()=>div.remove(),1400);
-      },i*60);
-    }
-    // Firebase'e emote yaz (kısa süreli)
-    setDoc(doc(db,'karakterler',KULLANICI_ID),{emote:{emoji:e.emoji,ts:Date.now()}},{merge:true});
-    setTimeout(()=>setDoc(doc(db,'karakterler',KULLANICI_ID),{emote:null},{merge:true}),2000);
-  }
-  window.emoteYap=emoteYap;
-
-  // Diğer kullanıcıların emotesini göster
-  function emoteGoster(uid, emote){
-    const K=tumK[uid]; if(!K||!emote||!emote.ts) return;
-    if(emote.ts<Date.now()-3000) return; // Eski emote
-    const div=document.createElement('div');
-    div.className='k-emote';
-    div.textContent=emote.emoji;
-    div.style.left=(K.x+20)+'px'; div.style.top=(K.y)+'px';
-    div.style.position='fixed';
-    document.body.appendChild(div);
-    setTimeout(()=>div.remove(),1400);
-  }
-
-    // Challenge listener - karakterler snapshot üzerinden çalışıyor
-
-  // ---- OBJELEr ----
+  // ─── OBJELEr ──────────────────────────────────────────────────────────────
   const OBJ_CONFIG={
-    bilgisayar:{emoji:'⌨️💻',mesaj:'Çalışıyorum...',dur:8000,state:'calisiyor'},
-    yazici:    {emoji:'📄🖨️',mesaj:'Yazdırıyorum!',dur:4000,state:'yazici'},
-    kitaplik:  {emoji:'📖✨',mesaj:'Okuyorum...',dur:6000,state:'okuyor'},
-    tahta:     {emoji:'✏️💡',mesaj:'Fikir üretiyorum!',dur:5000,state:'tahtada'},
-    kahve:     {emoji:'☕😌',mesaj:'Kahve molaaa!',dur:4000,state:'kahve'},
-    buzdolabi: {emoji:'🥪😋',mesaj:'Atıştırıyorum~',dur:3500,state:'yiyor'},
-    bitki:     {emoji:'🌱💚',mesaj:'Bitkimi suladım!',dur:2500,state:'bitki'},
+    bilgisayar:{emoji:'⌨️💻',dur:8000,state:'calisiyor'},
+    yazici:    {emoji:'📄🖨️',dur:4000,state:'yazici'},
+    kitaplik:  {emoji:'📖✨',dur:6000,state:'okuyor'},
+    tahta:     {emoji:'✏️💡',dur:5000,state:'tahtada'},
+    kahve:     {emoji:'☕😌',dur:4000,state:'kahve'},
+    buzdolabi: {emoji:'🥪😋',dur:3500,state:'yiyor'},
+    bitki:     {emoji:'🌱💚',dur:2500,state:'bitki'},
   };
-
-  window.objTikla=function(objId, el){
-    const cfg=OBJ_CONFIG[objId]; if(!cfg) return;
-    const K=tumK[KULLANICI_ID]; if(!K) return;
+  window.objTikla=function(objId,el){
+    const cfg=OBJ_CONFIG[objId];if(!cfg)return;
+    const K=tumK[KULLANICI_ID];if(!K)return;
     const rect=el.getBoundingClientRect();
-    const tx=rect.left+rect.width/2-32;
-    const ty=Math.max(60, rect.top - 90);
-    K.state='gidiyor'; K.hedefX=tx; K.hedefY=ty;
+    const tx=rect.left+rect.width/2-32,ty=Math.max(60,rect.top-90);
+    K.state='gidiyor';K.hedefX=tx;K.hedefY=ty;
     K.varinca=async()=>{
-      K.state=cfg.state; K.stateTimer=Math.floor(cfg.dur/16);
-      charBubble(K.el, cfg.emoji);
+      K.state=cfg.state;K.stateTimer=Math.floor(cfg.dur/16);
+      charBubble(K.el,cfg.emoji);
       document.querySelectorAll('.k-obj').forEach(o=>o.classList.remove('aktif'));
       el.classList.add('aktif');
-      // Firebase'e aktiviteyi + pozisyonu kaydet (diğerleri görsün)
       const bitis=Date.now()+cfg.dur;
-      await setDoc(doc(db,'karakterler',KULLANICI_ID),{
-        aktiflik:{obj:objId, emoji:cfg.emoji, bitis, x:Math.round(K.x), y:Math.round(K.y)}
-      },{merge:true});
-      setTimeout(async()=>{
-        K.state='normal'; el.classList.remove('aktif');
-        await setDoc(doc(db,'karakterler',KULLANICI_ID),{aktiflik:null},{merge:true});
-      }, cfg.dur);
+      await setDoc(doc(db,'karakterler',KULLANICI_ID),{aktiflik:{obj:objId,emoji:cfg.emoji,bitis,x:Math.round(K.x),y:Math.round(K.y)}},{merge:true});
+      setTimeout(async()=>{K.state='normal';el.classList.remove('aktif');await setDoc(doc(db,'karakterler',KULLANICI_ID),{aktiflik:null},{merge:true});},cfg.dur);
     };
   };
 
-  // ---- EDITOR ----
+  // ─── EDITOR ───────────────────────────────────────────────────────────────
   let kCfg={isim:'',cinsiyet:'kadin',ten:TEN[0],sac:SAC[0],sacStil:0,goz:GOZ[1],kiy:KIY[0],aksesuar:'yok',boyut:1,aura:'yok',hayvan:'yok',iz:'yok'};
-
   window.karakterEditorAc=()=>{
     const s=localStorage.getItem('ofis_karakter');
     if(s){try{kCfg={...kCfg,...JSON.parse(s)};}catch(_){}}
     document.getElementById('kIsimInput').value=kCfg.isim||'';
-    kBuildUI(); kGuncelle();
+    kBuildUI();kGuncelle();
     document.getElementById('kModal').style.display='flex';
   };
   window.karakterEditorKapat=()=>document.getElementById('kModal').style.display='none';
-
   function kBuildUI(){
-    const sav=JSON.parse(localStorage.getItem('ofis_karakter')||'{}');
-    const lvl=xpToLevel(sav.xp||0);
-    document.getElementById('kLvlHint').textContent=lvl>=3?'(Seviye '+lvl+' — özel aksesuar açık!)':'(Seviye 3\'te yeni aksesuar açılır)';
-    function sw(id,colors,key){ document.getElementById(id).innerHTML=colors.map(c=>`<div class="k-swatch ${kCfg[key]===c?'aktif':''}" style="background:${c}" onclick="kSet('${key}','${c}')"></div>`).join(''); }
-    sw('kTenRow',TEN,'ten'); sw('kSacRow',SAC,'sac'); sw('kGozRow',GOZ,'goz'); sw('kKiyRow',KIY,'kiy');
-    const sr=document.getElementById('kSacStilRow'); sr.innerHTML='';
-    for(let i=0;i<4;i++){ const b=document.createElement('button'); b.className='k-stil-btn'+(kCfg.sacStil===i?' aktif':''); b.onclick=()=>kSet('sacStil',i); const c=document.createElement('canvas'); drawKarakter(c,{...kCfg,sacStil:i},40,52); b.appendChild(c); sr.appendChild(b); }
+    const sav=JSON.parse(localStorage.getItem('ofis_karakter')||'{}'),lvl=xpToLevel(sav.xp||0);
+    document.getElementById('kLvlHint').textContent=lvl>=3?'(Lv'+lvl+' — özel ak. açık!)':'(Lv3\'te yeni aksesuar)';
+    function sw(id,colors,key){document.getElementById(id).innerHTML=colors.map(c=>`<div class="k-swatch ${kCfg[key]===c?'aktif':''}" style="background:${c}" onclick="kSet('${key}','${c}')"></div>`).join('');}
+    sw('kTenRow',TEN,'ten');sw('kSacRow',SAC,'sac');sw('kGozRow',GOZ,'goz');sw('kKiyRow',KIY,'kiy');
+    // Saç stili (8 adet)
+    const sr=document.getElementById('kSacStilRow');sr.innerHTML='';
+    for(let i=0;i<8;i++){const b=document.createElement('button');b.className='k-stil-btn'+(kCfg.sacStil===i?' aktif':'');b.onclick=()=>kSet('sacStil',i);const c=document.createElement('canvas');drawKarakter(c,{...kCfg,sacStil:i},40,52);b.appendChild(c);sr.appendChild(b);}
     document.querySelectorAll('[data-k="cinsiyet"]').forEach(b=>b.classList.toggle('aktif',b.dataset.v===kCfg.cinsiyet));
+    // Aksesuar
     const aks=[...AKSESUARLAR];
-    if(lvl>=3) aks.push({v:'pelerin',l:'🦸 Pelerin'});
-    if(lvl>=5) aks.push({v:'kanat',l:'🪽 Kanatlar'});
+    if(lvl>=3)aks.push({v:'pelerin',l:'🦸 Pelerin'});
+    if(lvl>=5)aks.push({v:'kanat',l:'🪽 Kanatlar'});
     document.getElementById('kAkRow').innerHTML=aks.map(a=>`<button class="k-ak-btn ${kCfg.aksesuar===a.v?'aktif':''}" onclick="kSet('aksesuar','${a.v}')">${a.l}</button>`).join('');
     // Boyut
-    const boyutlar=[{v:0.7,l:'🔹 Küçük'},{v:1,l:'⬜ Normal'},{v:1.5,l:'🔷 Büyük'},{v:2,l:'🟦 Dev'}];
-    document.getElementById('kBoyutRow').innerHTML=boyutlar.map(b=>`<button class="k-size-btn ${(kCfg.boyut||1)===b.v?'aktif':''}" onclick="kSet('boyut',${b.v})">${b.l}</button>`).join('');
+    [{v:0.7,l:'🔹 Küçük'},{v:1,l:'⬜ Normal'},{v:1.5,l:'🔷 Büyük'},{v:2,l:'🟦 Dev'}].forEach(b=>{
+      const btn=document.createElement('button');btn.className='k-size-btn'+((kCfg.boyut||1)===b.v?' aktif':'');
+      btn.textContent=b.l;btn.onclick=()=>kSet('boyut',b.v);document.getElementById('kBoyutRow').appendChild(btn);
+    });
     // Aura
-    const auralar=[{v:'yok',c:'#e8e8e8',l:'Yok'},{v:'#9b59b6',c:'#9b59b6',l:'Mor'},{v:'#FFD700',c:'#FFD700',l:'Altın'},{v:'#FF69B4',c:'#FF69B4',l:'Pembe'},{v:'#00CED1',c:'#00CED1',l:'Mavi'},{v:'#FF4500',c:'#FF4500',l:'Ateş'},{v:'gokkusagi',c:'linear-gradient(45deg,red,orange,yellow,green,blue,violet)',l:'🌈'}];
-    document.getElementById('kAuraRow').innerHTML=auralar.map(a=>`<div class="k-aura-swatch ${(kCfg.aura||'yok')===a.v?'aktif':''}" style="background:${a.c}" title="${a.l}" onclick="kSet('aura','${a.v}')"></div>`).join('');
+    [{v:'yok',c:'#e8e8e8'},{v:'#9b59b6',c:'#9b59b6'},{v:'#FFD700',c:'#FFD700'},{v:'#FF69B4',c:'#FF69B4'},{v:'#00CED1',c:'#00CED1'},{v:'#FF4500',c:'#FF4500'},{v:'gokkusagi',c:'linear-gradient(45deg,red,orange,yellow,green,blue,violet)'}].forEach(a=>{
+      const d=document.createElement('div');d.className='k-swatch'+((kCfg.aura||'yok')===a.v?' aktif':'');
+      d.style.background=a.c;d.onclick=()=>kSet('aura',a.v);document.getElementById('kAuraRow').appendChild(d);
+    });
     // Hayvan
-    const hayvanlar=['yok','🐱','🐶','🐸','🦆','🐰','👾','🐼','🦊','🐧'];
-    document.getElementById('kHayvanRow').innerHTML=hayvanlar.map(h=>`<button class="k-hayvan-btn ${(kCfg.hayvan||'yok')===h?'aktif':''}" onclick="kSet('hayvan','${h}')">${h==='yok'?'❌':h}</button>`).join('');
+    ['yok','🐱','🐶','🐸','🦆','🐰','👾','🐼','🦊','🐧'].forEach(h=>{
+      const b=document.createElement('button');b.className='k-hayvan-btn'+((kCfg.hayvan||'yok')===h?' aktif':'');
+      b.textContent=h==='yok'?'❌':h;b.onclick=()=>kSet('hayvan',h);document.getElementById('kHayvanRow').appendChild(b);
+    });
     // İz
-    const izler=[{v:'yok',l:'Yok'},{v:'mor',l:'💜 Mor'},{v:'pembe',l:'💗 Pembe'},{v:'altin',l:'⭐ Yıldız'},{v:'yesil',l:'✿ Çiçek'}];
-    document.getElementById('kIzRow').innerHTML=izler.map(i=>`<button class="k-btn ${(kCfg.iz||'yok')===i.v?'aktif':''}" onclick="kSet('iz','${i.v}')" style="flex:none;padding:5px 8px;font-size:0.76rem">${i.l}</button>`).join('');
-    // Emote bar (editörde önizleme)
-    document.getElementById('kEmoteBar').innerHTML=EMOTELER.map((e,i)=>`<button class="k-emote-btn" onclick="emoteYap(${i})" title="${e.emoji} x${e.count}">${e.emoji}</button>`).join('');
+    [{v:'yok',l:'Yok'},{v:'mor',l:'💜 Mor'},{v:'pembe',l:'💗 Pembe'},{v:'altin',l:'⭐ Yıldız'},{v:'yesil',l:'✿ Çiçek'}].forEach(iz=>{
+      const b=document.createElement('button');b.className='k-btn'+((kCfg.iz||'yok')===iz.v?' aktif':'');
+      b.style.cssText='flex:none;padding:5px 9px;font-size:0.76rem';b.textContent=iz.l;b.onclick=()=>kSet('iz',iz.v);
+      document.getElementById('kIzRow').appendChild(b);
+    });
+    // Emote bar
+    document.getElementById('kEmoteBar').innerHTML=EMOTELER.map((e,i)=>`<button class="k-emote-btn" onclick="emoteYap(${i})">${e.e}</button>`).join('');
   }
-  window.kSet=(key,val)=>{ kCfg[key]=val; kBuildUI(); kGuncelle(); };
+  window.kSet=(key,val)=>{kCfg[key]=val;document.getElementById('kBoyutRow').innerHTML='';document.getElementById('kAuraRow').innerHTML='';document.getElementById('kHayvanRow').innerHTML='';document.getElementById('kIzRow').innerHTML='';kBuildUI();kGuncelle();};
   window.kGuncelle=()=>{
     kCfg.isim=document.getElementById('kIsimInput').value||'';
     document.getElementById('kPreviewAd').textContent=kCfg.isim||'Karakter';
@@ -1330,23 +1220,22 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
     kCfg.isim=(document.getElementById('kIsimInput').value||'').trim();
     if(!kCfg.isim){alert('Lütfen bir isim gir!');return;}
     const s=JSON.parse(localStorage.getItem('ofis_karakter')||'{}');
-    const xp=s.xp||0, level=xpToLevel(xp);
+    const xp=s.xp||0,level=xpToLevel(xp);
     const full={...kCfg,xp,level,uid:KULLANICI_ID};
     localStorage.setItem('ofis_karakter',JSON.stringify(full));
     await setDoc(doc(db,'karakterler',KULLANICI_ID),{...full,guncellendi:serverTimestamp()});
     window.karakterEditorKapat();
-    if(!tumK[KULLANICI_ID]) charElOlustur(KULLANICI_ID,full); else charElGuncelle(KULLANICI_ID,full);
-    petOlustur(full.hayvan);
-    charAuraSec(KULLANICI_ID,full.aura);
-    charBoyutuAyarla(KULLANICI_ID,full.boyut);
-    if(!floatRaf) floatLoop();
+    if(!tumK[KULLANICI_ID])charElOlustur(KULLANICI_ID,full);else charElGuncelle(KULLANICI_ID,full);
+    petOlustur(full.hayvan);charAuraSec(KULLANICI_ID,full.aura);charBoyutuAyarla(KULLANICI_ID,full.boyut);
+    if(!floatRaf)floatLoop();
   };
 
   // Başlangıç
   const _sc=localStorage.getItem('ofis_karakter');
-  if(_sc){ try{ charElOlustur(KULLANICI_ID,JSON.parse(_sc)); if(!floatRaf) floatLoop(); }catch(_){} }
-  else setTimeout(()=>{ if(!localStorage.getItem('ofis_karakter')) window.karakterEditorAc(); },1500);
+  if(_sc){try{charElOlustur(KULLANICI_ID,JSON.parse(_sc));if(!floatRaf)floatLoop();}catch(_){}}
+  else setTimeout(()=>{if(!localStorage.getItem('ofis_karakter'))window.karakterEditorAc();},1500);
   zamanKontrol();
+
 
     // ---- 24 SAAT SONRA SİL ----
   async function eskiMesajlariSil() {
