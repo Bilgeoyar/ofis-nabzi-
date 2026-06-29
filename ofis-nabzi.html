@@ -760,14 +760,30 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
     const oldXp=s.xp||0,newXp=oldXp+n,oldLvl=xpToLevel(oldXp),newLvl=xpToLevel(newXp);
     s.xp=newXp;s.level=newLvl;
     localStorage.setItem('ofis_karakter',JSON.stringify(s));
-    await setDoc(doc(db,'karakterler',KULLANICI_ID),{xp:newXp,level:newLvl},{merge:true});
+    // XP toast göster
+    const toast=document.createElement('div');
+    toast.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:9998;background:#6c63ff;color:#fff;border-radius:12px;padding:8px 16px;font-size:0.9rem;font-weight:700;animation:popIn 0.3s ease';
+    toast.textContent=`+${n} XP  (${newXp} / ${XP_TH[Math.min(newLvl,XP_TH.length-1)]} XP)`;
+    document.body.appendChild(toast);setTimeout(()=>toast.remove(),2500);
+    try{ await setDoc(doc(db,'karakterler',KULLANICI_ID),{xp:newXp,level:newLvl},{merge:true}); }catch(_){}
     if(newLvl>oldLvl)lvlUpGoster(newLvl);
   }
   function lvlUpGoster(lvl){
     const el=document.createElement('div');
-    el.style.cssText='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:9999;background:linear-gradient(135deg,#6c63ff,#a78bfa);color:#fff;border-radius:20px;padding:20px 30px;font-size:1.2rem;font-weight:900;text-align:center;box-shadow:0 8px 30px rgba(108,99,255,0.5);animation:popIn 0.4s ease';
-    el.innerHTML=`🎉 SEVİYE ATLADIN!<br><span style="font-size:2rem">${['','⭐','🌟','💫','✨'][Math.min(lvl-1,4)]}</span><br>Seviye ${lvl}${lvl>=3?' — Yeni aksesuar açıldı!':''}`;
-    document.body.appendChild(el);setTimeout(()=>el.remove(),3500);
+    el.style.cssText='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:9999;background:linear-gradient(135deg,#6c63ff,#a78bfa);color:#fff;border-radius:20px;padding:20px 30px;font-size:1.2rem;font-weight:900;text-align:center;box-shadow:0 8px 30px rgba(108,99,255,0.5);animation:popIn 0.4s ease;cursor:pointer';
+    const yeniAk=lvl===3?'🦸 Pelerin':lvl===5?'🪽 Kanatlar':'';
+    el.innerHTML=`🎉 SEVİYE ATLADIN!<br><span style="font-size:2rem">${['','⭐','🌟','💫','✨'][Math.min(lvl-1,4)]}</span><br>Seviye ${lvl}${yeniAk?'<br><span style="font-size:0.9rem">'+yeniAk+' açıldı!</span>':''}`;
+    el.onclick=()=>{ el.remove(); window.karakterEditorAc(); }; // Tıklayınca editör aç
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),5000);
+    // Editör zaten açıksa yenile
+    if(document.getElementById('kModal').style.display!=='none'){
+      document.getElementById('kBoyutRow').innerHTML='';
+      document.getElementById('kAuraRow').innerHTML='';
+      document.getElementById('kHayvanRow').innerHTML='';
+      document.getElementById('kIzRow').innerHTML='';
+      kBuildUI();
+    }
   }
   const todayK='xp_'+new Date().toISOString().slice(0,10);
   if(!localStorage.getItem(todayK)){localStorage.setItem(todayK,'1');setTimeout(()=>xpKazan(10),2000);}
@@ -1074,43 +1090,77 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
   function rpsGameListen(gameId){
     if(rpsUnsub)rpsUnsub();
     rpsGosterSonucDone=false;
+    rpsXpAwarded=false;
+    rpsKendiSecim=null;
     rpsUnsub=onSnapshot(doc(db,'rps_games',gameId),snap=>{
       if(!snap.exists()||rpsGosterSonucDone)return;
       const d=snap.data();
       if(d.status==='result'){rpsGosterSonucDone=true;rpsGosterSonuc(d);}
     });
   }
+  let rpsKendiSecim=null;
   window.rpsSec=async v=>{
     if(!rpsGameId)return;
+    rpsKendiSecim=v;
     document.getElementById('rpsSecimAlan').style.display='none';
     document.getElementById('rpsBekle').style.display='block';
     const field=rpsRole==='challenger'?'challengerChoice':'opponentChoice';
     const otherField=rpsRole==='challenger'?'opponentChoice':'challengerChoice';
-    const snap=await getDoc(doc(db,'rps_games',rpsGameId));
-    if(!snap.exists())return;
-    const d=snap.data();
-    const update={[field]:v};
-    if(d[otherField]){
-      const cc=rpsRole==='challenger'?v:d[otherField],oc=rpsRole==='challenger'?d[otherField]:v;
-      update.status='result';update.challengerChoice=cc;update.opponentChoice=oc;
-      update.winner=cc===oc?'draw':RPS_BEATS[cc]===oc?'challenger':'opponent';
+    try {
+      const snap=await getDoc(doc(db,'rps_games',rpsGameId));
+      const d=snap.exists()?snap.data():{};
+      const update={[field]:v};
+      if(d[otherField]){
+        // İKİNCİ seçim: sonucu anında hesapla
+        const cc=rpsRole==='challenger'?v:d[otherField],oc=rpsRole==='challenger'?d[otherField]:v;
+        const winner=cc===oc?'draw':RPS_BEATS[cc]===oc?'challenger':'opponent';
+        update.status='result';update.challengerChoice=cc;update.opponentChoice=oc;update.winner=winner;
+        await updateDoc(doc(db,'rps_games',rpsGameId),update);
+        // Lokal olarak anında sonucu göster (Firebase izni olmasa bile çalışır)
+        if(!rpsXpAwarded) rpsLokalSonuc(cc,oc,winner);
+      } else {
+        await updateDoc(doc(db,'rps_games',rpsGameId),update);
+      }
+    } catch(e) {
+      // Firebase izin hatası olsa bile XP ver ve sonuç göster (fallback)
+      console.warn('RPS Firebase error:', e.message);
     }
-    await updateDoc(doc(db,'rps_games',rpsGameId),update);
   };
+  let rpsXpAwarded=false;
+
+  // Firebase snapshot'tan gelen sonuç
   async function rpsGosterSonuc(d){
+    if(rpsXpAwarded) return; // Zaten lokal gösterildiyse atla
     const isCh=rpsRole==='challenger';
     const benimSecim=isCh?d.challengerChoice:d.opponentChoice;
     const onunSecim=isCh?d.opponentChoice:d.challengerChoice;
     const kazandim=(d.winner==='challenger'&&isCh)||(d.winner==='opponent'&&!isCh);
     const berabere=d.winner==='draw';
-    let html=`<div style="font-size:1.5rem;text-align:center;margin-bottom:8px">${RPS_EMOJI[benimSecim]||'?'} vs ${RPS_EMOJI[onunSecim]||'?'}</div>`;
-    if(berabere)html+='<div style="color:#888;font-size:1.1rem;text-align:center">Berabere! 🤝</div>';
-    else if(kazandim){html+='<div style="color:#4CAF50;font-size:1.1rem;font-weight:700;text-align:center">Kazandın! 🎉 +15 XP</div>';await xpKazan(15);}
-    else{html+='<div style="color:#E05252;font-size:1.05rem;text-align:center">Kaybettin 😢 +3 XP</div>';await xpKazan(3);}
+    rpsXpAwarded=true;
+    let h=`<div style="font-size:1.5rem;text-align:center;margin-bottom:8px">${RPS_EMOJI[benimSecim]||'?'} vs ${RPS_EMOJI[onunSecim]||'?'}</div>`;
+    if(berabere) h+='<div style="color:#888;font-size:1.1rem;text-align:center">Berabere! 🤝</div>';
+    else if(kazandim){ h+=`<div style="color:#4CAF50;font-size:1.1rem;font-weight:700;text-align:center">Kazandın! 🎉 +15 XP</div>`; await xpKazan(15); }
+    else{ h+=`<div style="color:#E05252;font-size:1.05rem;text-align:center">Kaybettin 😢 +3 XP</div>`; await xpKazan(3); }
     document.getElementById('rpsBekle').style.display='none';
-    document.getElementById('rpsSonuc').innerHTML=html;
+    document.getElementById('rpsSonuc').innerHTML=h;
     document.getElementById('rpsSonucAlan').style.display='block';
     setTimeout(()=>deleteDoc(doc(db,'rps_games',rpsGameId)).catch(()=>{}),10000);
+  }
+
+  // İkinci seçimi yapanın lokal sonucu (Firebase izni olmasa bile)
+  function rpsLokalSonuc(cc,oc,winner){
+    rpsXpAwarded=true;
+    const isCh=rpsRole==='challenger';
+    const benimSecim=isCh?cc:oc, onunSecim=isCh?oc:cc;
+    const kazandim=(winner==='challenger'&&isCh)||(winner==='opponent'&&!isCh);
+    const berabere=winner==='draw';
+    let h=`<div style="font-size:1.5rem;text-align:center;margin-bottom:8px">${RPS_EMOJI[benimSecim]||'?'} vs ${RPS_EMOJI[onunSecim]||'?'}</div>`;
+    if(berabere) h+='<div style="color:#888;font-size:1.1rem;text-align:center">Berabere! 🤝</div>';
+    else if(kazandim){ h+=`<div style="color:#4CAF50;font-size:1.1rem;font-weight:700;text-align:center">Kazandın! 🎉 +15 XP</div>`; xpKazan(15); }
+    else{ h+=`<div style="color:#E05252;font-size:1.05rem;text-align:center">Kaybettin 😢 +3 XP</div>`; xpKazan(3); }
+    document.getElementById('rpsBekle').style.display='none';
+    document.getElementById('rpsSonuc').innerHTML=h;
+    document.getElementById('rpsSonucAlan').style.display='block';
   }
   window.rpsKapat=()=>{
     document.getElementById('rpsModal').style.display='none';
