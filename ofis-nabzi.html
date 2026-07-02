@@ -454,10 +454,38 @@ header p { font-size:0.76rem; color:var(--yazi2); margin-top:2px; }
 .k-emote-bar{display:flex;gap:6px;flex-wrap:wrap;}
 .k-emote-btn{padding:6px 10px;border:2px solid var(--border);border-radius:10px;background:var(--btn-bg);font-size:1rem;cursor:pointer;transition:all 0.15s;}
 .k-emote-btn:hover{border-color:#6c63ff;transform:scale(1.1);}
+
+@keyframes silkele {
+  0%,100%{transform:translateX(0);}
+  20%{transform:translateX(-10px);}
+  40%{transform:translateX(10px);}
+  60%{transform:translateX(-8px);}
+  80%{transform:translateX(8px);}
+}
 </style>
 </head>
 <body>
 
+<!-- ŞİFRE EKRANI -->
+<div id="sifreEkrani">
+  <div id="sifreBilesen">
+    <h1>🏢</h1>
+    <p style="font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:4px;">Ofis Nabzı</p>
+    <p>Bu sayfaya girmek için şifre gereklidir.</p>
+    <input id="sifreInput" type="password" placeholder="Şifreyi girin..." maxlength="32"
+           onkeydown="if(event.key==='Enter')sifreKontrol()">
+    <button id="sifreGirisBtn" onclick="sifreKontrol()">🔓 Giriş Yap</button>
+    <div id="sifreHata"></div>
+  </div>
+</div>
+
+<!-- ADMİN PANELİ -->
+<button id="adminToggleBtn" onclick="adminToggle()" title="Admin Paneli">⚙️</button>
+<div id="adminPanel">
+  <h3>⚙️ Admin Paneli</h3>
+  <div class="admin-info">Kayıtlı kullanıcıları buradan silebilirsin.</div>
+  <div id="adminKullanicilар"></div>
+</div>
 
 
 <!-- KARAKTER ÇUBUĞU -->
@@ -1660,6 +1688,123 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
   onSnapshot(q,snap=>{tumMesajlar=snap.docs.map(d=>({id:d.id,...d.data()}));render();});
   const qY=query(collection(db,"yanitlar"),orderBy("olusturuldu","asc"));
   onSnapshot(qY,snap=>{tumYanitlar={};snap.docs.forEach(d=>{const y={id:d.id,...d.data()};if(!tumYanitlar[y.mesajId])tumYanitlar[y.mesajId]=[];tumYanitlar[y.mesajId].push(y);});render();});
+
+
+  // ═══════════════════════════════════════════
+  // ŞİFRE SİSTEMİ
+  // ═══════════════════════════════════════════
+  const SAYFA_SIFRESI = "cırrıkkuşu2026"; // ← Şifreyi buradan değiştirebilirsin
+  const ADMIN_SIFRESI = "adminbilge2026"; // ← Admin şifresi
+
+  function sifreKontrol() {
+    const girilen = document.getElementById('sifreInput').value.trim();
+    const hata = document.getElementById('sifreHata');
+    if (girilen === ADMIN_SIFRESI) {
+      localStorage.setItem('ofis_giris', 'evet');
+      localStorage.setItem('ofis_admin', 'evet');
+      document.getElementById('sifreEkrani').style.display = 'none';
+      document.getElementById('adminToggleBtn').style.display = 'flex';
+      adminPanelGuncelle();
+      hata.textContent = '';
+    } else if (girilen === SAYFA_SIFRESI) {
+      localStorage.setItem('ofis_giris', 'evet');
+      localStorage.removeItem('ofis_admin');
+      document.getElementById('sifreEkrani').style.display = 'none';
+      hata.textContent = '';
+    } else {
+      hata.textContent = '❌ Yanlış şifre, tekrar deneyin.';
+      document.getElementById('sifreInput').value = '';
+      document.getElementById('sifreInput').focus();
+      // Sallama animasyonu
+      const bilesen = document.getElementById('sifreBilesen');
+      bilesen.style.animation = 'none';
+      setTimeout(() => { bilesen.style.animation = 'silkele 0.4s ease'; }, 10);
+    }
+  }
+
+  // Şifre kontrolü: sayfa yüklenmesinde
+  (function() {
+    const giris = localStorage.getItem('ofis_giris');
+    if (giris === 'evet') {
+      document.getElementById('sifreEkrani').style.display = 'none';
+      if (localStorage.getItem('ofis_admin') === 'evet') {
+        document.getElementById('adminToggleBtn').style.display = 'flex';
+      }
+    }
+    // Çıkış yaparsa admin'i de temizle
+  })();
+
+  // ═══════════════════════════════════════════
+  // ADMİN PANELİ
+  // ═══════════════════════════════════════════
+  let adminPanelAcik = false;
+
+  function adminToggle() {
+    adminPanelAcik = !adminPanelAcik;
+    document.getElementById('adminPanel').style.display = adminPanelAcik ? 'block' : 'none';
+    if (adminPanelAcik) adminPanelGuncelle();
+  }
+
+  function adminPanelGuncelle() {
+    if (localStorage.getItem('ofis_admin') !== 'evet') return;
+    const kont = document.getElementById('adminKullanicilар');
+    kont.innerHTML = '<div style="color:var(--yazi3);font-size:0.78rem;padding:8px 0;">Yükleniyor...</div>';
+    // Firestore'dan tüm kullanıcıları çek
+    import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js').then(({getDocs, collection, deleteDoc, doc}) => {
+      getDocs(collection(db, 'karakterler')).then(snap => {
+        if (snap.empty) {
+          kont.innerHTML = '<div style="color:var(--yazi3);font-size:0.78rem;">Kayıtlı kullanıcı yok.</div>';
+          return;
+        }
+        kont.innerHTML = '';
+        snap.docs.forEach(d => {
+          const data = d.data();
+          const uid = d.id;
+          const isim = data.isim || '???';
+          const benim = uid === KULLANICI_ID;
+          const div = document.createElement('div');
+          div.className = 'admin-kullanici';
+          div.innerHTML = `
+            <div>
+              <div class="admin-kul-isim">${isim}${benim ? ' (Sen)' : ''}</div>
+              <div class="admin-kul-uid">${uid}</div>
+            </div>
+            <button class="admin-sil-btn" id="sil-${uid}" ${benim ? 'disabled title="Kendini silemezsin"' : ''}
+              onclick="adminSilKullanici('${uid}', '${isim.replace(/'/g,'')}')">🗑️ Sil</button>
+          `;
+          kont.appendChild(div);
+        });
+        const toplam = document.createElement('div');
+        toplam.style = 'font-size:0.72rem;color:var(--yazi3);margin-top:8px;text-align:right;';
+        toplam.textContent = `Toplam: ${snap.size} kullanıcı`;
+        kont.appendChild(toplam);
+      });
+    });
+  }
+
+  async function adminSilKullanici(uid, isim) {
+    if (!confirm(`"${isim}" kullanıcısını sistemden silmek istediğine emin misin?\n\nBu işlem geri alınamaz.`)) return;
+    const btn = document.getElementById('sil-' + uid);
+    if (btn) { btn.disabled = true; btn.textContent = '⏳'; }
+    try {
+      const {deleteDoc, doc: firestoreDoc} = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+      await deleteDoc(firestoreDoc(db, 'karakterler', uid));
+      // Kullanıcının mesajlarını da silebiliriz - isteğe bağlı
+      const div = document.getElementById('sil-' + uid)?.closest('.admin-kullanici');
+      if (div) {
+        div.style.opacity = '0.4';
+        div.style.textDecoration = 'line-through';
+        if (btn) { btn.textContent = '✅ Silindi'; }
+      }
+      // Paneli yenile
+      setTimeout(adminPanelGuncelle, 800);
+    } catch (e) {
+      console.error('Silme hatası:', e);
+      if (btn) { btn.disabled = false; btn.textContent = '🗑️ Sil'; }
+      alert('Silme işlemi başarısız oldu: ' + e.message);
+    }
+  }
+
 </script>
 </body>
 </html>
