@@ -1691,47 +1691,52 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
 
 
   // ═══════════════════════════════════════════
-  // ŞİFRE SİSTEMİ
+  // ŞİFRE SİSTEMİ  (sessionStorage — sekme kapanınca sıfırlanır)
   // ═══════════════════════════════════════════
-  const SAYFA_SIFRESI = "cırrıkkuşu2026"; // ← Şifreyi buradan değiştirebilirsin
-  const ADMIN_SIFRESI = "adminbilge2026"; // ← Admin şifresi
+  const SAYFA_SIFRESI = "ofis2025";  // ← Normal şifre — buradan değiştir
+  const ADMIN_SIFRESI = "admin2025"; // ← Admin şifresi  — buradan değiştir
 
   function sifreKontrol() {
     const girilen = document.getElementById('sifreInput').value.trim();
-    const hata = document.getElementById('sifreHata');
+    const hata    = document.getElementById('sifreHata');
+
     if (girilen === ADMIN_SIFRESI) {
-      localStorage.setItem('ofis_giris', 'evet');
-      localStorage.setItem('ofis_admin', 'evet');
+      sessionStorage.setItem('ofis_giris', 'evet');
+      sessionStorage.setItem('ofis_admin', 'evet');
       document.getElementById('sifreEkrani').style.display = 'none';
       document.getElementById('adminToggleBtn').style.display = 'flex';
       adminPanelGuncelle();
       hata.textContent = '';
     } else if (girilen === SAYFA_SIFRESI) {
-      localStorage.setItem('ofis_giris', 'evet');
-      localStorage.removeItem('ofis_admin');
+      sessionStorage.setItem('ofis_giris', 'evet');
+      sessionStorage.removeItem('ofis_admin');
       document.getElementById('sifreEkrani').style.display = 'none';
       hata.textContent = '';
     } else {
       hata.textContent = '❌ Yanlış şifre, tekrar deneyin.';
       document.getElementById('sifreInput').value = '';
       document.getElementById('sifreInput').focus();
-      // Sallama animasyonu
-      const bilesen = document.getElementById('sifreBilesen');
-      bilesen.style.animation = 'none';
-      setTimeout(() => { bilesen.style.animation = 'silkele 0.4s ease'; }, 10);
+      const b = document.getElementById('sifreBilesen');
+      b.style.animation = 'none';
+      setTimeout(() => { b.style.animation = 'silkele 0.4s ease'; }, 10);
     }
   }
 
-  // Şifre kontrolü: sayfa yüklenmesinde
+  // Sayfa yüklenince kontrol: doğru şifre bu oturumda girildi mi?
   (function() {
-    const giris = localStorage.getItem('ofis_giris');
+    // Eski localStorage kaydını temizle (varsa)
+    localStorage.removeItem('ofis_giris');
+    localStorage.removeItem('ofis_admin');
+
+    const giris = sessionStorage.getItem('ofis_giris');
     if (giris === 'evet') {
       document.getElementById('sifreEkrani').style.display = 'none';
-      if (localStorage.getItem('ofis_admin') === 'evet') {
+      if (sessionStorage.getItem('ofis_admin') === 'evet') {
         document.getElementById('adminToggleBtn').style.display = 'flex';
+        adminPanelGuncelle();
       }
     }
-    // Çıkış yaparsa admin'i de temizle
+    // Aksi hâlde şifre ekranı görünmeye devam eder (CSS'de display:flex)
   })();
 
   // ═══════════════════════════════════════════
@@ -1746,12 +1751,13 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
   }
 
   function adminPanelGuncelle() {
-    if (localStorage.getItem('ofis_admin') !== 'evet') return;
+    if (sessionStorage.getItem('ofis_admin') !== 'evet') return;
     const kont = document.getElementById('adminKullanicilар');
     kont.innerHTML = '<div style="color:var(--yazi3);font-size:0.78rem;padding:8px 0;">Yükleniyor...</div>';
     // Firestore'dan tüm kullanıcıları çek
-    import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js').then(({getDocs, collection, deleteDoc, doc}) => {
-      getDocs(collection(db, 'karakterler')).then(snap => {
+    (async () => {
+      const snap = await getDocs(collection(db, 'karakterler'));
+      (async (snap) => {
         if (snap.empty) {
           kont.innerHTML = '<div style="color:var(--yazi3);font-size:0.78rem;">Kayıtlı kullanıcı yok.</div>';
           return;
@@ -1778,8 +1784,8 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
         toplam.style = 'font-size:0.72rem;color:var(--yazi3);margin-top:8px;text-align:right;';
         toplam.textContent = `Toplam: ${snap.size} kullanıcı`;
         kont.appendChild(toplam);
-      });
-    });
+      })(snap);
+    })();
   }
 
   async function adminSilKullanici(uid, isim) {
@@ -1787,8 +1793,7 @@ const SARKILER = [["Zamansızdık", "⏳"], ["Arıyo", "🔍"], ["Yaşanacaksa",
     const btn = document.getElementById('sil-' + uid);
     if (btn) { btn.disabled = true; btn.textContent = '⏳'; }
     try {
-      const {deleteDoc, doc: firestoreDoc} = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
-      await deleteDoc(firestoreDoc(db, 'karakterler', uid));
+      await deleteDoc(doc(db, 'karakterler', uid));
       // Kullanıcının mesajlarını da silebiliriz - isteğe bağlı
       const div = document.getElementById('sil-' + uid)?.closest('.admin-kullanici');
       if (div) {
